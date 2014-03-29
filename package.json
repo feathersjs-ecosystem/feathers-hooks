@@ -22,14 +22,14 @@
     "email": "daff@neyeon.com",
     "url": "https://github.com/daffl"
   },
-  "contributors": [ ],
+  "contributors": [],
   "bugs": {
     "url": "https://github.com/daffl/feathers-hooks/issues"
   },
   "engines": {
     "node": ">=0.10.0"
   },
-  "main": "lib/index.js",
+  "main": "lib/hooks.js",
   "scripts": {
     "test": "grunt test"
   },
@@ -37,7 +37,7 @@
     "lib": "lib"
   },
   "dependencies": {
-
+    "lodash": "^2.4.1"
   },
   "devDependencies": {
     "mocha": "*",
@@ -46,7 +46,8 @@
     "grunt-release": "~0.5.1",
     "grunt-contrib-jshint": "~0.x",
     "grunt-simple-mocha": "~0.4.0",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "feathers": "^0.3.2"
   },
   "peerDependencies": {
     "feathers": "~0.3.0"
