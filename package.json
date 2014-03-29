@@ -1,0 +1,54 @@
+{
+  "name": "feathers-hooks",
+  "version": "0.1.0",
+  "description": "Before and after service method call hooks for easy authorization and processing.",
+  "homepage": "https://github.com/daffl/feathers-hooks",
+  "keywords": [
+    "feathers-plugin",
+    "feathers"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/daffl/feathers-hooks/blob/master/LICENSE"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/daffl/feathers-hooks.git"
+  },
+  "author": {
+    "name": "David Luecke",
+    "email": "daff@neyeon.com",
+    "url": "https://github.com/daffl"
+  },
+  "contributors": [ ],
+  "bugs": {
+    "url": "https://github.com/daffl/feathers-hooks/issues"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "grunt-cli": "~0.1.7",
+    "grunt": "~0.4.1",
+    "grunt-release": "~0.5.1",
+    "grunt-contrib-jshint": "~0.x",
+    "grunt-simple-mocha": "~0.4.0",
+    "grunt-contrib-watch": "~0.5.3"
+  },
+  "peerDependencies": {
+    "feathers": "~0.3.0"
+  }
+}
