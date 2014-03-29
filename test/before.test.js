@@ -68,7 +68,7 @@ describe('.before hooks', function () {
 
     service.update(1, {}, {}, function (error) {
       assert.ok(error, 'Got an error');
-      assert.equal(error.message, 'You are not allowed to update', 'Got error message')
+      assert.equal(error.message, 'You are not allowed to update', 'Got error message');
       done();
     });
   });
