@@ -1,4 +1,4 @@
-# feathers-hooks [![Build Status](https://travis-ci.org/daffl/feathers-hooks.png?branch=master)](https://travis-ci.org/daffl/feathers-hooks)
+# feathers-hooks [![Build Status](https://travis-ci.org/feathersjs/feathers-hooks.png?branch=master)](https://travis-ci.org/daffl/feathers-hooks)
 
 > Before and after service method call hooks for easy authorization and processing.
 
