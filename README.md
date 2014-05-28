@@ -28,7 +28,7 @@ that allow you to decouple things like authorization and pre- or post processing
 
 You can add as many `before` and `after` hooks to any Feathers service method as you want (they will be executed in the
 order they have been registered). There are two ways to use hooks. Either after registering the service by calling
-`service.before(beforeHooks)` or `service.after(afterHook)` or by adding a `before` or `after` object with your hooks to the service.
+`service.before(beforeHooks)` or `service.after(afterHooks)` or by adding a `before` or `after` object with your hooks to the service.
 
 Lets assume a Feathers application initialized like this:
 
@@ -73,7 +73,7 @@ var todoService = app.lookup('todos');
 
 `before` hooks allow to pre-process service call parameters. They will be called with the original service parameters
 and a callback which should be called with the same (potentially modified) parameters and an error (for example, when
-a user is not authorized, `null` for now error).
+a user is not authorized, `null` for no error).
 The following example checks if a user has been passed to the services `find` method and returns an error if not
 and also adds a `createdAt` property to a newly created todo:
 
@@ -124,7 +124,7 @@ todoService.after({
 ### As service properties
 
 You can also add `before` and `after` hooks to your initial service object right away by setting the `before` and
-`after` properties to the hook object:
+`after` properties to the hook object. The following example has the same effect as the previous examples:
 
 ```js
 var TodoService = {
@@ -164,6 +164,12 @@ var TodoService = {
   }
 }
 ```
+
+## Changelog
+
+__0.1.0__
+
+- Initial release
 
 ## Author
 
