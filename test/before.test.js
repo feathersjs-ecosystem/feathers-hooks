@@ -2,7 +2,7 @@ var _ = require('lodash');
 var assert = require('assert');
 var feathers = require('feathers');
 
-var hooks = require('../../hooks');
+var hooks = require('../lib/hooks');
 
 describe('.before hooks', function () {
   it('gets mixed into a service and modifies data', function (done) {
@@ -92,5 +92,56 @@ describe('.before hooks', function () {
     var service = app.lookup('dummy');
 
     service.remove(1, { my: 'param' }, done);
+  });
+
+  it('adds .before() and chains multiple calls', function (done) {
+    var dummyService = {
+      create: function (data, params, callback) {
+        assert.deepEqual(data, {
+          some: 'thing',
+          modified: 'second data'
+        }, 'Data modified');
+
+        assert.deepEqual(params, {
+          modified: 'params'
+        }, 'Params modified');
+
+        callback(null, data);
+      }
+    };
+
+    var app = feathers().configure(hooks()).use('/dummy', dummyService);
+    var service = app.lookup('dummy');
+
+    service.before({
+      create: function (data, params, callback) {
+        params = _.extend({
+          modified: 'params'
+        }, params);
+
+        callback(null, data, params);
+      }
+    });
+
+    service.before({
+      create: function (data, params, callback) {
+        data = _.extend({
+          modified: 'second data'
+        }, data);
+
+        callback(null, data, params);
+      }
+    });
+
+    service.create({ some: 'thing' }, {}, function (error, data) {
+      assert.ok(!error, 'No error');
+
+      assert.deepEqual(data, {
+        some: 'thing',
+        modified: 'second data'
+      }, 'Data got modified');
+
+      done();
+    });
   });
 });

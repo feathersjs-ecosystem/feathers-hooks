@@ -15,11 +15,9 @@ Finally, to use the plugin in your Feathers app:
 ```javascript
 // Require
 var feathers = require('feathers');
-var plugin = require('feathers-hooks');
+var hooks = require('feathers-hooks');
 // Setup
-var app = feathers();
-// Use Plugin
-app.configure(plugin({ /* configuration */ }));
+var app = feathers().configure(hooks());
 ```
 
 ## Using hooks
@@ -65,10 +63,6 @@ var TodoService = {
   }
 }
 ```
-
-## Documentation
-
-See the [docs](docs/).
 
 ## Author
 
