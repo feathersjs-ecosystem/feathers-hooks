@@ -34,9 +34,10 @@ Lets assume a Feathers application initialized like this:
 
 ```js
 var feathers = require('feathers');
+var hooks = require('feathers-hooks');
 
 var app = feathers()
-    .configure(feathers.socketio())
+    .configure(hooks())
     .use('/todos', {
        todos: [],
 
@@ -62,8 +63,9 @@ var app = feathers()
 
          callback(null, data);
        }
-     })
-    .listen(8000);
+     });
+
+app.listen(8000);
 
 // Get the wrapped service object which will be used in the other exapmles
 var todoService = app.lookup('todos');
@@ -92,7 +94,7 @@ and also adds a `createdAt` property to a newly created todo:
 todoService.before({
   find: function (hook, next) {
     if (!hook.params.user) {
-      return callback(new Error('You are not logged in'));
+      return next(new Error('You are not logged in'));
     }
     
     next();
@@ -140,7 +142,7 @@ todoService.after({
 
   get: function (hook, next) {
     if (hook.result.companyId !== hook.params.user.companyId) {
-      return callback(new Error('You are not authorized to access this information'));
+      return next(new Error('You are not authorized to access this information'));
     }
 
     next();
@@ -155,46 +157,75 @@ You can also add `before` and `after` hooks to your initial service object right
 
 ```js
 var TodoService = {
-  before: {
-    find: function (hook, next) {
-      if (!hook.params.user) {
-        return callback(new Error('You are not logged in'));
-      }
-      
-      next();
-    },
-  
-    create: function(hook, next) {
-      hook.data.createdAt = new Date();
-  
-      next();
-      // Or
-      next(null, hook);
-    }
-  },
+	todos: [],
 
-  after: {
-    find: function (hook, next) {
-      // Manually filter the find results
-      hook.result = _.filter(hook.result, function (current) {
-        return current.companyId === params.user.companyId;
-      });
-  
-      next();
-    },
-  
-    get: function (hook, next) {
-      if (hook.result.companyId !== hook.params.user.companyId) {
-        return callback(new Error('You are not authorized to access this information'));
-      }
-  
-      next();
-    }
-  }
+	get: function (id, params, callback) {
+		for (var i = 0; i < this.todos.length; i++) {
+			if (this.todos[i].id === id) {
+				return callback(null, this.todos[i]);
+			}
+		}
+
+		callback(new Error('Todo not found'));
+	},
+
+	// Return all todos from this service
+	find: function (params, callback) {
+		callback(null, this.todos);
+	},
+
+	// Create a new Todo with the given data
+	create: function (data, params, callback) {
+		data.id = this.todos.length;
+		this.todos.push(data);
+
+		callback(null, data);
+	},
+
+	before: {
+		find: function (hook, next) {
+			if (!hook.params.user) {
+				return next(new Error('You are not logged in'));
+			}
+
+			next();
+		},
+
+		create: function (hook, next) {
+			hook.data.createdAt = new Date();
+
+			next();
+			// Or
+			next(null, hook);
+		}
+	},
+
+	after: {
+		find: function (hook, next) {
+			// Manually filter the find results
+			hook.result = _.filter(hook.result, function (current) {
+				return current.companyId === params.user.companyId;
+			});
+
+			next();
+		},
+
+		get: function (hook, next) {
+			if (hook.result.companyId !== hook.params.user.companyId) {
+				return next(new Error('You are not authorized to access this information'));
+			}
+
+			next();
+		}
+	}
 }
 ```
 
 ## Changelog
+
+__0.2.0__
+
+- API change to use hook objects instead of function parameters ([#1](https://github.com/feathersjs/feathers-hooks/issues/1))
 
 __0.1.0__
 
