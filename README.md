@@ -71,52 +71,79 @@ var todoService = app.lookup('todos');
 
 ### `service.before(beforeHooks)`
 
-`before` hooks allow to pre-process service call parameters. They will be called with the original service parameters
-and a callback which should be called with the same (potentially modified) parameters and an error (for example, when
-a user is not authorized, `null` for no error).
+`before` hooks allow to pre-process service call parameters. They will be called with the hook object
+and a callback which should be called with any errors or no arguments or `null` and the modified hook object.
+The hook object contains information about the intercepted method and for `before` hooks can have the following properties:
+
+- __method__ - The method name
+- __type__ - The hook type (`before` or `after`)
+- __callback__ - The original callback (can be replaced but shouldn't be called in your hook)
+- __params__ - The service method parameters
+- __data__ - The request data (for `create`, `update` and `patch`)
+- __id__ - The id (for `get`, `remove`, `update` and `patch`)
+
+All properties of the hook object can be modified and the modified data will be used for the actual service method
+call. This is very helpful for pre-processing parameters and massaging data when creating or updating.
+
 The following example checks if a user has been passed to the services `find` method and returns an error if not
 and also adds a `createdAt` property to a newly created todo:
 
 ```js
 todoService.before({
-  find: function (params, callback) {
-    if (!params.user) {
+  find: function (hook, next) {
+    if (!hook.params.user) {
       return callback(new Error('You are not logged in'));
     }
-    callback(null, params);
+    
+    next();
   },
 
-  create: function(data, params, callback) {
-    data.createdAt = new Date();
+  create: function(hook, next) {
+    hook.data.createdAt = new Date();
 
-    callback(null, data, params);
+    next();
+    // Or
+    next(null, hook);
   }
 });
 ```
 
 ### `service.after(afterHooks)`
 
-`after` hooks will be called with the result of the service call, the original parameters and a callback. The following example
-filters the data returned by a `find` service call based on a users company id and checks if the current user is allowed
-to retrieve the data returned by `get` (that is, they have the same company id):
+`after` hooks will be called with a similar hook object than `before` hooks but additionally contain a `result`
+property with the service call results:
+
+- __method__ - The method name
+- __type__ - The hook type (`before` or `after`)
+- __result__ - The service call result data
+- __callback__ - The original callback (can be replaced but shouldn't be called in your hook)
+- __params__ - The service method parameters
+- __data__ - The request data (for `create`, `update` and `patch`)
+- __id__ - The id (for `get`, `remove`, `update` and `patch`)
+
+In any `after` hook, only modifications to the `result` object will have any effect. This is a good place to filter or
+post-process the data retrieved by a service and also add some additional authorization that needs the actual data.
+
+The following example filters the data returned by a `find` service call based on a users company id
+and checks if the current user is allowed to retrieve the data returned by `get` (that is, they have the same company id):
 
 ```js
 todoService.after({
-  find: function (data, params, callback) {
+  find: function (hook, next) {
     // Manually filter the find results
-    var filtered = _.filter(data, function (current) {
+    hook.result = _.filter(hook.result, function (current) {
       return current.companyId === params.user.companyId;
     });
 
-    callback(null, filtered);
+    next();
   },
 
-  get: function (data, id, params, callback) {
-    if (data.companyId !== params.user.companyId) {
+  get: function (hook, next) {
+    if (hook.result.companyId !== hook.params.user.companyId) {
       return callback(new Error('You are not authorized to access this information'));
     }
 
-    callback(null, data);
+    next();
   }
 });
 ```
@@ -129,37 +156,39 @@ You can also add `before` and `after` hooks to your initial service object right
 ```js
 var TodoService = {
   before: {
-    find: function (params, callback) {
-      if (!params.user) {
+    find: function (hook, next) {
+      if (!hook.params.user) {
         return callback(new Error('You are not logged in'));
       }
-      callback(null, params);
+      
+      next();
     },
-
-    get: function (id, params, callback) {
-      // Pre-process the params passed to the actual service
-      params.something = 'test';
-
-      callback(null, id, params);
+  
+    create: function(hook, next) {
+      hook.data.createdAt = new Date();
+  
+      next();
+      // Or
+      next(null, hook);
     }
   },
 
   after: {
-    find: function (data, params, callback) {
+    find: function (hook, next) {
       // Manually filter the find results
-      var filtered = _.filter(data, function (current) {
+      hook.result = _.filter(hook.result, function (current) {
         return current.companyId === params.user.companyId;
       });
-
-      callback(null, filtered);
+  
+      next();
     },
-
-    get: function (data, id, params, callback) {
-      if (data.companyId !== params.user.companyId) {
+  
+    get: function (hook, next) {
+      if (hook.result.companyId !== hook.params.user.companyId) {
         return callback(new Error('You are not authorized to access this information'));
       }
-
-      callback(null, data);
+  
+      next();
     }
   }
 }

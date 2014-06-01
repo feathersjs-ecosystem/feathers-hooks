@@ -5,143 +5,139 @@ var feathers = require('feathers');
 var hooks = require('../lib/hooks');
 
 describe('.before hooks', function () {
-  it('gets mixed into a service and modifies data', function (done) {
-    var dummyService = {
-      before: {
-        create: function (data, params, callback) {
-          data = _.extend({
-            modified: 'data'
-          }, data);
+	it('gets mixed into a service and modifies data', function (done) {
+		var dummyService = {
+			before: {
+				create: function (hook, next) {
+					assert.equal(hook.type, 'before');
 
-          params = _.extend({
-            modified: 'params'
-          }, params);
+					hook.data.modified = 'data';
 
-          callback(null, data, params);
-        }
-      },
+					_.extend(hook.params, {
+						modified: 'params'
+					});
 
-      create: function (data, params, callback) {
-        assert.deepEqual(data, {
-          some: 'thing',
-          modified: 'data'
-        }, 'Data modified');
+					next(null, hook);
+				}
+			},
 
-        assert.deepEqual(params, {
-          modified: 'params'
-        }, 'Params modified');
+			create: function (data, params, callback) {
+				assert.deepEqual(data, {
+					some: 'thing',
+					modified: 'data'
+				}, 'Data modified');
 
-        callback(null, data);
-      }
-    };
+				assert.deepEqual(params, {
+					modified: 'params'
+				}, 'Params modified');
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+				callback(null, data);
+			}
+		};
 
-    service.create({ some: 'thing' }, {}, function (error, data) {
-      assert.ok(!error, 'No error');
+		var app = feathers().configure(hooks()).use('/dummy', dummyService);
+		var service = app.lookup('dummy');
 
-      assert.deepEqual(data, {
-        some: 'thing',
-        modified: 'data'
-      }, 'Data got modified');
+		service.create({ some: 'thing' }, {}, function (error, data) {
+			assert.ok(!error, 'No error');
 
-      done();
-    });
-  });
+			assert.deepEqual(data, {
+				some: 'thing',
+				modified: 'data'
+			}, 'Data got modified');
 
-  it('passes errors', function (done) {
-    var dummyService = {
-      before: {
-        update: function (id, data, params, callback) {
-          callback(new Error('You are not allowed to update'));
-        }
-      },
+			done();
+		});
+	});
 
-      update: function () {
-        assert.ok(false, 'Never should be called');
-      }
-    };
+	it('passes errors', function (done) {
+		var dummyService = {
+			before: {
+				update: function (hook, next) {
+					next(new Error('You are not allowed to update'));
+				}
+			},
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+			update: function () {
+				assert.ok(false, 'Never should be called');
+			}
+		};
 
-    service.update(1, {}, {}, function (error) {
-      assert.ok(error, 'Got an error');
-      assert.equal(error.message, 'You are not allowed to update', 'Got error message');
-      done();
-    });
-  });
+		var app = feathers().configure(hooks()).use('/dummy', dummyService);
+		var service = app.lookup('dummy');
 
-  it('calling back with no arguments uses the old ones', function (done) {
-    var dummyService = {
-      before: {
-        remove: function (id, params, callback) {
-          callback();
-        }
-      },
+		service.update(1, {}, {}, function (error) {
+			assert.ok(error, 'Got an error');
+			assert.equal(error.message, 'You are not allowed to update', 'Got error message');
+			done();
+		});
+	});
 
-      remove: function (id, params, callback) {
-        assert.equal(id, 1, 'Got id');
-        assert.deepEqual(params, { my: 'param' });
-        callback();
-      }
-    };
+	it('calling back with no arguments uses the old ones', function (done) {
+		var dummyService = {
+			before: {
+				remove: function (hook, next) {
+					next();
+				}
+			},
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+			remove: function (id, params, callback) {
+				assert.equal(id, 1, 'Got id');
+				assert.deepEqual(params, { my: 'param' });
+				callback();
+			}
+		};
 
-    service.remove(1, { my: 'param' }, done);
-  });
+		var app = feathers().configure(hooks()).use('/dummy', dummyService);
+		var service = app.lookup('dummy');
 
-  it('adds .before() and chains multiple calls', function (done) {
-    var dummyService = {
-      create: function (data, params, callback) {
-        assert.deepEqual(data, {
-          some: 'thing',
-          modified: 'second data'
-        }, 'Data modified');
+		service.remove(1, { my: 'param' }, done);
+	});
 
-        assert.deepEqual(params, {
-          modified: 'params'
-        }, 'Params modified');
+	it('adds .before() and chains multiple calls', function (done) {
+		var dummyService = {
+			create: function (data, params, callback) {
+				assert.deepEqual(data, {
+					some: 'thing',
+					modified: 'second data'
+				}, 'Data modified');
 
-        callback(null, data);
-      }
-    };
+				assert.deepEqual(params, {
+					modified: 'params'
+				}, 'Params modified');
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+				callback(null, data);
+			}
+		};
 
-    service.before({
-      create: function (data, params, callback) {
-        params = _.extend({
-          modified: 'params'
-        }, params);
+		var app = feathers().configure(hooks()).use('/dummy', dummyService);
+		var service = app.lookup('dummy');
 
-        callback(null, data, params);
-      }
-    });
+		service.before({
+			create: function (hook, next) {
+				hook.params.modified = 'params';
 
-    service.before({
-      create: function (data, params, callback) {
-        data = _.extend({
-          modified: 'second data'
-        }, data);
+				next();
+			}
+		});
 
-        callback(null, data, params);
-      }
-    });
+		service.before({
+			create: function (hook, next) {
+				hook.data.modified = 'second data';
 
-    service.create({ some: 'thing' }, {}, function (error, data) {
-      assert.ok(!error, 'No error');
+				next();
+			}
+		});
 
-      assert.deepEqual(data, {
-        some: 'thing',
-        modified: 'second data'
-      }, 'Data got modified');
+		service.create({ some: 'thing' }, {}, function (error, data) {
+			assert.ok(!error, 'No error');
 
-      done();
-    });
-  });
+			assert.deepEqual(data, {
+				some: 'thing',
+				modified: 'second data'
+			}, 'Data got modified');
+
+			done();
+		});
+	});
 });

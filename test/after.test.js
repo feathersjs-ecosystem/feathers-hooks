@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var assert = require('assert');
 var feathers = require('feathers');
 
@@ -8,8 +7,12 @@ describe('.after hooks', function () {
   it('gets mixed into a service and modifies data', function (done) {
     var dummyService = {
       after: {
-        create: function (result, data, params, callback) {
-          callback(null, _.extend({ some: 'thing' }, result));
+        create: function (hook, next) {
+					assert.equal(hook.type, 'after');
+
+					hook.result.some = 'thing';
+
+					next(null, hook);
         }
       },
 
@@ -30,8 +33,8 @@ describe('.after hooks', function () {
   it('returns errors', function (done) {
     var dummyService = {
       after: {
-        update: function (result, id, data, params, callback) {
-          callback(new Error('This did not work'));
+        update: function (hook, next) {
+          next(new Error('This did not work'));
         }
       },
 
@@ -84,14 +87,17 @@ describe('.after hooks', function () {
     var service = app.lookup('dummy');
 
     service.after({
-      create: function (result, data, params, callback) {
-        callback(null, _.extend({ some: 'thing' }, result));
+      create: function (hook, next) {
+				hook.result.some = 'thing';
+        next();
       }
     });
 
     service.after({
-      create: function (result, data, params, callback) {
-        callback(null, _.extend({ other: 'stuff' }, result));
+      create: function (hook, next) {
+				hook.result.other = 'stuff';
+
+				next();
       }
     });
 
