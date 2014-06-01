@@ -21,6 +21,13 @@ var hooks = require('feathers-hooks');
 var app = feathers().configure(hooks());
 ```
 
+## Examples
+
+The repository contains the following working examples:
+
+- [authorization.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/authorization.js) - A simple demo showing how to use hooks for authorization (and post-processing the results) where the user is set via a ?user=username query parameter.
+- [timestamp.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/timestamp.js) - A demo that adds a `createdAt` and `updatedAt` timestamp when creating or updating a Todo using hooks.
+
 ## Using hooks
 
 Feathers hooks are a form of [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming)

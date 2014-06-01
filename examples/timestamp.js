@@ -8,12 +8,7 @@ var app = feathers()
 	.configure(hooks())
 	.use('/todos', {
 		id: 0,
-		todos: {
-			0: {
-				id: 0,
-				description: 'Do something :)'
-			}
-		},
+		todos: {},
 
 		get: function(id, params, callback) {
 			if(!this.todos[id]) {
@@ -67,3 +62,8 @@ todoService.before({
 		next();
 	}
 });
+
+// Create a Todo already so that it doesn't look so empty
+todoService.create({
+	description: 'Do something :)'
+}, {}, function() {});
