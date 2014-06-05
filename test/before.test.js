@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var Q = require('q');
 var assert = require('assert');
 var feathers = require('feathers');
 
@@ -138,6 +139,54 @@ describe('.before hooks', function () {
 			}, 'Data got modified');
 
 			done();
+		});
+	});
+
+	it('.before hooks can return a promise', function(done) {
+		var app = feathers().configure(hooks()).use('/dummy', {
+			get: function(id, params) {
+				assert.ok(params.ran, 'Ran through promise hook');
+
+				return Q({
+					id: id,
+					description: 'You have to do ' + id
+				});
+			},
+
+			remove: function() {
+				assert.ok(false, 'Should never get here');
+			}
+		});
+		var service = app.lookup('dummy');
+
+		service.before({
+			get: function(hook) {
+				var dfd = Q.defer();
+
+				setTimeout(function() {
+					hook.params.ran = true;
+					dfd.resolve();
+				}, 50);
+
+				return dfd.promise;
+			},
+
+			remove: function() {
+				var dfd = Q.defer();
+
+				setTimeout(function() {
+					dfd.reject(new Error('This did not work'));
+				}, 50);
+
+				return dfd.promise;
+			}
+		});
+
+		service.get('dishes', {}, function() {
+			service.remove(10, {}, function(error) {
+				assert.equal(error.message, 'This did not work');
+				done();
+			});
 		});
 	});
 });
