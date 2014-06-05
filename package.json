@@ -40,14 +40,15 @@
     "lodash": "^2.4.1"
   },
   "devDependencies": {
-    "mocha": "*",
-    "grunt-cli": "~0.1.7",
+    "feathers": "1.0.0-pre.1",
     "grunt": "~0.4.1",
-    "grunt-release": "~0.5.1",
+    "grunt-cli": "~0.1.7",
     "grunt-contrib-jshint": "~0.x",
-    "grunt-simple-mocha": "~0.4.0",
     "grunt-contrib-watch": "~0.5.3",
-    "feathers": "^0.4.0"
+    "grunt-release": "~0.5.1",
+    "grunt-simple-mocha": "~0.4.0",
+    "mocha": "*",
+    "q": "^1.0.1"
   },
   "peerDependencies": {
     "feathers": ">= 0.3.0"
