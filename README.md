@@ -30,12 +30,9 @@ The repository contains the following working examples:
 
 ## Using hooks
 
-Feathers hooks are a form of [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming)
-that allow you to decouple things like authorization and pre- or post processing from your services logic.
+Feathers hooks are a form of [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming) that allow you to decouple things like authorization and pre- or post processing from your services logic.
 
-You can add as many `before` and `after` hooks to any Feathers service method as you want (they will be executed in the
-order they have been registered). There are two ways to use hooks. Either after registering the service by calling
-`service.before(beforeHooks)` or `service.after(afterHooks)` or by adding a `before` or `after` object with your hooks to the service.
+You can add as many `before` and `after` hooks to any Feathers service method as you want (they will be executed in the order they have been registered). There are two ways to use hooks. Either after registering the service by calling `service.before(beforeHooks)` or `service.after(afterHooks)` or by adding a `before` or `after` object with your hooks to the service.
 
 Lets assume a Feathers application initialized like this:
 
@@ -227,6 +224,33 @@ var TodoService = {
 	}
 }
 ```
+
+### Promises
+
+All hooks can return a [Promise](http://promises-aplus.github.io/promises-spec/) object instead of calling the callback. The promises return value will *not* be used. Using [Q](https://github.com/kriskowal/q) it would look like:
+
+```js
+todoService.before({
+  find: function (hook) {
+    return Q(/* ... */);
+  }
+});
+```
+
+If you want to change the hook object just chain the returned promise using `.then`:
+
+```js
+todoService.before({
+  find: function (hook) {
+    return Q(/* ... */).then(function(result) {
+      hook.params.message = 'Ran through promise hook';
+      hook.data.result = result;
+    });
+  }
+});
+```
+
+If a promise fails, the error will be propagated immediately.
 
 ## Changelog
 
