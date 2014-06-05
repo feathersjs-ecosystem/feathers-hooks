@@ -230,6 +230,10 @@ var TodoService = {
 
 ## Changelog
 
+__0.3.0__
+
+- Allows hooks to return a promise ([#3](https://github.com/feathersjs/feathers-hooks/issues/3), [#4](https://github.com/feathersjs/feathers-hooks/issues/4))
+
 __0.2.0__
 
 - API change to use hook objects instead of function parameters ([#1](https://github.com/feathersjs/feathers-hooks/issues/1))
