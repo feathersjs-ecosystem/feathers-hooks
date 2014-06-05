@@ -1,6 +1,6 @@
 {
   "name": "feathers-hooks",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Before and after service method call hooks for easy authorization and processing.",
   "homepage": "https://github.com/daffl/feathers-hooks",
   "keywords": [
