@@ -2,7 +2,7 @@
   "name": "feathers-hooks",
   "version": "0.3.1",
   "description": "Before and after service method call hooks for easy authorization and processing.",
-  "homepage": "https://github.com/daffl/feathers-hooks",
+  "homepage": "https://github.com/feathersjs/feathers-hooks",
   "keywords": [
     "feathers-plugin",
     "feathers"
@@ -10,21 +10,21 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/daffl/feathers-hooks/blob/master/LICENSE"
+      "url": "https://github.com/feathersjs/feathers-hooks/blob/master/LICENSE"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/daffl/feathers-hooks.git"
+    "url": "git://github.com/feathersjs/feathers-hooks.git"
   },
   "author": {
     "name": "David Luecke",
     "email": "daff@neyeon.com",
-    "url": "https://github.com/daffl"
+    "url": "https://feathersjs.com"
   },
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/daffl/feathers-hooks/issues"
+    "url": "https://github.com/feathersjs/feathers-hooks/issues"
   },
   "engines": {
     "node": ">=0.10.0"
