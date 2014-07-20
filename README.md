@@ -258,7 +258,7 @@ If you want to register more than one `before` or `after` hook for the same meth
 
 #### Dynamic Registrations
 
-If you register a `before` or `after` hook for a certain method in one place and then register another `before` or `after` hook for the same method `feathers-hooks` will automatically execute them in a chained fashion **in the order that they were registered**.
+If you register a `before` or `after` hook for a certain method in one place and then register another `before` or `after` hook for the same method, `feathers-hooks` will automatically execute them in a chained fashion **in the order that they were registered**.
 
 > **Pro Tip:** _This works well if you have more dynamic or conditional hooks._
 
@@ -305,7 +305,7 @@ userService.before({
 
 __0.4.0__
 
-- Allows hooks to be chained in an array ([#2](https://github.com/feathersjs/feathers-hooks/issues/2)
+- Allows hooks to be chained in an array ([#2](https://github.com/feathersjs/feathers-hooks/issues/2))
 
 __0.3.0__
 
