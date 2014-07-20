@@ -137,8 +137,6 @@ describe('.after hooks', function() {
     });
 
     service.create({ my: 'data' }, {}, function(error, data) {
-      console.log('DATA', data);
-        
       assert.deepEqual({
         my: 'data',
         some: 'thing',
