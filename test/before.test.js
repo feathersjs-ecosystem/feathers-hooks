@@ -95,7 +95,7 @@ describe('.before hooks', function() {
     service.remove(1, { my: 'param' }, done);
   });
 
-  it('adds .before() and chains multiple calls', function(done) {
+  it('adds .before() and chains multiple hooks for the same method', function(done) {
     var dummyService = {
       create: function(data, params, callback) {
         assert.deepEqual(data, {
@@ -130,14 +130,48 @@ describe('.before hooks', function() {
       }
     });
 
-    service.create({ some: 'thing' }, {}, function(error, data) {
+    service.create({ some: 'thing' }, {}, function(error) {
       assert.ok(!error, 'No error');
+      done();
+    });
+  });
 
-      assert.deepEqual(data, {
-        some: 'thing',
-        modified: 'second data'
-      }, 'Data got modified');
+  it('chains multiple after hooks using array syntax', function(done) {
+    var dummyService = {
+      create: function(data, params, callback) {
+        assert.deepEqual(data, {
+          some: 'thing',
+          modified: 'second data'
+        }, 'Data modified');
 
+        assert.deepEqual(params, {
+          modified: 'params'
+        }, 'Params modified');
+
+        callback(null, data);
+      }
+    };
+
+    var app = feathers().configure(hooks()).use('/dummy', dummyService);
+    var service = app.lookup('dummy');
+
+    service.before({
+      create: [
+        function(hook, next) {
+          hook.params.modified = 'params';
+
+          next();
+        },
+        function(hook, next) {
+          hook.data.modified = 'second data';
+
+          next();
+        }
+      ]
+    });
+
+    service.create({ some: 'thing' }, {}, function(error) {
+      assert.ok(!error, 'No error');
       done();
     });
   });
