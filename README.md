@@ -77,7 +77,7 @@ var todoService = app.lookup('todos');
 
 ### `service.before(beforeHooks)`
 
-`before` hooks allow to pre-process service call parameters. They will be called with the hook object
+`before` hooks allow you to pre-process service call parameters. They will be called with the hook object
 and a callback which should be called with any errors or no arguments or `null` and the modified hook object.
 The hook object contains information about the intercepted method and for `before` hooks can have the following properties:
 
@@ -252,7 +252,60 @@ todoService.before({
 
 If a promise fails, the error will be propagated immediately.
 
+### Chaining / Registering Multiple Hooks
+
+If you want to register more than one `before` or `after` hook for the same method, there are 2 ways that you can do this:
+
+#### Dynamic Registrations
+
+If you register a `before` or `after` hook for a certain method in one place and then register another `before` or `after` hook for the same method `feathers-hooks` will automatically execute them in a chained fashion **in the order that they were registered**.
+
+> **Pro Tip:** _This works well if you have more dynamic or conditional hooks._
+
+```js
+var app = feathers().use('/users', userService);
+
+// We need to retrieve the wrapped service object from app which has the added hook functionality
+var userService = app.lookup('users');
+
+userService.before({
+    ...
+});
+
+// Somewhere else
+userService.before({
+    ...
+});
+
+```
+
+#### Defining Arrays
+
+You can also register multiple hooks at the same time, in the order that you want them executed, when you are registering your service.
+
+> **Pro Tip:** _This is the preferred method becuase it is bit cleaner and execution order is more apparent._
+
+
+```js
+var hooks = require('your-hooks');
+
+var app = feathers().use('/users', userService);
+
+// We need to retrieve the wrapped service object from app which has the added hook functionality
+var userService = app.lookup('users');
+
+userService.before({
+  // Auth is required.  No exceptions
+  create : [hooks.requireAuth, hooks.setUserID, hooks.setCreatedAt]
+});
+
+```
+
 ## Changelog
+
+__0.4.0__
+
+- Allows hooks to be chained in an array ([#2](https://github.com/feathersjs/feathers-hooks/issues/2)
 
 __0.3.0__
 
