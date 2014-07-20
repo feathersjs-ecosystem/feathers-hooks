@@ -43,7 +43,8 @@ var app = feathers()
 		}
 	});
 
-app.listen(8000);
+app.listen(8080);
+console.log('App listening on 127.0.0.1:8080');
 
 // Get the wrapped service object which will be used in the other exapmles
 var todoService = app.lookup('todos');
