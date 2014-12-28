@@ -73,6 +73,16 @@ describe('hook utilities', function() {
     assert.deepEqual(args, [2, { my: 'data' }, { some: 'thing' }, _.noop]);
 
     args = utils.makeArguments({
+      id: 0,
+      data: { my: 'data' },
+      params: { some: 'thing' },
+      method: 'update',
+      callback: _.noop
+    });
+
+    assert.deepEqual(args, [0, { my: 'data' }, { some: 'thing' }, _.noop]);
+
+    args = utils.makeArguments({
       params: { some: 'thing' },
       method: 'find',
       callback: _.noop
