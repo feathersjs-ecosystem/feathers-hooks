@@ -40,7 +40,7 @@
     "lodash": "^2.4.1"
   },
   "devDependencies": {
-    "feathers": "1.0.0-pre.1",
+    "feathers": "^1.0.0",
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.7",
     "grunt-contrib-jshint": "~0.x",
@@ -49,8 +49,5 @@
     "grunt-simple-mocha": "~0.4.0",
     "mocha": "*",
     "q": "^1.0.1"
-  },
-  "peerDependencies": {
-    "feathers": ">= 0.3.0"
   }
 }

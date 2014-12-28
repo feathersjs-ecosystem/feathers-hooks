@@ -23,7 +23,7 @@ describe('.after hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.create({ my: 'data' }, {}, function(error, data) {
       assert.deepEqual({ my: 'data', some: 'thing' }, data, 'Got modified data');
@@ -45,7 +45,7 @@ describe('.after hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.update(1, { my: 'data' }, {}, function(error) {
       assert.ok(error, 'Got an error');
@@ -68,7 +68,7 @@ describe('.after hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.remove(1, {}, function(error) {
       assert.ok(error, 'Got error');
@@ -85,7 +85,7 @@ describe('.after hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.after({
       create: function(hook, next) {
@@ -120,7 +120,7 @@ describe('.after hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.after({
       create: [
@@ -159,7 +159,7 @@ describe('.after hooks', function() {
         return Q([]);
       }
     });
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.after({
       get: function(hook) {

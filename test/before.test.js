@@ -37,7 +37,7 @@ describe('.before hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.create({ some: 'thing' }, {}, function(error, data) {
       assert.ok(!error, 'No error');
@@ -65,7 +65,7 @@ describe('.before hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.update(1, {}, {}, function(error) {
       assert.ok(error, 'Got an error');
@@ -90,7 +90,7 @@ describe('.before hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.remove(1, { my: 'param' }, done);
   });
@@ -112,7 +112,7 @@ describe('.before hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.before({
       create: function(hook, next) {
@@ -153,7 +153,7 @@ describe('.before hooks', function() {
     };
 
     var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.lookup('dummy');
+    var service = app.service('dummy');
 
     service.before({
       create: [
@@ -192,7 +192,7 @@ describe('.before hooks', function() {
       }
     });
 
-    var service = app.lookup('dummy').before({
+    var service = app.service('dummy').before({
       get: function(hook) {
         var dfd = Q.defer();
 
