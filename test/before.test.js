@@ -299,4 +299,35 @@ describe('.before hooks', function() {
       service.get(1, {}, done);
     });
   });
+
+  it('before hooks have service as context and keep it in service method (#17)', function(done) {
+    var app = feathers().configure(hooks()).use('/dummy', {
+      number: 42,
+      get: function(id, params, callback) {
+        callback(null, {
+          id: id,
+          number: this.number,
+          test: params.test
+        });
+      }
+    });
+
+    var service = app.service('dummy');
+
+    service.before({
+      get: function(hook, next) {
+        hook.params.test = this.number + 2;
+        next();
+      }
+    });
+
+    service.get(10, {}, function(error, data) {
+      assert.deepEqual(data, {
+        id: 10,
+        number: 42,
+        test: 44
+      });
+      done();
+    });
+  });
 });
