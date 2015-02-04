@@ -275,4 +275,34 @@ describe('.after hooks', function() {
       });
     });
   });
+
+  it('after hooks have service as context and keep it in service method (#17)', function(done) {
+    var app = feathers().configure(hooks()).use('/dummy', {
+      number: 42,
+      get: function(id, params, callback) {
+        callback(null, {
+          id: id,
+          number: this.number
+        });
+      }
+    });
+
+    var service = app.service('dummy');
+
+    service.after({
+      get: function(hook, next) {
+        hook.result.test = this.number + 1;
+        next();
+      }
+    });
+
+    service.get(10, {}, function(error, data) {
+      assert.deepEqual(data, {
+        id: 10,
+        number: 42,
+        test: 43
+      });
+      done();
+    });
+  });
 });
