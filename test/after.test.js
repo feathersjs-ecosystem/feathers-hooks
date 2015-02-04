@@ -196,4 +196,83 @@ describe('.after hooks', function() {
       });
     });
   });
+
+  it('.after hooks run in the correct order (#13)', function(done) {
+    var app = feathers().configure(hooks()).use('/dummy', {
+      get: function(id, params, callback) {
+        callback(null, {
+          id: id
+        });
+      }
+    });
+
+    var service = app.service('dummy');
+
+    service.after({
+      get: function(hook, next) {
+        hook.result.items = ['first'];
+        next();
+      }
+    });
+
+    service.after({
+      get: [
+        function(hook, next) {
+          hook.result.items.push('second');
+          next();
+        },
+        function(hook, next) {
+          hook.result.items.push('third');
+          next();
+        }
+      ]
+    });
+
+    service.get(10, {}, function(error, data) {
+      assert.deepEqual(data.items, ['first', 'second', 'third']);
+      done(error);
+    });
+  });
+
+  it('after all hooks (#11)', function(done) {
+    var app = feathers().configure(hooks()).use('/dummy', {
+      after: {
+        all: function(hook, next) {
+          hook.result.afterAllObject = true;
+          next();
+        }
+      },
+
+      get: function(id, params, callback) {
+        callback(null, {
+          id: id,
+          items: []
+        });
+      },
+
+      find: function(params, callback) {
+        callback(null, []);
+      }
+    });
+
+    var service = app.service('dummy');
+
+    service.after([
+      function(hook, next) {
+        hook.result.afterAllMethodArray = true;
+        next();
+      }
+    ]);
+
+    service.find({}, function(error, data) {
+      assert.ok(data.afterAllObject);
+      assert.ok(data.afterAllMethodArray);
+
+      service.get(1, {}, function(error, data) {
+        assert.ok(data.afterAllObject);
+        assert.ok(data.afterAllMethodArray);
+        done();
+      });
+    });
+  });
 });

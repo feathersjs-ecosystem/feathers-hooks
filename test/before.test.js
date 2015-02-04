@@ -222,4 +222,81 @@ describe('.before hooks', function() {
       });
     });
   });
+
+  it('.before hooks run in the correct order (#13)', function(done) {
+    var app = feathers().configure(hooks()).use('/dummy', {
+      get: function(id, params, callback) {
+        assert.deepEqual(params.items, ['first', 'second', 'third']);
+        callback(null, {
+          id: id,
+          items: []
+        });
+      }
+    });
+
+    var service = app.service('dummy');
+
+    service.before({
+      get: function(hook, next) {
+        hook.params.items = ['first'];
+        next();
+      }
+    });
+
+    service.before({
+      get: [
+        function(hook, next) {
+          hook.params.items.push('second');
+          next();
+        },
+        function(hook, next) {
+          hook.params.items.push('third');
+          next();
+        }
+      ]
+    });
+
+    service.get(10, {}, function(error) {
+      done(error);
+    });
+  });
+
+  it('before all hooks (#11)', function(done) {
+    var app = feathers().configure(hooks()).use('/dummy', {
+      before: {
+        all: function(hook, next) {
+          hook.params.beforeAllObject = true;
+          next();
+        }
+      },
+
+      get: function(id, params, callback) {
+        assert.ok(params.beforeAllObject);
+        assert.ok(params.beforeAllMethodArray);
+        callback(null, {
+          id: id,
+          items: []
+        });
+      },
+
+      find: function(params, callback) {
+        assert.ok(params.beforeAllObject);
+        assert.ok(params.beforeAllMethodArray);
+        callback(null, []);
+      }
+    });
+
+    var service = app.service('dummy');
+
+    service.before([
+      function(hook, next) {
+        hook.params.beforeAllMethodArray = true;
+        next();
+      }
+    ]);
+
+    service.find({}, function() {
+      service.get(1, {}, done);
+    });
+  });
 });
