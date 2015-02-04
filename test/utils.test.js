@@ -5,7 +5,7 @@ var utils = require('../lib/utils');
 
 function hookMaker(name) {
   return function() {
-    return utils.hookObject(name, arguments);
+    return utils.hookObject(name, 'test', arguments);
   };
 }
 
@@ -15,6 +15,7 @@ describe('hook utilities', function() {
     assert.deepEqual(hookMaker('find')({ some: 'thing' }, _.noop), {
       params: { some: 'thing' },
       method: 'find',
+      type: 'test',
       callback: _.noop
     });
 
@@ -23,6 +24,7 @@ describe('hook utilities', function() {
       id: 1,
       params: { some: 'thing' },
       method: 'get',
+      type: 'test',
       callback: _.noop
     });
 
@@ -31,6 +33,7 @@ describe('hook utilities', function() {
       id: 1,
       params: { some: 'thing' },
       method: 'remove',
+      type: 'test',
       callback: _.noop
     });
 
@@ -39,6 +42,7 @@ describe('hook utilities', function() {
       data: { my: 'data' },
       params: { some: 'thing' },
       method: 'create',
+      type: 'test',
       callback: _.noop
     });
 
@@ -48,6 +52,7 @@ describe('hook utilities', function() {
       data: { my: 'data' },
       params: { some: 'thing' },
       method: 'update',
+      type: 'test',
       callback: _.noop
     });
 
@@ -57,6 +62,7 @@ describe('hook utilities', function() {
       data: { my: 'data' },
       params: { some: 'thing' },
       method: 'patch',
+      type: 'test',
       callback: _.noop
     });
   });
@@ -92,5 +98,25 @@ describe('hook utilities', function() {
       { some: 'thing' },
       _.noop
     ]);
+  });
+
+  it('.convertHookData', function() {
+    assert.deepEqual(utils.convertHookData('test'), {
+      all: [ 'test' ]
+    });
+
+    assert.deepEqual(utils.convertHookData([ 'test', 'me' ]), {
+      all: [ 'test', 'me' ]
+    });
+
+    assert.deepEqual(utils.convertHookData({
+      all: 'thing',
+      other: 'value',
+      hi: [ 'foo', 'bar' ]
+    }), {
+      all: [ 'thing' ],
+      other: [ 'value' ],
+      hi: [ 'foo', 'bar' ]
+    });
   });
 });
