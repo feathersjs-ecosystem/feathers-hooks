@@ -32,7 +32,7 @@ The repository contains the following working examples:
 
 Feathers hooks are a form of [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming) that allow you to decouple things like authorization and pre- or post processing from your services logic.
 
-You can add as many `before` and `after` hooks to any Feathers service method as you want (they will be executed in the order they have been registered). There are two ways to use hooks. Either after registering the service by calling `service.before(beforeHooks)` or `service.after(afterHooks)` or by adding a `before` or `after` object with your hooks to the service.
+You can add as many `before` and `after` hooks to any Feathers service method or `all` service methods (they will be executed in the order they have been registered). There are two ways to use hooks. Either after registering the service by calling `service.before(beforeHooks)` or `service.after(afterHooks)` or by adding a `before` or `after` object with your hooks to the service.
 
 Lets assume a Feathers application initialized like this:
 
@@ -88,15 +88,13 @@ The hook object contains information about the intercepted method and for `befor
 - __data__ - The request data (for `create`, `update` and `patch`)
 - __id__ - The id (for `get`, `remove`, `update` and `patch`)
 
-All properties of the hook object can be modified and the modified data will be used for the actual service method
-call. This is very helpful for pre-processing parameters and massaging data when creating or updating.
+All properties of the hook object can be modified and the modified data will be used for the actual service method call. This is very helpful for pre-processing parameters and massaging data when creating or updating.
 
-The following example checks if a user has been passed to the services `find` method and returns an error if not
-and also adds a `createdAt` property to a newly created todo:
+The following example adds an authorization check (if a user has been provided in the params) to *all* service methods and also adds a `createdAt` property to a newly created todo:
 
 ```js
 todoService.before({
-  find: function (hook, next) {
+  all: function (hook, next) {
     if (!hook.params.user) {
       return next(new Error('You are not logged in'));
     }
@@ -114,10 +112,11 @@ todoService.before({
 });
 ```
 
+> **Note:** `all` hooks will be registered before specific hooks in that object. For the above example that means that the `all` hook will be added to the `create` service method and then the specific hook. 
+
 ### `service.after(afterHooks)`
 
-`after` hooks will be called with a similar hook object than `before` hooks but additionally contain a `result`
-property with the service call results:
+`after` hooks will be called with a similar hook object than `before` hooks but additionally contain a `result` property with the service call results:
 
 - __method__ - The method name
 - __type__ - The hook type (`before` or `after`)
@@ -127,11 +126,9 @@ property with the service call results:
 - __data__ - The request data (for `create`, `update` and `patch`)
 - __id__ - The id (for `get`, `remove`, `update` and `patch`)
 
-In any `after` hook, only modifications to the `result` object will have any effect. This is a good place to filter or
-post-process the data retrieved by a service and also add some additional authorization that needs the actual data.
+In any `after` hook, only modifications to the `result` object will have any effect. This is a good place to filter or post-process the data retrieved by a service and also add some additional authorization that needs the actual data.
 
-The following example filters the data returned by a `find` service call based on a users company id
-and checks if the current user is allowed to retrieve the data returned by `get` (that is, they have the same company id):
+The following example filters the data returned by a `find` service call based on a users company id and checks if the current user is allowed to retrieve the data returned by `get` (that is, they have the same company id):
 
 ```js
 todoService.after({
@@ -154,10 +151,13 @@ todoService.after({
 });
 ```
 
+After hooks also support the `all` property to register a hook for every service method.
+
+> **Note:** `all` hooks will be registered after specific hooks in that object.
+
 ### As service properties
 
-You can also add `before` and `after` hooks to your initial service object right away by setting the `before` and
-`after` properties to the hook object. The following example has the same effect as the previous examples:
+You can also add `before` and `after` hooks to your initial service object right away by setting the `before` and `after` properties to the hook object. The following example has the same effect as the previous examples:
 
 ```js
 var TodoService = {
@@ -283,7 +283,7 @@ userService.before({
 
 You can also register multiple hooks at the same time, in the order that you want them executed, when you are registering your service.
 
-> **Pro Tip:** _This is the preferred method becuase it is bit cleaner and execution order is more apparent._
+> **Pro Tip:** _This is the preferred method because it is bit cleaner and execution order is more apparent._
 
 
 ```js
@@ -302,6 +302,15 @@ userService.before({
 ```
 
 ## Changelog
+
+__0.5.0__
+
+- Make sure hooks and service methods keep their context ([#17](https://github.com/feathersjs/feathers-hooks/issues/17))
+- Refactoring to fix hook execution order and all-hooks ([#16](https://github.com/feathersjs/feathers-hooks/issues/16))
+- Arrays of Hooks are running in reverse order ([#13](https://github.com/feathersjs/feathers-hooks/issues/13))
+- Before all and after all hooks ([#11](https://github.com/feathersjs/feathers-hooks/issues/11))
+- Better check for .makeArguments id ([#15](https://github.com/feathersjs/feathers-hooks/issues/15))
+- Remove Feathers peer dependency ([#12](https://github.com/feathersjs/feathers-hooks/issues/12))
 
 __0.4.0__
 
