@@ -31,7 +31,13 @@
   },
   "main": "lib/hooks.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "npm run jshint && npm run mocha",
+    "jshint": "jshint lib/. test/. --config",
+    "mocha": "mocha test/",
+    "publish": "git push origin && git push origin --tags",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish"
   },
   "directories": {
     "lib": "lib"
@@ -42,13 +48,8 @@
   },
   "devDependencies": {
     "feathers": "^1.0.0",
-    "grunt": "~0.4.1",
-    "grunt-cli": "~0.1.7",
-    "grunt-contrib-jshint": "~0.x",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-release": "~0.5.1",
-    "grunt-simple-mocha": "~0.4.0",
-    "mocha": "*",
+    "jshint": "^2.8.0",
+    "mocha": "^2.3.3",
     "q": "^1.0.1"
   }
 }
