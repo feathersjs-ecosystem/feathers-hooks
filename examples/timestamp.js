@@ -5,6 +5,7 @@ var hooks = require('../lib/hooks');
 var _ = require('lodash');
 
 var app = feathers()
+	.configure(feathers.rest())
 	.configure(hooks())
 	.use('/todos', {
 		id: 0,
@@ -47,7 +48,7 @@ app.listen(8080);
 console.log('App listening on 127.0.0.1:8080');
 
 // Get the wrapped service object which will be used in the other exapmles
-var todoService = app.lookup('todos');
+var todoService = app.service('todos');
 
 // Register a hook that adds a createdAt and updatedAt timestamp
 todoService.before({

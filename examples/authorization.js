@@ -5,6 +5,7 @@ var feathers = require('feathers');
 var hooks = require('../lib/hooks');
 
 var app = feathers()
+	.configure(feathers.rest())
 	.configure(hooks())
 	.use(function(req, res, next) {
 		// Just some dummy user. In the real-world, for example using
@@ -44,7 +45,7 @@ var app = feathers()
 	});
 
 //Get the wrapped service object (which will have the .before() and .after() methods)
-var todoService = app.lookup('todos');
+var todoService = app.service('todos');
 
 // This `before` hook checks if a user is set
 todoService.before({
