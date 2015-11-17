@@ -41,6 +41,7 @@ var feathers = require('feathers');
 var hooks = require('feathers-hooks');
 
 var app = feathers()
+    .configure(feathers.rest())
     .configure(hooks())
     .use('/todos', {
        todos: [],
@@ -72,7 +73,7 @@ var app = feathers()
 app.listen(8000);
 
 // Get the wrapped service object which will be used in the other exapmles
-var todoService = app.lookup('todos');
+var todoService = app.service('todos');
 ```
 
 ### `service.before(beforeHooks)`
@@ -266,7 +267,7 @@ If you register a `before` or `after` hook for a certain method in one place and
 var app = feathers().use('/users', userService);
 
 // We need to retrieve the wrapped service object from app which has the added hook functionality
-var userService = app.lookup('users');
+var userService = app.service('users');
 
 userService.before({
     ...
@@ -292,7 +293,7 @@ var hooks = require('your-hooks');
 var app = feathers().use('/users', userService);
 
 // We need to retrieve the wrapped service object from app which has the added hook functionality
-var userService = app.lookup('users');
+var userService = app.service('users');
 
 userService.before({
   // Auth is required.  No exceptions
