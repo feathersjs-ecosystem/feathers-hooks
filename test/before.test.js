@@ -1,20 +1,18 @@
-var _ = require('lodash');
-var Q = require('q');
-var assert = require('assert');
-var feathers = require('feathers');
+import assert from 'assert';
+import feathers from 'feathers';
 
-var hooks = require('../lib/hooks');
+import hooks from '../lib/hooks';
 
-describe('.before hooks', function() {
-  it('gets mixed into a service and modifies data', function(done) {
-    var dummyService = {
+describe('.before hooks', () => {
+  it('gets mixed into a service and modifies data', done => {
+    const dummyService = {
       before: {
-        create: function(hook, next) {
+        create(hook, next) {
           assert.equal(hook.type, 'before');
 
           hook.data.modified = 'data';
 
-          _.extend(hook.params, {
+          Object.assign(hook.params, {
             modified: 'params'
           });
 
@@ -22,7 +20,7 @@ describe('.before hooks', function() {
         }
       },
 
-      create: function(data, params, callback) {
+      create(data, params, callback) {
         assert.deepEqual(data, {
           some: 'thing',
           modified: 'data'
@@ -36,10 +34,10 @@ describe('.before hooks', function() {
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
-    service.create({ some: 'thing' }, {}, function(error, data) {
+    service.create({ some: 'thing' }, {}, (error, data) => {
       assert.ok(!error, 'No error');
 
       assert.deepEqual(data, {
@@ -51,53 +49,53 @@ describe('.before hooks', function() {
     });
   });
 
-  it('passes errors', function(done) {
-    var dummyService = {
+  it('passes errors', done => {
+    const dummyService = {
       before: {
-        update: function(hook, next) {
+        update(hook, next) {
           next(new Error('You are not allowed to update'));
         }
       },
 
-      update: function() {
+      update() {
         assert.ok(false, 'Never should be called');
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
-    service.update(1, {}, {}, function(error) {
+    service.update(1, {}, {}, error => {
       assert.ok(error, 'Got an error');
       assert.equal(error.message, 'You are not allowed to update', 'Got error message');
       done();
     });
   });
 
-  it('calling back with no arguments uses the old ones', function(done) {
-    var dummyService = {
+  it('calling back with no arguments uses the old ones', done => {
+    const dummyService = {
       before: {
-        remove: function(hook, next) {
+        remove(hook, next) {
           next();
         }
       },
 
-      remove: function(id, params, callback) {
+      remove(id, params, callback) {
         assert.equal(id, 1, 'Got id');
         assert.deepEqual(params, { my: 'param' });
         callback();
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
     service.remove(1, { my: 'param' }, done);
   });
 
-  it('adds .before() and chains multiple hooks for the same method', function(done) {
-    var dummyService = {
-      create: function(data, params, callback) {
+  it('adds .before() and chains multiple hooks for the same method', done => {
+    const dummyService = {
+      create(data, params, callback) {
         assert.deepEqual(data, {
           some: 'thing',
           modified: 'second data'
@@ -111,11 +109,11 @@ describe('.before hooks', function() {
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
     service.before({
-      create: function(hook, next) {
+      create(hook, next) {
         hook.params.modified = 'params';
 
         next();
@@ -123,22 +121,22 @@ describe('.before hooks', function() {
     });
 
     service.before({
-      create: function(hook, next) {
+      create(hook, next) {
         hook.data.modified = 'second data';
 
         next();
       }
     });
 
-    service.create({ some: 'thing' }, {}, function(error) {
+    service.create({ some: 'thing' }, {}, error => {
       assert.ok(!error, 'No error');
       done();
     });
   });
 
-  it('chains multiple after hooks using array syntax', function(done) {
-    var dummyService = {
-      create: function(data, params, callback) {
+  it('chains multiple after hooks using array syntax', done => {
+    const dummyService = {
+      create(data, params, callback) {
         assert.deepEqual(data, {
           some: 'thing',
           modified: 'second data'
@@ -152,8 +150,8 @@ describe('.before hooks', function() {
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
     service.before({
       create: [
@@ -170,62 +168,54 @@ describe('.before hooks', function() {
       ]
     });
 
-    service.create({ some: 'thing' }, {}, function(error) {
+    service.create({ some: 'thing' }, {}, error => {
       assert.ok(!error, 'No error');
       done();
     });
   });
 
-  it('.before hooks can return a promise', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
-      get: function(id, params) {
+  it('.before hooks can return a promise', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get(id, params) {
         assert.ok(params.ran, 'Ran through promise hook');
 
-        return Q({
+        return Promise.resolve({
           id: id,
           description: 'You have to do ' + id
         });
       },
 
-      remove: function() {
+      remove() {
         assert.ok(false, 'Should never get here');
       }
     });
 
-    var service = app.service('dummy').before({
+    const service = app.service('dummy').before({
       get: function(hook) {
-        var dfd = Q.defer();
-
-        setTimeout(function() {
-          hook.params.ran = true;
-          dfd.resolve();
-        }, 50);
-
-        return dfd.promise;
+        return new Promise(resolve => setTimeout(function() {
+            hook.params.ran = true;
+            resolve();
+          }, 50));
       },
 
-      remove: function() {
-        var dfd = Q.defer();
-
-        setTimeout(function() {
-          dfd.reject(new Error('This did not work'));
-        }, 50);
-
-        return dfd.promise;
+      remove() {
+        return new Promise((resolve, reject) => setTimeout(function() {
+          reject(new Error('This did not work'));
+        }, 50));
       }
     });
 
-    service.get('dishes', {}, function() {
-      service.remove(10, {}, function(error) {
+    service.get('dishes', {}, () => {
+      service.remove(10, {}, error => {
         assert.equal(error.message, 'This did not work');
         done();
       });
     });
   });
 
-  it('.before hooks run in the correct order (#13)', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
-      get: function(id, params, callback) {
+  it('.before hooks run in the correct order (#13)', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get(id, params, callback) {
         assert.deepEqual(params.items, ['first', 'second', 'third']);
         callback(null, {
           id: id,
@@ -234,10 +224,10 @@ describe('.before hooks', function() {
       }
     });
 
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.before({
-      get: function(hook, next) {
+      get(hook, next) {
         hook.params.items = ['first'];
         next();
       }
@@ -256,21 +246,19 @@ describe('.before hooks', function() {
       ]
     });
 
-    service.get(10, {}, function(error) {
-      done(error);
-    });
+    service.get(10, {}, done);
   });
 
-  it('before all hooks (#11)', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
+  it('before all hooks (#11)', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
       before: {
-        all: function(hook, next) {
+        all(hook, next) {
           hook.params.beforeAllObject = true;
           next();
         }
       },
 
-      get: function(id, params, callback) {
+      get(id, params, callback) {
         assert.ok(params.beforeAllObject);
         assert.ok(params.beforeAllMethodArray);
         callback(null, {
@@ -279,14 +267,14 @@ describe('.before hooks', function() {
         });
       },
 
-      find: function(params, callback) {
+      find(params, callback) {
         assert.ok(params.beforeAllObject);
         assert.ok(params.beforeAllMethodArray);
         callback(null, []);
       }
     });
 
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.before([
       function(hook, next) {
@@ -295,15 +283,15 @@ describe('.before hooks', function() {
       }
     ]);
 
-    service.find({}, function() {
+    service.find({}, () => {
       service.get(1, {}, done);
     });
   });
 
-  it('before hooks have service as context and keep it in service method (#17)', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
+  it('before hooks have service as context and keep it in service method (#17)', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
       number: 42,
-      get: function(id, params, callback) {
+      get(id, params, callback) {
         callback(null, {
           id: id,
           number: this.number,
@@ -312,16 +300,16 @@ describe('.before hooks', function() {
       }
     });
 
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.before({
-      get: function(hook, next) {
+      get(hook, next) {
         hook.params.test = this.number + 2;
         next();
       }
     });
 
-    service.get(10, {}, function(error, data) {
+    service.get(10, {}, (error, data) => {
       assert.deepEqual(data, {
         id: 10,
         number: 42,
