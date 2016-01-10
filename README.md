@@ -99,7 +99,7 @@ todoService.before({
     if (!hook.params.user) {
       return next(new Error('You are not logged in'));
     }
-    
+
     next();
   },
 
@@ -113,7 +113,7 @@ todoService.before({
 });
 ```
 
-> **Note:** `all` hooks will be registered before specific hooks in that object. For the above example that means that the `all` hook will be added to the `create` service method and then the specific hook. 
+> **Note:** `all` hooks will be registered before specific hooks in that object. For the above example that means that the `all` hook will be added to the `create` service method and then the specific hook.
 
 ### `service.after(afterHooks)`
 
@@ -303,6 +303,11 @@ userService.before({
 ```
 
 ## Changelog
+
+__0.6.0__
+
+- Prevent next from being called multiple times ([#27](https://github.com/feathersjs/feathers-hooks/pull/27))
+- Migrate to ES6 and new plugin infrastructure ([#26](https://github.com/feathersjs/feathers-hooks/pull/26))
 
 __0.5.0__
 
