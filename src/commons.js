@@ -1,4 +1,7 @@
+import makeDebug from 'debug';
 import { hooks as utils } from 'feathers-commons';
+
+const debug = makeDebug('feathers-hooks:commons');
 
 /**
  * Creates a new hook function for the execution chain.
@@ -9,22 +12,29 @@ import { hooks as utils } from 'feathers-commons';
  */
 export function makeHookFn(hook, prev) {
   return function(hookObject) {
+    let called = false;
     // The callback for the hook
-    const hookCallback = (error, newHookObject) => {
-      const currentHook = newHookObject || hookObject;
+    const hookCallback = (error, currentHook = hookObject) => {
+      if(called) {
+        throw new Error(`next() called multiple times for hook on '${hookObject.method}' method`);
+      }
+
+      called = true;
 
       // Call the callback with the result we set in `newCallback`
       if(error) {
+        debug(`Hook returned error: ${error.message}`);
         // Call the old callback with the hook error
         return currentHook.callback(error);
       }
 
-      prev.call(this, currentHook);
+      return prev.call(this, currentHook);
     };
 
     const promise = hook.call(this, hookObject, hookCallback);
 
     if(typeof promise !== 'undefined' && typeof promise.then === 'function') {
+      debug('Converting hook promise');
       promise.then(function() {
         hookCallback();
       }, hookCallback);
