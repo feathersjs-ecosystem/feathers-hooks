@@ -1,8 +1,5 @@
-'use strict';
-
-var _ = require('lodash');
-var commons = require('./commons');
-var utils = require('feathers-commons').hooks;
+import { hooks as utils } from 'feathers-commons';
+import { makeHookFn, createMixin } from './commons';
 
 /**
  * Return the hook mixin method for the given name.
@@ -10,7 +7,7 @@ var utils = require('feathers-commons').hooks;
  * @param {String} method The service method name
  * @returns {Function}
  */
-var getMixin = function (method) {
+function getMixin(method) {
   return function() {
     var _super = this._super;
 
@@ -18,10 +15,10 @@ var getMixin = function (method) {
       return _super.apply(this, arguments);
     }
 
-    var args = _.toArray(arguments);
-    var hookObject = utils.hookObject(method, 'after', args);
+    const args = Array.from(arguments);
+    const hookObject = utils.hookObject(method, 'after', args);
     // Make a copy of our hooks
-    var hooks = this.__after[method].slice();
+    const hooks = this.__after[method].slice();
 
     // Remove the old callback and replace with the new callback that runs the hook
     args.pop();
@@ -40,7 +37,7 @@ var getMixin = function (method) {
       hookObject.result = result;
 
       while(hooks.length) {
-        fn = commons.makeHookFn(hooks.pop(), fn);
+        fn = makeHookFn(hooks.pop(), fn);
       }
 
       return fn.call(this, hookObject);
@@ -49,10 +46,10 @@ var getMixin = function (method) {
 
     return _super.apply(this, args);
   };
-};
+}
 
-var addHooks = function(hooks, method) {
-  var myHooks = this.__after[method];
+function addHooks(hooks, method) {
+  const myHooks = this.__after[method];
 
   if(hooks[method]) {
     myHooks.push.apply(myHooks, hooks[method]);
@@ -61,6 +58,6 @@ var addHooks = function(hooks, method) {
   if(hooks.all) {
     myHooks.push.apply(myHooks, hooks.all);
   }
-};
+}
 
-module.exports = commons.createMixin('after', getMixin, addHooks);
+module.exports = createMixin('after', getMixin, addHooks);

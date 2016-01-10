@@ -1,7 +1,5 @@
-'use strict';
-
-var commons = require('./commons');
-var utils = require('feathers-commons').hooks;
+import { hooks as utils } from 'feathers-commons';
+import { makeHookFn, createMixin } from './commons';
 
 /**
  * Return the hook mixin method for the given name.
@@ -9,30 +7,30 @@ var utils = require('feathers-commons').hooks;
  * @param {String} method The service method name
  * @returns {Function}
  */
-var getMixin = function (method) {
+function getMixin(method) {
   return function() {
-    var _super = this._super;
+    const _super = this._super;
 
     if(!this.__before || !this.__before[method].length) {
       return _super.apply(this, arguments);
     }
 
     // Make a copy of our hooks
-    var hooks = this.__before[method].slice();
+    const hooks = this.__before[method].slice();
     // The chained function
-    var fn = function(hookObject) {
+    let fn = function(hookObject) {
       return _super.apply(this, utils.makeArguments(hookObject));
     };
 
     while(hooks.length) {
-      fn = commons.makeHookFn(hooks.pop(), fn);
+      fn = makeHookFn(hooks.pop(), fn);
     }
 
     return fn.call(this, utils.hookObject(method, 'before', arguments));
   };
-};
+}
 
-var addHooks = function(hooks, method) {
+function addHooks(hooks, method) {
   var myHooks = this.__before[method];
 
   if(hooks.all) {
@@ -42,6 +40,6 @@ var addHooks = function(hooks, method) {
   if(hooks[method]) {
     myHooks.push.apply(myHooks, hooks[method]);
   }
-};
+}
 
-module.exports = commons.createMixin('before', getMixin, addHooks);
+export default createMixin('before', getMixin, addHooks);

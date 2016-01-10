@@ -7,12 +7,7 @@
     "feathers-plugin",
     "feathers"
   ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/feathersjs/feathers-hooks/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/feathersjs/feathers-hooks.git"
@@ -31,25 +26,30 @@
   },
   "main": "lib/hooks.js",
   "scripts": {
-    "test": "npm run jshint && npm run mocha",
-    "jshint": "jshint lib/. test/. --config",
-    "mocha": "mocha test/",
+    "prepublish": "npm run compile",
     "publish": "git push origin && git push origin --tags",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
-    "release:major": "npm version major && npm publish"
+    "release:major": "npm version major && npm publish",
+    "compile": "rm -rf lib/ && babel -d lib/ src/",
+    "watch": "babel --watch -d lib/ src/",
+    "jshint": "jshint src/. test/. --config",
+    "mocha": "mocha test/ --compilers js:babel-core/register",
+    "test": "npm run compile && npm run jshint && npm run mocha"
   },
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
-    "feathers-commons": "^0.2.8",
-    "lodash": "^2.4.1"
+    "feathers-commons": "^0.5.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.4.0",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-preset-es2015": "^6.3.13",
     "feathers": "^1.0.0",
     "jshint": "^2.8.0",
-    "mocha": "^2.3.3",
-    "q": "^1.0.1"
+    "mocha": "^2.3.3"
   }
 }

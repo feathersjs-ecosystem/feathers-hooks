@@ -1,14 +1,13 @@
-var assert = require('assert');
-var Q = require('q');
-var feathers = require('feathers');
+import assert from 'assert';
+import feathers from 'feathers';
 
-var hooks = require('../lib/hooks');
+import hooks from '../lib/hooks';
 
-describe('.after hooks', function() {
-  it('gets mixed into a service and modifies data', function(done) {
-    var dummyService = {
+describe('.after hooks', () => {
+  it('gets mixed into a service and modifies data', done => {
+    const dummyService = {
       after: {
-        create: function(hook, next) {
+        create(hook, next) {
           assert.equal(hook.type, 'after');
 
           hook.result.some = 'thing';
@@ -17,92 +16,92 @@ describe('.after hooks', function() {
         }
       },
 
-      create: function(data, params, callback) {
+      create(data, params, callback) {
         callback(null, data);
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
-    service.create({ my: 'data' }, {}, function(error, data) {
+    service.create({ my: 'data' }, {}, (error, data) => {
       assert.deepEqual({ my: 'data', some: 'thing' }, data, 'Got modified data');
       done();
     });
   });
 
-  it('returns errors', function(done) {
-    var dummyService = {
+  it('returns errors', done => {
+    const dummyService = {
       after: {
-        update: function(hook, next) {
+        update(hook, next) {
           next(new Error('This did not work'));
         }
       },
 
-      update: function(id, data, params, callback) {
+      update(id, data, params, callback) {
         callback(null, data);
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
-    service.update(1, { my: 'data' }, {}, function(error) {
+    service.update(1, { my: 'data' }, {}, error => {
       assert.ok(error, 'Got an error');
       assert.equal(error.message, 'This did not work', 'Got expected error message from hook');
       done();
     });
   });
 
-  it('does not run after hook when there is an error', function(done) {
-    var dummyService = {
+  it('does not run after hook when there is an error', done => {
+    const dummyService = {
       after: {
-        remove: function() {
+        remove() {
           assert.ok(false, 'This should never get called');
         }
       },
 
-      remove: function(id, params, callback) {
+      remove(id, params, callback) {
         callback(new Error('Error removing item'));
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
-    service.remove(1, {}, function(error) {
+    service.remove(1, {}, error => {
       assert.ok(error, 'Got error');
       assert.equal(error.message, 'Error removing item', 'Got error message from service');
       done();
     });
   });
 
-  it('adds .after() and chains multiple hooks for the same method', function(done) {
-    var dummyService = {
-      create: function(data, params, callback) {
+  it('adds .after() and chains multiple hooks for the same method', done => {
+    const dummyService = {
+      create(data, params, callback) {
         callback(null, data);
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
     service.after({
-      create: function(hook, next) {
+      create(hook, next) {
         hook.result.some = 'thing';
         next();
       }
     });
 
     service.after({
-      create: function(hook, next) {
+      create(hook, next) {
         hook.result.other = 'stuff';
 
         next();
       }
     });
 
-    service.create({ my: 'data' }, {}, function(error, data) {
+    service.create({ my: 'data' }, {}, (error, data) => {
       assert.deepEqual({
         my: 'data',
         some: 'thing',
@@ -112,15 +111,15 @@ describe('.after hooks', function() {
     });
   });
 
-  it('chains multiple after hooks using array syntax', function(done) {
-    var dummyService = {
-      create: function(data, params, callback) {
+  it('chains multiple after hooks using array syntax', done => {
+    const dummyService = {
+      create(data, params, callback) {
         callback(null, data);
       }
     };
 
-    var app = feathers().configure(hooks()).use('/dummy', dummyService);
-    var service = app.service('dummy');
+    const app = feathers().configure(hooks()).use('/dummy', dummyService);
+    const service = app.service('dummy');
 
     service.after({
       create: [
@@ -136,7 +135,7 @@ describe('.after hooks', function() {
       ]
     });
 
-    service.create({ my: 'data' }, {}, function(error, data) {
+    service.create({ my: 'data' }, {}, (error, data) => {
       assert.deepEqual({
         my: 'data',
         some: 'thing',
@@ -146,70 +145,64 @@ describe('.after hooks', function() {
     });
   });
 
-  it('.after hooks can return a promise', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
-      get: function(id) {
-        return Q({
+  it('.after hooks can return a promise', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get(id) {
+        return Promise.resolve({
           id: id,
-          description: 'You have to do ' + id
+          description: `You have to do ${id}`
         });
       },
 
       find: function() {
-        return Q([]);
+        return Promise.resolve([]);
       }
     });
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.after({
-      get: function(hook) {
-        var dfd = Q.defer();
-
-        setTimeout(function() {
-          hook.result.ran = true;
-          dfd.resolve();
-        }, 50);
-
-        return dfd.promise;
+      get(hook) {
+        return new Promise(resolve => {
+          setTimeout(function() {
+            hook.result.ran = true;
+            resolve();
+          }, 50);
+        });
       },
 
       find: function() {
-        var dfd = Q.defer();
-
-        setTimeout(function() {
-          dfd.reject(new Error('You can not see this'));
-        }, 50);
-
-        return dfd.promise;
+        return new Promise((resolve, reject) => {
+          setTimeout(function() {
+            reject(new Error('You can not see this'));
+          }, 50);
+        });
       }
     });
 
-    service.get('laundry', {}, function(error, data) {
+    service.get('laundry', {}, (error, data) => {
       assert.deepEqual(data, {
         id: 'laundry',
         description: 'You have to do laundry',
         ran: true
       });
-      service.find({}, function(error) {
+      service.find({}, error => {
         assert.equal(error.message, 'You can not see this');
         done();
       });
     });
   });
 
-  it('.after hooks run in the correct order (#13)', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
-      get: function(id, params, callback) {
-        callback(null, {
-          id: id
-        });
+  it('.after hooks run in the correct order (#13)', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get(id, params, callback) {
+        callback(null, { id });
       }
     });
 
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.after({
-      get: function(hook, next) {
+      get(hook, next) {
         hook.result.items = ['first'];
         next();
       }
@@ -228,34 +221,34 @@ describe('.after hooks', function() {
       ]
     });
 
-    service.get(10, {}, function(error, data) {
+    service.get(10, {}, (error, data) => {
       assert.deepEqual(data.items, ['first', 'second', 'third']);
       done(error);
     });
   });
 
-  it('after all hooks (#11)', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
+  it('after all hooks (#11)', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
       after: {
-        all: function(hook, next) {
+        all(hook, next) {
           hook.result.afterAllObject = true;
           next();
         }
       },
 
-      get: function(id, params, callback) {
+      get(id, params, callback) {
         callback(null, {
           id: id,
           items: []
         });
       },
 
-      find: function(params, callback) {
+      find(params, callback) {
         callback(null, []);
       }
     });
 
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.after([
       function(hook, next) {
@@ -264,11 +257,11 @@ describe('.after hooks', function() {
       }
     ]);
 
-    service.find({}, function(error, data) {
+    service.find({}, (error, data) => {
       assert.ok(data.afterAllObject);
       assert.ok(data.afterAllMethodArray);
 
-      service.get(1, {}, function(error, data) {
+      service.get(1, {}, (error, data) => {
         assert.ok(data.afterAllObject);
         assert.ok(data.afterAllMethodArray);
         done();
@@ -276,10 +269,10 @@ describe('.after hooks', function() {
     });
   });
 
-  it('after hooks have service as context and keep it in service method (#17)', function(done) {
-    var app = feathers().configure(hooks()).use('/dummy', {
+  it('after hooks have service as context and keep it in service method (#17)', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
       number: 42,
-      get: function(id, params, callback) {
+      get(id, params, callback) {
         callback(null, {
           id: id,
           number: this.number
@@ -287,16 +280,16 @@ describe('.after hooks', function() {
       }
     });
 
-    var service = app.service('dummy');
+    const service = app.service('dummy');
 
     service.after({
-      get: function(hook, next) {
+      get(hook, next) {
         hook.result.test = this.number + 1;
         next();
       }
     });
 
-    service.get(10, {}, function(error, data) {
+    service.get(10, {}, (error, data) => {
       assert.deepEqual(data, {
         id: 10,
         number: 42,

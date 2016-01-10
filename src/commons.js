@@ -1,7 +1,4 @@
-'use strict';
-
-var _ = require('lodash');
-var utils = require('feathers-commons').hooks;
+import { hooks as utils } from 'feathers-commons';
 
 /**
  * Creates a new hook function for the execution chain.
@@ -10,11 +7,11 @@ var utils = require('feathers-commons').hooks;
  * @param {Function} prev The previous hook method in the chain
  * @returns {Function}
  */
-exports.makeHookFn = function(hook, prev) {
+export function makeHookFn(hook, prev) {
   return function(hookObject) {
     // The callback for the hook
-    var hookCallback = function(error, newHookObject) {
-      var currentHook = newHookObject || hookObject;
+    const hookCallback = (error, newHookObject) => {
+      const currentHook = newHookObject || hookObject;
 
       // Call the callback with the result we set in `newCallback`
       if(error) {
@@ -23,21 +20,19 @@ exports.makeHookFn = function(hook, prev) {
       }
 
       prev.call(this, currentHook);
-    }.bind(this);
+    };
 
-    var promise = hook.call(this, hookObject, hookCallback);
+    const promise = hook.call(this, hookObject, hookCallback);
 
     if(typeof promise !== 'undefined' && typeof promise.then === 'function') {
       promise.then(function() {
         hookCallback();
-      }, function(error) {
-        hookCallback(error);
-      });
+      }, hookCallback);
     }
 
     return promise;
   };
-};
+}
 
 /**
  * Returns the main mixin function for the given type.
@@ -48,33 +43,31 @@ exports.makeHookFn = function(hook, prev) {
  * @param {Function} addHooks A callback that adds the hooks
  * @returns {Function}
  */
-exports.createMixin = function(type, getMixin, addHooks) {
+export function createMixin(type, getMixin, addHooks) {
   return function(service) {
-    if(!_.isFunction(service.mixin)) {
+    if(typeof service.mixin !== 'function') {
       return;
     }
 
-    var app = this;
-    var hookProp = '__' + type;
-    var methods = app.methods;
-    var old = service[type];
+    const app = this;
+    const hookProp = '__' + type;
+    const methods = app.methods;
+    const old = service[type];
 
-    var mixin = {};
+    const mixin = {};
 
     mixin[type] = function(obj) {
       if(!this[hookProp]) {
         this[hookProp] = {};
-        _.each(methods, function(method) {
-          this[hookProp][method] = [];
-        }.bind(this));
+        methods.forEach(method => this[hookProp][method] = []);
       }
 
-      _.each(methods, addHooks.bind(this, utils.convertHookData(obj)));
+      methods.forEach(addHooks.bind(this, utils.convertHookData(obj)));
 
       return this;
     };
 
-    _.each(methods, function(method) {
+    methods.forEach(method => {
       if(typeof service[method] !== 'function') {
         return;
       }
@@ -88,4 +81,4 @@ exports.createMixin = function(type, getMixin, addHooks) {
       service[type](old);
     }
   };
-};
+}
