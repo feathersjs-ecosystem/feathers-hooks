@@ -1,5 +1,8 @@
+import makeDebug from 'debug';
 import { hooks as utils } from 'feathers-commons';
 import { makeHookFn, createMixin } from './commons';
+
+const debug = makeDebug('feathers-hooks:after');
 
 /**
  * Return the hook mixin method for the given name.
@@ -17,8 +20,10 @@ function getMixin(method) {
 
     const args = Array.from(arguments);
     const hookObject = utils.hookObject(method, 'after', args);
+
     // Make a copy of our hooks
     const hooks = this.__after[method].slice();
+    debug(`Running ${hooks.length} after hooks for method ${method}`);
 
     // Remove the old callback and replace with the new callback that runs the hook
     args.pop();

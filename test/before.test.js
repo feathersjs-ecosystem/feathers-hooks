@@ -318,4 +318,33 @@ describe('.before hooks', () => {
       done();
     });
   });
+
+  it('can not call next() multiple times', () => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get(id, params, callback) {
+        callback(null, { id });
+      }
+    });
+
+    const service = app.service('dummy');
+
+    service.before({
+      get: [
+        function(hook, next) {
+          next();
+        },
+
+        function(hook, next) {
+          next();
+          next();
+        }
+      ]
+    });
+
+    try {
+      service.get(10);
+    } catch(e) {
+      assert.deepEqual(e.message, `next() called multiple times for hook on 'get' method`);
+    }
+  });
 });

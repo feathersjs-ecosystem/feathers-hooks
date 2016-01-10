@@ -1,5 +1,8 @@
+import makeDebug from 'debug';
 import { hooks as utils } from 'feathers-commons';
 import { makeHookFn, createMixin } from './commons';
+
+const debug = makeDebug('feathers-hooks:before');
 
 /**
  * Return the hook mixin method for the given name.
@@ -17,6 +20,8 @@ function getMixin(method) {
 
     // Make a copy of our hooks
     const hooks = this.__before[method].slice();
+    debug(`Running ${hooks.length} before hooks for method ${method}`);
+
     // The chained function
     let fn = function(hookObject) {
       return _super.apply(this, utils.makeArguments(hookObject));
@@ -31,7 +36,7 @@ function getMixin(method) {
 }
 
 function addHooks(hooks, method) {
-  var myHooks = this.__before[method];
+  const myHooks = this.__before[method];
 
   if(hooks.all) {
     myHooks.push.apply(myHooks, hooks.all);
