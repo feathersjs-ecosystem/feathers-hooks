@@ -49,24 +49,20 @@ var todoService = app.service('todos');
 
 // This `before` hook checks if a user is set
 todoService.before({
-	find: function(hook, next) {
+	find: function(hook) {
 		// If no user is set, throw an error
 		if(!hook.params.user) {
-			return next(new Error('You are not authorized. Set the ?user=username parameter.'));
+			throw new Error('You are not authorized. Set the ?user=username parameter.');
 		}
-
-		next();
 	}
 });
 
 // This `after` hook sets the username for each Todo
 todoService.after({
-	find: function(hook, next) {
+	find: function(hook) {
 		hook.result.forEach(function(todo) {
 			todo.user = hook.params.user.name;
 		});
-
-		next();
 	}
 });
 

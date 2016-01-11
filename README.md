@@ -2,17 +2,17 @@
 
 [![Build Status](https://travis-ci.org/feathersjs/feathers-hooks.png?branch=master)](https://travis-ci.org/feathersjs/feathers-hooks)
 
-> Before and after service method call hooks for easy authorization and processing.
+> Middleware for Feathers service methods
 
 ## Getting Started
 
-To install feathers-hooks from [npm](https://www.npmjs.org/), run:
+`feathers-hooks` allow to register composable middleware functions before or after a Feathers service method executes to easily decouple things like authorization and pre- or post processing from your service logic. To install from [npm](https://www.npmjs.com/package/feathers-hooks), run:
 
 ```bash
 $ npm install feathers-hooks --save
 ```
 
-Finally, to use the plugin in your Feathers app:
+Then, to use the plugin in your Feathers app:
 
 ```javascript
 var feathers = require('feathers');
@@ -23,14 +23,12 @@ var app = feathers().configure(hooks());
 
 ## Examples
 
-The repository contains the following working examples:
+The repository contains the following examples:
 
-- [authorization.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/authorization.js) - A simple demo showing how to use hooks for authorization (and post-processing the results) where the user is set via a ?user=username query parameter.
+- [authorization.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/authorization.js) - A simple demo showing how to use hooks for authorization (and post-processing the results) where the user is set via a `?user=username` query parameter.
 - [timestamp.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/timestamp.js) - A demo that adds a `createdAt` and `updatedAt` timestamp when creating or updating a Todo using hooks.
 
 ## Using hooks
-
-Feathers hooks are a form of [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming) that allow you to decouple things like authorization and pre- or post processing from your services logic.
 
 You can add as many `before` and `after` hooks to any Feathers service method or `all` service methods (they will be executed in the order they have been registered). There are two ways to use hooks. Either after registering the service by calling `service.before(beforeHooks)` or `service.after(afterHooks)` or by adding a `before` or `after` object with your hooks to the service.
 
@@ -38,49 +36,23 @@ Lets assume a Feathers application initialized like this:
 
 ```js
 var feathers = require('feathers');
+var memory = require('feathers-memory');
 var hooks = require('feathers-hooks');
 
 var app = feathers()
     .configure(feathers.rest())
     .configure(hooks())
-    .use('/todos', {
-       todos: [],
-
-       get: function(id, params, callback) {
-         for(var i = 0; i < this.todos.length; i++) {
-          if(this.todos[i].id === id) {
-            return callback(null, this.todos[i]);
-          }
-         }
-
-         callback(new Error('Todo not found'));
-       },
-
-       // Return all todos from this service
-       find: function(params, callback) {
-         callback(null, this.todos);
-       },
-
-       // Create a new Todo with the given data
-       create: function(data, params, callback) {
-         data.id = this.todos.length;
-         this.todos.push(data);
-
-         callback(null, data);
-       }
-     });
+    .use('/todos', memory());
 
 app.listen(8000);
 
-// Get the wrapped service object which will be used in the other exapmles
+// Get the wrapped service object which will be used in the other examples
 var todoService = app.service('todos');
 ```
 
 ### `service.before(beforeHooks)`
 
-`before` hooks allow you to pre-process service call parameters. They will be called with the hook object
-and a callback which should be called with any errors or no arguments or `null` and the modified hook object.
-The hook object contains information about the intercepted method and for `before` hooks can have the following properties:
+`before` hooks allow you to pre-process service call parameters. They will be called with the hook object and a callback which should be called with any errors or no arguments or `null` and the modified hook object. The hook object contains information about the intercepted method and for `before` hooks can have the following properties:
 
 - __method__ - The method name
 - __type__ - The hook type (`before` or `after`)
@@ -95,20 +67,12 @@ The following example adds an authorization check (if a user has been provided i
 
 ```js
 todoService.before({
-  all: function (hook, next) {
-    if (!hook.params.user) {
-      return next(new Error('You are not logged in'));
-    }
-
-    next();
+  all: function (hook) {
+    throw new Error('You are not logged in');
   },
 
   create: function(hook, next) {
     hook.data.createdAt = new Date();
-
-    next();
-    // Or
-    next(null, hook);
   }
 });
 ```
@@ -133,21 +97,17 @@ The following example filters the data returned by a `find` service call based o
 
 ```js
 todoService.after({
-  find: function (hook, next) {
+  find: function (hook) {
     // Manually filter the find results
     hook.result = _.filter(hook.result, function (current) {
       return current.companyId === params.user.companyId;
     });
-
-    next();
   },
 
-  get: function (hook, next) {
+  get: function (hook) {
     if (hook.result.companyId !== hook.params.user.companyId) {
-      return next(new Error('You are not authorized to access this information'));
+      throw new Error('You are not authorized to access this information');
     }
-
-    next();
   }
 });
 ```
@@ -188,39 +148,29 @@ var TodoService = {
 	},
 
 	before: {
-		find: function (hook, next) {
+		find: function (hook) {
 			if (!hook.params.user) {
-				return next(new Error('You are not logged in'));
+				throw new Error('You are not logged in');
 			}
-
-			next();
 		},
 
-		create: function (hook, next) {
+		create: function (hook) {
 			hook.data.createdAt = new Date();
-
-			next();
-			// Or
-			next(null, hook);
 		}
 	},
 
 	after: {
-		find: function (hook, next) {
+		find: function (hook) {
 			// Manually filter the find results
 			hook.result = _.filter(hook.result, function (current) {
 				return current.companyId === params.user.companyId;
 			});
-
-			next();
 		},
 
-		get: function (hook, next) {
+		get: function (hook) {
 			if (hook.result.companyId !== hook.params.user.companyId) {
-				return next(new Error('You are not authorized to access this information'));
+				throw new Error('You are not authorized to access this information');
 			}
-
-			next();
 		}
 	}
 }
@@ -228,12 +178,14 @@ var TodoService = {
 
 ### Promises
 
-All hooks can return a [Promise](http://promises-aplus.github.io/promises-spec/) object instead of calling the callback. The promises return value will *not* be used. Using [Q](https://github.com/kriskowal/q) it would look like:
+All hooks can return a [Promise](http://promises-aplus.github.io/promises-spec/) object instead of calling the callback.
 
 ```js
 todoService.before({
   find: function (hook) {
-    return Q(/* ... */);
+    return new Promise(function(resolve, reject) {
+
+    });
   }
 });
 ```
@@ -243,9 +195,11 @@ If you want to change the hook object just chain the returned promise using `.th
 ```js
 todoService.before({
   find: function (hook) {
-    return Q(/* ... */).then(function(result) {
+    return this.find().then(function(data) {
       hook.params.message = 'Ran through promise hook';
       hook.data.result = result;
+      // Always return the hook object
+      return hook;
     });
   }
 });

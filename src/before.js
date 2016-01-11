@@ -1,50 +1,54 @@
-import makeDebug from 'debug';
 import { hooks as utils } from 'feathers-commons';
-import { makeHookFn, createMixin } from './commons';
+import { addHookMethod, processHooks } from './commons';
 
-const debug = makeDebug('feathers-hooks:before');
+export default function(service) {
+  if(typeof service.mixin !== 'function') {
+    return;
+  }
 
-/**
- * Return the hook mixin method for the given name.
- *
- * @param {String} method The service method name
- * @returns {Function}
- */
-function getMixin(method) {
-  return function() {
-    const _super = this._super;
+  const methods = this.methods;
+  const old = service.before;
+  const mixin = {};
 
-    if(!this.__before || !this.__before[method].length) {
-      return _super.apply(this, arguments);
+  addHookMethod(service, 'before', methods);
+
+  methods.forEach(method => {
+    if(typeof service[method] !== 'function') {
+      return;
     }
 
-    // Make a copy of our hooks
-    const hooks = this.__before[method].slice();
-    debug(`Running ${hooks.length} before hooks for method ${method}`);
+    mixin[method] = function() {
+      const _super = this._super.bind(this);
+      const hookObject = utils.hookObject(method, 'before', arguments);
+      const hooks = this.__beforeHooks[method];
 
-    // The chained function
-    let fn = function(hookObject) {
-      return _super.apply(this, utils.makeArguments(hookObject));
+      // Run all hooks
+      let promise = processHooks.call(this, hooks, hookObject);
+
+      // Then call the original method
+      return promise.then(hookObject => {
+        return new Promise((resolve, reject) => {
+          const args = utils.makeArguments(hookObject);
+
+          // We replace the callback with resolving the promise
+          args.splice(args.length - 1, 1, (error, result) => {
+            if(error) {
+              reject(error);
+            } else {
+              hookObject.result = result;
+              resolve(hookObject);
+            }
+          });
+
+          _super(... args);
+        });
+      });
     };
+  });
 
-    while(hooks.length) {
-      fn = makeHookFn(hooks.pop(), fn);
-    }
+  service.mixin(mixin);
 
-    return fn.call(this, utils.hookObject(method, 'before', arguments));
-  };
-}
-
-function addHooks(hooks, method) {
-  const myHooks = this.__before[method];
-
-  if(hooks.all) {
-    myHooks.push.apply(myHooks, hooks.all);
-  }
-
-  if(hooks[method]) {
-    myHooks.push.apply(myHooks, hooks[method]);
+  if(old) {
+    service.before(old);
   }
 }
-
-export default createMixin('before', getMixin, addHooks);
