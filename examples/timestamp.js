@@ -52,16 +52,12 @@ var todoService = app.service('todos');
 
 // Register a hook that adds a createdAt and updatedAt timestamp
 todoService.before({
-	create: function(hook, next) {
+	create: function(hook) {
 		hook.data.createdAt = new Date();
-
-		next();
 	},
 
-	update: function(hook, next) {
+	update: function(hook) {
 		hook.data.updatedAt = new Date();
-
-		next();
 	}
 });
 

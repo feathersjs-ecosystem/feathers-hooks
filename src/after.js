@@ -1,68 +1,55 @@
-import makeDebug from 'debug';
-import { hooks as utils } from 'feathers-commons';
-import { makeHookFn, createMixin } from './commons';
+import { addHookMethod, processHooks } from './commons';
 
-const debug = makeDebug('feathers-hooks:after');
+export default function(service) {
+  if(typeof service.mixin !== 'function') {
+    return;
+  }
 
-/**
- * Return the hook mixin method for the given name.
- *
- * @param {String} method The service method name
- * @returns {Function}
- */
-function getMixin(method) {
-  return function() {
-    var _super = this._super;
+  const methods = this.methods;
+  const old = service.after;
 
-    if(!this.__after || !this.__after[method].length) {
-      return _super.apply(this, arguments);
+  addHookMethod(service, 'after', methods);
+
+  const mixin = {};
+
+  methods.forEach(method => {
+    if(typeof service[method] !== 'function') {
+      return;
     }
 
-    const args = Array.from(arguments);
-    const hookObject = utils.hookObject(method, 'after', args);
+    mixin[method] = function() {
+      const originalCallback = arguments[arguments.length - 1];
 
-    // Make a copy of our hooks
-    const hooks = this.__after[method].slice();
-    debug(`Running ${hooks.length} after hooks for method ${method}`);
+      // Call the _super method which will return the `before` hook object
+      return this._super.apply(this, arguments)
+        // Make a copy of hookObject from `before` hooks and update type
+        .then(hookObject => Object.assign({}, hookObject, { type: 'after' }))
+        // Run through all `after` hooks
+        .then(processHooks.bind(this, this.__afterHooks[method]))
+        // Convert the results and call the original callback if available
+        .then(hookObject => {
+          const callback = hookObject.callback || originalCallback;
 
-    // Remove the old callback and replace with the new callback that runs the hook
-    args.pop();
-    // The new _super method callback
-    args.push(function(error, result) {
-      if(error) {
-        // Call the old callback with the error
-        return hookObject.callback(error);
-      }
+          if(typeof callback === 'function') {
+            hookObject.callback(null, hookObject.result);
+          }
 
-      var fn = function(hookObject) {
-        return hookObject.callback(null, hookObject.result);
-      };
+          return hookObject.result;
+        }).catch(error => {
+          const callback = (error && error.hook && error.hook.callback) || originalCallback;
 
-      // Set hookObject result
-      hookObject.result = result;
+          if(typeof callback === 'function') {
+            callback(error);
+          }
 
-      while(hooks.length) {
-        fn = makeHookFn(hooks.pop(), fn);
-      }
+          throw error;
+        });
+    };
+  });
 
-      return fn.call(this, hookObject);
-    }.bind(this));
+  service.mixin(mixin);
 
-
-    return _super.apply(this, args);
-  };
-}
-
-function addHooks(hooks, method) {
-  const myHooks = this.__after[method];
-
-  if(hooks[method]) {
-    myHooks.push.apply(myHooks, hooks[method]);
-  }
-
-  if(hooks.all) {
-    myHooks.push.apply(myHooks, hooks.all);
+  if(old) {
+    service.after(old);
   }
 }
-
-module.exports = createMixin('after', getMixin, addHooks);

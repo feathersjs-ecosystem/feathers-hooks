@@ -1,94 +1,85 @@
-import makeDebug from 'debug';
 import { hooks as utils } from 'feathers-commons';
 
-const debug = makeDebug('feathers-hooks:commons');
-
-/**
- * Creates a new hook function for the execution chain.
- *
- * @param {Function} hook The hook function
- * @param {Function} prev The previous hook method in the chain
- * @returns {Function}
- */
-export function makeHookFn(hook, prev) {
-  return function(hookObject) {
-    let called = false;
-    // The callback for the hook
-    const hookCallback = (error, currentHook = hookObject) => {
-      if(called) {
-        throw new Error(`next() called multiple times for hook on '${hookObject.method}' method`);
-      }
-
-      called = true;
-
-      // Call the callback with the result we set in `newCallback`
-      if(error) {
-        debug(`Hook returned error: ${error.message}`);
-        // Call the old callback with the hook error
-        return currentHook.callback(error);
-      }
-
-      return prev.call(this, currentHook);
-    };
-
-    const promise = hook.call(this, hookObject, hookCallback);
-
-    if(typeof promise !== 'undefined' && typeof promise.then === 'function') {
-      debug('Converting hook promise');
-      promise.then(function() {
-        hookCallback();
-      }, hookCallback);
-    }
-
-    return promise;
-  };
+export function isHookObject(hookObject) {
+  return typeof hookObject === 'object' &&
+    typeof hookObject.method === 'string' &&
+    (hookObject.type === 'before' || hookObject.type === 'after');
 }
 
-/**
- * Returns the main mixin function for the given type.
- *
- * @param {String} type The type of the hook (currently `before` and `after`)
- * @param {Function} getMixin A function that returns the actual
- * mixin function.
- * @param {Function} addHooks A callback that adds the hooks
- * @returns {Function}
- */
-export function createMixin(type, getMixin, addHooks) {
-  return function(service) {
-    if(typeof service.mixin !== 'function') {
-      return;
-    }
-
-    const app = this;
-    const hookProp = '__' + type;
-    const methods = app.methods;
-    const old = service[type];
-
-    const mixin = {};
-
-    mixin[type] = function(obj) {
-      if(!this[hookProp]) {
-        this[hookProp] = {};
-        methods.forEach(method => this[hookProp][method] = []);
+export function processHooks(hooks, initialHookObject) {
+  let hookObject = initialHookObject;
+  let updateCurrentHook = current => {
+    if(current) {
+      if(!isHookObject(current)) {
+        throw new Error(`${hookObject.type} hook for '${hookObject.method}' method returned invalid hook object`);
       }
 
-      methods.forEach(addHooks.bind(this, utils.convertHookData(obj)));
+      hookObject = current;
+    }
+
+    return hookObject;
+  };
+  let promise = Promise.resolve(hookObject);
+
+  // Go through all hooks and chain them into our promise
+  hooks.forEach(fn => {
+    const hook = fn.bind(this);
+
+    if(hook.length === 2) { // function(hook, next)
+      promise = promise.then(hookObject => {
+        return new Promise((resolve, reject) => {
+          hook(hookObject, (error, result) =>
+            error ? reject(error) : resolve(result));
+        });
+      });
+    } else { // function(hook)
+      promise = promise.then(hook);
+    }
+
+    // Use the returned hook object or the old one
+    promise = promise.then(updateCurrentHook);
+  });
+
+  return promise.catch(error => {
+    // Add the hook information to any errors
+    error.hook = hookObject;
+    throw error;
+  });
+}
+
+export function addHookMethod(service, type, methods) {
+  const prop = `__${type}Hooks`;
+
+  // Initialize properties where hook functions are stored
+  service[prop] = {};
+  methods.forEach(method => {
+    if(typeof service[method] === 'function') {
+      service[prop][method] = [];
+    }
+  });
+
+  // mixin the method (.before or .after)
+  service.mixin({
+    [type](obj) {
+      const hooks = utils.convertHookData(obj);
+
+      methods.forEach(method => {
+        if(typeof this[method] !== 'function') {
+          return;
+        }
+
+        const myHooks = this[prop][method];
+
+        if(hooks.all) {
+          myHooks.push.apply(myHooks, hooks.all);
+        }
+
+        if(hooks[method]) {
+          myHooks.push.apply(myHooks, hooks[method]);
+        }
+      });
 
       return this;
-    };
-
-    methods.forEach(method => {
-      if(typeof service[method] !== 'function') {
-        return;
-      }
-
-      mixin[method] = getMixin(method);
-    });
-
-    service.mixin(mixin);
-
-    if(old) {
-      service[type](old);
     }
-  };
+  });
 }
