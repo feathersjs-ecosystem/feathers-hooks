@@ -42,7 +42,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "feathers-commons": "^0.5.0"
+    "feathers-commons": "^0.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",
