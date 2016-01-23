@@ -170,6 +170,35 @@ describe('.before hooks', () => {
       });
     });
 
+    it('contains the app object at hook.app', done => {
+      const someServiceConfig = {
+        before: {
+          create(hook, next) {
+            hook.data.appPresent = typeof hook.app === 'function';
+            assert.equal(hook.data.appPresent, true);
+            next(null, hook);
+          }
+        },
+
+        create(data, params, callback) {
+          callback(null, data);
+        }
+      };
+
+      const app = feathers().configure(hooks()).use('/some-service', someServiceConfig);
+      const someService = app.service('some-service');
+
+      someService.create({ some: 'thing' }, {}, (error, data) => {
+
+        assert.deepEqual(data, {
+          some: 'thing',
+          appPresent: true
+        }, 'App object was present');
+
+        done();
+      });
+    });
+
     it('passes errors', done => {
       const dummyService = {
         before: {
