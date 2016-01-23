@@ -130,6 +130,31 @@ describe('.after hooks', () => {
       });
     });
 
+    it('also makes the app available at hook.app', done => {
+      const dummyService = {
+        after: {
+          create(hook, next) {
+            hook.result.appPresent = typeof hook.app === 'function';
+            assert.equal(hook.result.appPresent, true);
+
+            next(null, hook);
+          }
+        },
+
+        create(data, params, callback) {
+          callback(null, data);
+        }
+      };
+
+      const app = feathers().configure(hooks()).use('/dummy', dummyService);
+      const service = app.service('dummy');
+
+      service.create({ my: 'data' }, {}, (error, data) => {
+        assert.deepEqual({ my: 'data', appPresent: true }, data, 'The app was present in the hook.');
+        done();
+      });
+    });
+
     it('returns errors', done => {
       const dummyService = {
         after: {
