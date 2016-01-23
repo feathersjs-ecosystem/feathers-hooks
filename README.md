@@ -59,6 +59,7 @@ var todoService = app.service('todos');
 - __callback__ - The original callback (can be replaced but shouldn't be called in your hook)
 - __params__ - The service method parameters
 - __data__ - The request data (for `create`, `update` and `patch`)
+- __app__ - The `app` object
 - __id__ - The id (for `get`, `remove`, `update` and `patch`)
 
 All properties of the hook object can be modified and the modified data will be used for the actual service method call. This is very helpful for pre-processing parameters and massaging data when creating or updating.
@@ -89,6 +90,7 @@ todoService.before({
 - __callback__ - The original callback (can be replaced but shouldn't be called in your hook)
 - __params__ - The service method parameters
 - __data__ - The request data (for `create`, `update` and `patch`)
+- __app__ - The `app` object
 - __id__ - The id (for `get`, `remove`, `update` and `patch`)
 
 In any `after` hook, only modifications to the `result` object will have any effect. This is a good place to filter or post-process the data retrieved by a service and also add some additional authorization that needs the actual data.
@@ -253,10 +255,34 @@ userService.before({
   // Auth is required.  No exceptions
   create : [hooks.requireAuth, hooks.setUserID, hooks.setCreatedAt]
 });
+```
 
+## Communicating with other services.
+Hooks make it convenient to work with other services. You can use the `app` object to lookup the services you need to use like this:
+
+```js
+/**
+ * Check if provided account already exists.
+ */
+export default function(hook) {
+  // Get a reference to the accounts service.
+  const accounts = hook.app.service('accounts');
+
+  return new Promise(function(resolve, reject) {
+
+    // Do something with the accounts service here.
+
+    hook.params.accountExists = 'yup';
+    resolve(hook);
+  });
+}
 ```
 
 ## Changelog
+
+__1.0.0__
+
+- Make `app` available inside the `hook` object ([#34](https://github.com/feathersjs/feathers-hooks/pull/34))
 
 __0.6.0__
 
