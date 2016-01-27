@@ -6,7 +6,7 @@
 
 ## Getting Started
 
-`feathers-hooks` allow to register composable middleware functions **before** or **after** a Feathers service method executes. This makes it easy to decouple things like authorization and pre- or post processing from your service logic.
+`feathers-hooks` allows you to register composable middleware functions **before** or **after** a Feathers service method executes. This makes it easy to decouple things like authorization and pre- or post processing from your service logic.
 
 To install from [npm](https://www.npmjs.com/package/feathers-hooks), run:
 
@@ -17,13 +17,13 @@ $ npm install feathers-hooks --save
 Then, to use the plugin in your Feathers app:
 
 ```javascript
-var feathers = require('feathers');
-var hooks = require('feathers-hooks');
+import feathers from 'feathers';
+import hooks from 'feathers-hooks';
 
-var app = feathers().configure(hooks());
+let app = feathers().configure(hooks());
 ```
 
-Then, you can register the hook for a service:
+Then, you can register a hook for a service:
 
 ```javascript
 // User service
