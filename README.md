@@ -4,7 +4,17 @@
 
 > Middleware for Feathers service methods
 
-## Getting Started
+## Documentation
+
+Please refer to the [Feathers hooks documentation](http://docs.feathersjs.com/hooks/readme.html) for more details on:
+
+- The philosophy behind hooks
+- How you can use hooks
+- How you can chain hooks using Promises
+- Params that are available in hooks
+- Hooks that are bundled with feathers and feathers plugins
+
+## Quick start
 
 `feathers-hooks` allows you to register composable middleware functions **before** or **after** a Feathers service method executes. This makes it easy to decouple things like authorization and pre- or post processing from your service logic.
 
@@ -17,19 +27,19 @@ $ npm install feathers-hooks --save
 Then, to use the plugin in your Feathers app:
 
 ```javascript
-import feathers from 'feathers';
-import hooks from 'feathers-hooks';
+const feathers = require('feathers');
+const hooks = require('feathers-hooks');
 
-let app = feathers().configure(hooks());
+const app = feathers().configure(hooks());
 ```
 
 Then, you can register a hook for a service:
 
 ```javascript
 // User service
-import service from 'feathers-memory';
+const service = require('feathers-memory');
 
-export default function(){
+module.exports = function(){
   const app = this;
 
   let myHook = function(options) {
@@ -46,7 +56,7 @@ export default function(){
 
   // Set up our before hook
   userService.before({
-    find: [myHook()]
+    find: [ myHook() ]
   });
 }
 ```
@@ -58,20 +68,13 @@ The repository contains the following examples:
 - [authorization.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/authorization.js) - A simple demo showing how to use hooks for authorization (and post-processing the results) where the user is set via a `?user=username` query parameter.
 - [timestamp.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/timestamp.js) - A demo that adds a `createdAt` and `updatedAt` timestamp when creating or updating a Todo using hooks.
 
-## Documentation
-Please refer to the [Feathers hooks documentation](http://docs.feathersjs.com/hooks/readme.html) for more details on:
-
-- The philosophy behind hooks
-- How you can use hooks
-- How you can chain hooks using Promises
-- Params that are available in hooks
-- Hooks that are bundled with feathers and feathers plugins
-
 ## Changelog
 
 __1.0.0__
 
 - Make `app` available inside the `hook` object ([#34](https://github.com/feathersjs/feathers-hooks/pull/34))
+- Added remove and disable common hook ([#33](https://github.com/feathersjs/feathers-hooks/pull/33))
+- Hooks use promises and promise chains ([#29](https://github.com/feathersjs/feathers-hooks/pull/29))
 
 __0.6.0__
 
