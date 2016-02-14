@@ -9,6 +9,6 @@ function configure() {
   };
 }
 
-configure.hooks = hooks;
+Object.assign(configure, hooks);
 
 export default configure;

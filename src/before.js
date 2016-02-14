@@ -30,6 +30,10 @@ export default function(app) {
 
         // Then call the original method
         return promise.then(hookObject => {
+          if(typeof hookObject.result !== 'undefined') {
+            return Promise.resolve(hookObject);
+          }
+          
           return new Promise((resolve, reject) => {
             const args = utils.makeArguments(hookObject);
 
