@@ -2,7 +2,6 @@ import assert from 'assert';
 import feathers from 'feathers';
 import memory from 'feathers-memory';
 import hooks from '../src/hooks';
-import { remove, disable } from '../src/bundled';
 
 const app = feathers()
   .configure(feathers.rest())
@@ -21,7 +20,7 @@ describe('Bundled feathers hooks', () => {
   describe('remove', () => {    
     it('Removes fields from objects in arrays', done => {
       service.after({
-        find: remove('title')
+        find: hooks.remove('title')
       });
       
       service.find().then(data => {
@@ -36,7 +35,7 @@ describe('Bundled feathers hooks', () => {
 
     it('Removes multiple fields from single objects', done => {
       service.after({
-        get: remove('admin', 'title')
+        get: hooks.remove('admin', 'title')
       });
       
       service.get(1).then(data => {
@@ -50,7 +49,7 @@ describe('Bundled feathers hooks', () => {
     
     it('removes fields from data if it is a before hook', done => {
       service.before({
-        create: remove('_id')
+        create: hooks.remove('_id')
       });
       
       service.create({
@@ -69,7 +68,7 @@ describe('Bundled feathers hooks', () => {
   describe('disable', () => {
     it('disables completely', done => {
       service.before({
-        remove: disable()
+        remove: hooks.disable()
       });
       
       service.remove().catch(e => {
@@ -82,7 +81,7 @@ describe('Bundled feathers hooks', () => {
     
     it('disables provider for external', done => {
       service.before({
-        remove: disable('external')
+        remove: hooks.disable('external')
       });
       
       service.remove(0, { provider: 'test' }).catch(e => {
@@ -95,7 +94,7 @@ describe('Bundled feathers hooks', () => {
     
     it('disables for a specific provider', done => {
       service.before({
-        remove: disable('testing')
+        remove: hooks.disable('testing')
       });
       
       service.remove(0, { provider: 'testing' }).catch(e => {
@@ -108,7 +107,7 @@ describe('Bundled feathers hooks', () => {
     
     it('disables multiple providers', done => {
       service.before({
-        remove: disable('testing', 'again')
+        remove: hooks.disable('testing', 'again')
       });
       
       service.remove(0, { provider: 'testing' }).catch(e => {
@@ -125,7 +124,7 @@ describe('Bundled feathers hooks', () => {
     
     it('disables with a function', done => {
       service.before({
-        remove: disable(function(hook) {
+        remove: hooks.disable(function(hook) {
           if(hook.params.disable) {
             throw new Error('Not allowed!');
           }
@@ -142,7 +141,7 @@ describe('Bundled feathers hooks', () => {
     
     it('disables with a function that returns a promise', done => {
       service.before({
-        remove: disable(function(hook) {
+        remove: hooks.disable(function(hook) {
           return new Promise((resolve, reject) => {
             setTimeout(() => {
               if(hook.params.disable) {
