@@ -122,6 +122,34 @@ describe('.before hooks', () => {
         });
       });
     });
+    
+    it('.before hooks can set hook.result which will skip service method', done => {
+      const app = feathers().configure(hooks()).use('/dummy', {
+        get(id) {
+          assert.ok(false, 'This should never run');
+          return Promise.resolve({ id });
+        }
+      });
+
+      const service = app.service('dummy');
+
+      service.before({
+        get(hook) {
+          hook.result = {
+            id: hook.id,
+            message: 'Set from hook'
+          };
+        }
+      });
+
+      service.get(10, {}).then(data => {
+        assert.deepEqual(data, {
+          id: 10,
+          message: 'Set from hook'
+        });
+        done();
+      }).catch(done);
+    });
   });
 
   describe('function(hook, next)', () => {
