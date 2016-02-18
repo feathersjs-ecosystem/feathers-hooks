@@ -9,6 +9,8 @@ function configure() {
   };
 }
 
-Object.assign(configure, hooks);
+
+configure.remove = hooks.remove;
+configure.disable = hooks.disable;
 
 export default configure;
