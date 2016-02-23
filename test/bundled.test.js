@@ -1,10 +1,11 @@
 import assert from 'assert';
 import feathers from 'feathers';
+import rest from 'feathers-rest';
 import memory from 'feathers-memory';
 import hooks from '../src/hooks';
 
 const app = feathers()
-  .configure(feathers.rest())
+  .configure(rest())
   .configure(hooks())
   .use('/todos', memory());
 
