@@ -69,6 +69,9 @@ The repository contains the following examples:
 - [timestamp.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/timestamp.js) - A demo that adds a `createdAt` and `updatedAt` timestamp when creating or updating a Todo using hooks.
 
 ## Changelog
+__1.3.0__
+- adding `toLowerCase` hook
+- `remove` hook now only runs if `hook.params` is set
 
 __1.2.0__
 - `remove` hook now supports a callback function to conditionally run it.
