@@ -7,18 +7,27 @@ export function remove(... fields) {
       delete data[field];
     }
   };
+  const callback = typeof fields[fields.length - 1] === 'function' ?
+    fields.pop() : () => true;
   
   return function(hook) {
-    let result = hook.type === 'before' ? hook.data : hook.result;
-    
-    if(result) {
-      if(hook.method === 'find' || Array.isArray(result)) {
-        // data.data if the find method is paginated
-        (result.data || result).forEach(removeFields);
-      } else {
-        removeFields(result);
+    const result = hook.type === 'before' ? hook.data : hook.result;
+    const next = condition => {
+      if(result && condition) {
+        if(hook.method === 'find' || Array.isArray(result)) {
+          // data.data if the find method is paginated
+          (result.data || result).forEach(removeFields);
+        } else {
+          removeFields(result);
+        }
       }
-    }
+      return hook;
+    };
+    
+    const check = callback(hook);
+    
+    return check && typeof check.then === 'function' ?
+      check.then(next) : next(check);
   };
 }
 

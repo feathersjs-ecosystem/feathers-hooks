@@ -64,6 +64,56 @@ describe('Bundled feathers hooks', () => {
         done();
       }).catch(done);
     });
+    
+    it('removes field with a callback', done => {
+      const original = {
+        id: 10,
+        age: 12,
+        test: 'David'
+      };
+      
+      service.before({
+        create: hooks.remove('test', hook => hook.params.remove)
+      });
+      
+      service.create(original).then(data => {
+        assert.deepEqual(data, original);
+        original.id = 11;
+        
+        return service.create(original, { remove: true });
+      }).then(data => {
+        assert.deepEqual(data, { age: 12, id: 11 });
+        // Remove the hook we just added
+        service.__beforeHooks.create.pop();
+        done();
+      }).catch(done);
+    });
+    
+    it('removes field with callback that returns a Promise', done => {
+      const original = {
+        id: 23,
+        age: 12,
+        test: 'David'
+      };
+      
+      service.before({
+        create: hooks.remove('test', hook => new Promise(resolve => {
+          setTimeout(() => resolve(hook.params.remove), 20);
+        }))
+      });
+      
+      service.create(original).then(data => {
+        assert.deepEqual(data, original);
+        original.id = 24;
+        
+        return service.create(original, { remove: true });
+      }).then(data => {
+        assert.deepEqual(data, { age: 12, id: 24 });
+        // Remove the hook we just added
+        service.__beforeHooks.create.pop();
+        done();
+      }).catch(done);
+    });
   });
   
   describe('disable', () => {
