@@ -23,6 +23,8 @@
         "describe": true,
         "before": true,
         "after": true,
+        "beforeEach": true,
+        "afterEach": true,
         "exports": true
     }
 }
