@@ -206,7 +206,6 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
->>>>>>> only run remove hook if params.provider is set
     });
   });
 
