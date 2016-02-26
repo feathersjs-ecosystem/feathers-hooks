@@ -1,5 +1,36 @@
 const errors = require('feathers-errors').errors;
 
+export function lowerCase(... fields) {
+  const lowerCaseFields = data => {
+    for(let field of fields) {
+      data[field] = data[field].toLowerCase();
+    }
+  };
+
+  const callback = typeof fields[fields.length - 1] === 'function' ?
+    fields.pop() : () => true;
+
+  return function(hook) {
+    const result = hook.type === 'before' ? hook.data : hook.result;
+    const next = condition => {
+      if(result && condition) {
+        if(hook.method === 'find' || Array.isArray(result)) {
+          // data.data if the find method is paginated
+          (result.data || result).forEach(lowerCaseFields);
+        } else {
+          lowerCaseFields(result);
+        }
+      }
+      return hook;
+    };
+
+    const check = callback(hook);
+
+    return check && typeof check.then === 'function' ?
+      check.then(next) : next(check);
+  };
+}
+
 export function remove(... fields) {
   const removeFields = data => {
     for(let field of fields) {
@@ -9,7 +40,7 @@ export function remove(... fields) {
   };
   const callback = typeof fields[fields.length - 1] === 'function' ?
     fields.pop() : () => true;
-  
+
   return function(hook) {
     const result = hook.type === 'before' ? hook.data : hook.result;
     const next = condition => {
@@ -23,9 +54,9 @@ export function remove(... fields) {
       }
       return hook;
     };
-    
+
     const check = callback(hook);
-    
+
     return check && typeof check.then === 'function' ?
       check.then(next) : next(check);
   };
@@ -44,19 +75,19 @@ export function disable(realm, ... args) {
           throw new errors.MethodNotAllowed(`Calling '${hook.method}' not allowed.`);
         }
       };
-      
+
       if(result && typeof result.then === 'function') {
         return result.then(next);
       }
-      
+
       next(result);
     };
   } else {
     const providers = [ realm ].concat(args);
-    
+
     return function(hook) {
       const provider = hook.params.provider;
-      
+
       if((realm === 'external' && provider) || providers.indexOf(provider) !== -1) {
         throw new errors.MethodNotAllowed(`Provider '${hook.params.provider}' can not call '${hook.method}'`);
       }
