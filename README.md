@@ -70,6 +70,12 @@ The repository contains the following examples:
 
 ## Changelog
 
+__1.2.0__
+- `remove` hook now supports a callback function to conditionally run it.
+
+__1.1.0__
+- Moving bundled hooks top level
+
 __1.0.0__
 
 - Make `app` available inside the `hook` object ([#34](https://github.com/feathersjs/feathers-hooks/pull/34))
