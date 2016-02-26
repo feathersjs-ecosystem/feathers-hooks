@@ -39,7 +39,7 @@ export function remove(... fields) {
     }
   };
   const callback = typeof fields[fields.length - 1] === 'function' ?
-    fields.pop() : () => true;
+    fields.pop() : (hook) => !!hook.params.provider;
 
   return function(hook) {
     const result = hook.type === 'before' ? hook.data : hook.result;
