@@ -9,7 +9,7 @@ function configure() {
   };
 }
 
-
+configure.lowerCase = hooks.lowerCase;
 configure.remove = hooks.remove;
 configure.disable = hooks.disable;
 
