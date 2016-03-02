@@ -43,4 +43,39 @@ describe('feathers-hooks', () => {
       done();
     });
   });
+  
+  it('dispatches events with data modified by hook', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      create(data) {
+        return Promise.resolve(data);
+      }
+    });
+
+    const service = app.service('dummy');
+
+    service.before({
+      create(hook) {
+        hook.data.user = 'David';
+      }
+    }).after({
+      create(hook) {
+        hook.result.after = true;
+      }
+    });
+    
+    service.once('created', function(data) {
+      try {
+        assert.deepEqual(data, {
+          test: true,
+          user: 'David',
+          after: true
+        });
+        done();
+      } catch(e) {
+        done(e);
+      }
+    });
+    
+    service.create({ test: true });
+  });
 });
