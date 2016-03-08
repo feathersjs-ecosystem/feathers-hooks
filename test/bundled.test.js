@@ -27,7 +27,7 @@ describe('Bundled feathers hooks', () => {
   });
 
   afterEach(done => {
-    service.remove(null).then(() => done());
+    service.remove(null).then(() => done()).catch(e => console.log(e));
   });
 
   describe('lowerCase', () => {
@@ -195,6 +195,144 @@ describe('Bundled feathers hooks', () => {
       it('does not remove fields', done => {
         service.after({
           find: hooks.remove('title')
+        });
+        
+        service.find().then(data => {
+          assert.equal(data[0].title, 'Old Man');
+          assert.equal(data[1].title, 'Genius');
+          assert.equal(data[2].title, 'Badass');
+          // Remove the hook we just added
+          service.__afterHooks.find.pop();
+          done();
+        }).catch(done);
+      });
+    });
+  });
+
+  describe('pluck', () => {
+    describe('with params.provider set', () => {
+      before(() => {
+        service.before({
+          find: addProvider(),
+          get: addProvider(),
+          create: addProvider()
+        });
+      });
+
+      after(() => {
+        // remove our before hooks
+        service.__beforeHooks.find.pop();
+        service.__beforeHooks.get.pop();
+        service.__beforeHooks.create.pop();
+      });
+      // {id: 1, name: 'Marshall', title: 'Old Man', admin: true},
+      // {id: 2, name: 'David', title: 'Genius', admin: true},
+      // {id: 3, name: 'Eric', title: 'Badass', admin: true}
+      it('plucks fields from objects in arrays', done => {
+        service.after({
+          find: hooks.pluck('id', 'title')
+        });
+        
+        service.find().then(data => {
+          assert.equal(data[0].name, undefined);
+          assert.equal(data[1].name, undefined);
+          assert.equal(data[2].name, undefined);
+          assert.equal(data[0].admin, undefined);
+          assert.equal(data[1].admin, undefined);
+          assert.equal(data[2].admin, undefined);          
+          // Remove the hook we just added
+          service.__afterHooks.find.pop();
+          done();
+        }).catch(done);
+      });
+
+      it('plucks multiple fields from single objects', done => {
+        service.after({
+          get: hooks.pluck('id', 'admin')
+        });
+        
+        service.get(1).then(data => {
+          assert.equal(data.name, undefined);
+          assert.equal(data.title, undefined);
+          // Remove the hook we just added
+          service.__afterHooks.get.pop();
+          done();
+        }).catch(done);
+      });
+      
+      it('plucks fields from data if it is a before hook', done => {
+        service.before({
+          create: hooks.pluck('_id', 'id')
+        });
+        
+        service.create({
+          _id: 15,
+          id: 20,
+          name: 'David'
+        }).then(data => {
+          assert.equal(data._id, 15);
+          assert.equal(data.name, undefined);
+          // Remove the hook we just added
+          service.__beforeHooks.create.pop();
+          done();
+        }).catch(done);
+      });
+      
+      it('plucks field with a callback', done => {
+        const original = {
+          id: 10,
+          age: 12,
+          test: 'David'
+        };
+        
+        service.before({
+          create: hooks.pluck('id', 'age', hook => hook.params.pluck)
+        });
+        
+        service.create(original).then(data => {
+          assert.deepEqual(data, original);
+          original.id = 11;
+          
+          return service.create(original, { pluck: true });
+        }).then(data => {
+          assert.deepEqual(data, { age: 12, id: 11 });
+          // Remove the hook we just added
+          service.__beforeHooks.create.pop();
+          done();
+        }).catch(done);
+      });
+      
+      it('plucks field with callback that returns a Promise', done => {
+        const original = {
+          id: 23,
+          age: 12,
+          test: 'David'
+        };
+        
+        service.before({
+          create: hooks.pluck('id', 'age', hook => new Promise(resolve => {
+            setTimeout(() => resolve(hook.params.pluck), 20);
+          }))
+        });
+        
+        service.create(original).then(data => {
+          assert.deepEqual(data, original);
+          original.id = 24;
+          
+          return service.create(original, { pluck: true });
+        }).then(data => {
+          assert.deepEqual(data, { age: 12, id: 24 });
+          // Remove the hook we just added
+          service.__beforeHooks.create.pop();
+          done();
+        }).catch(done);
+      });
+    });
+
+    describe('without params.provider set', () => {
+      it('does not pluck fields', done => {
+        service.after({
+          find: hooks.pluck('id', 'age')
         });
         
         service.find().then(data => {
