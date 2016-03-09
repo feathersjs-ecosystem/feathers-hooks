@@ -96,6 +96,7 @@ function configure() {
 
 configure.lowerCase = hooks.lowerCase;
 configure.remove = hooks.remove;
+configure.pluck = hooks.pluck;
 configure.disable = hooks.disable;
 
 export default configure;
