@@ -98,7 +98,7 @@ describe('Bundled feathers hooks', () => {
         service.after({
           find: hooks.remove('title')
         });
-        
+
         service.find().then(data => {
           assert.equal(data[0].title, undefined);
           assert.equal(data[1].title, undefined);
@@ -113,7 +113,7 @@ describe('Bundled feathers hooks', () => {
         service.after({
           get: hooks.remove('admin', 'title')
         });
-        
+
         service.get(1).then(data => {
           assert.equal(data.admin, undefined);
           assert.equal(data.title, undefined);
@@ -122,12 +122,12 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
-      
+
       it('removes fields from data if it is a before hook', done => {
         service.before({
           create: hooks.remove('_id')
         });
-        
+
         service.create({
           _id: 10,
           name: 'David'
@@ -139,22 +139,22 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
-      
+
       it('removes field with a callback', done => {
         const original = {
           id: 10,
           age: 12,
           test: 'David'
         };
-        
+
         service.before({
           create: hooks.remove('test', hook => hook.params.remove)
         });
-        
+
         service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 11;
-          
+
           return service.create(original, { remove: true });
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 11 });
@@ -163,24 +163,24 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
-      
+
       it('removes field with callback that returns a Promise', done => {
         const original = {
           id: 23,
           age: 12,
           test: 'David'
         };
-        
+
         service.before({
           create: hooks.remove('test', hook => new Promise(resolve => {
             setTimeout(() => resolve(hook.params.remove), 20);
           }))
         });
-        
+
         service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 24;
-          
+
           return service.create(original, { remove: true });
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 24 });
@@ -196,7 +196,7 @@ describe('Bundled feathers hooks', () => {
         service.after({
           find: hooks.remove('title')
         });
-        
+
         service.find().then(data => {
           assert.equal(data[0].title, 'Old Man');
           assert.equal(data[1].title, 'Genius');
@@ -438,6 +438,66 @@ describe('Bundled feathers hooks', () => {
         assert.equal(e.message, 'Not allowed!');
         // Remove the hook we just tested
         service.__beforeHooks.remove.pop();
+        done();
+      }).catch(done);
+    });
+  });
+
+  describe('populate', () => {
+    let app;
+
+    before(() => {
+      app = feathers()
+        .configure(rest())
+        .configure(hooks())
+        .use('/todos', memory())
+        .use('/users', {
+          get(id) {
+            return Promise.resolve({
+              id, name: `user ${id}`
+            });
+          }
+        });
+    });
+
+    it('populates the same field', done => {
+      app.service('todos').after({
+        create: hooks.populate('user', { service: 'users' })
+      });
+
+      app.service('todos').create({
+        text: 'A todo',
+        user: 10
+      }).then(todo => {
+        assert.deepEqual(todo, {
+          text: 'A todo',
+          user: { id: 10, name: 'user 10' },
+          id: 0
+        });
+        service.__afterHooks.create.pop();
+        done();
+      }).catch(done);
+    });
+
+    it('populates a different field', done => {
+      app.service('todos').after({
+        create: hooks.populate('user', {
+          service: 'users',
+          field: 'userId'
+        })
+      });
+
+      app.service('todos').create({
+        text: 'A todo',
+        userId: 10
+      }).then(todo => {
+        assert.deepEqual(todo, {
+          text: 'A todo',
+          userId: 10,
+          user: { id: 10, name: 'user 10' },
+          id: 1
+        });
+        service.__afterHooks.create.pop();
         done();
       }).catch(done);
     });
