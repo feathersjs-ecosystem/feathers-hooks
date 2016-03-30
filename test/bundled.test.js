@@ -123,6 +123,27 @@ describe('Bundled feathers hooks', () => {
         }).catch(done);
       });
 
+      it('Removes fields from result.data object', done => {
+        service.after({
+          get: [
+            function(hook) {
+              var data = Object.assign({}, hook.result);
+              hook.result = { data };
+              return hook;
+            },
+            hooks.remove('title')
+          ]
+        });
+
+        service.get(1).then(result => {
+          assert.equal(result.data.title, undefined);
+          // Remove the hooks we just added
+          service.__afterHooks.find.pop();
+          service.__afterHooks.find.pop();
+          done();
+        }).catch(done);
+      });
+
       it('removes fields from data if it is a before hook', done => {
         service.before({
           create: hooks.remove('_id')

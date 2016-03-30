@@ -45,12 +45,19 @@ export function remove(... fields) {
   return function(hook) {
     const result = hook.type === 'before' ? hook.data : hook.result;
     const next = condition => {
-      if(result && condition) {
-        if(hook.method === 'find' || Array.isArray(result)) {
-          // data.data if the find method is paginated
-          (result.data || result).forEach(removeFields);
+      if (result && condition) {
+        if (Array.isArray(result)) {
+          result.forEach(removeFields);
         } else {
           removeFields(result);
+
+          if (result.data) {
+            if (Array.isArray(result.data)) {
+              result.data.forEach(removeFields);
+            } else {
+              removeFields(result.data);
+            }
+          }
         }
       }
       return hook;
