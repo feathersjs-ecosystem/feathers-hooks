@@ -31,6 +31,70 @@ export function lowerCase(... fields) {
   };
 }
 
+export function removeQuery(... fields) {
+  const removeQueries = data => {
+    for(let field of fields) {
+      data[field] = undefined;
+      delete data[field];
+    }
+  };
+  
+  const callback = typeof fields[fields.length - 1] === 'function' ?
+    fields.pop() : () => true;
+
+  return function(hook) {
+    if (hook.type === 'after') {
+      throw new errors.GeneralError(`Provider '${hook.params.provider}' can not remove query params on after hook.`);
+    }
+    const result = hook.params.query; 
+    const next = condition => {
+      if(result && condition) {
+        removeQueries(result);
+      }
+      return hook;
+    };
+
+    const check = callback(hook);
+
+    return check && typeof check.then === 'function' ?
+      check.then(next) : next(check);
+  };
+}
+
+export function pluckQuery(... fields) {
+  const pluckQueries = data => {
+    // admin, name
+    for(let key of Object.keys(data)) {
+      if(fields.indexOf(key) === -1) {
+        console.log(key);
+        data[key] = undefined;
+        delete data[key];
+      }
+    }
+  };
+  
+  const callback = typeof fields[fields.length - 1] === 'function' ?
+    fields.pop() : () => true;
+
+  return function(hook) {
+    if (hook.type === 'after') {
+      throw new errors.GeneralError(`Provider '${hook.params.provider}' can not pluck query params on after hook.`);
+    }
+    const result = hook.params.query;
+    const next = condition => {
+      if(result && condition) {
+        pluckQueries(result);
+      }
+      return hook;
+    };
+
+    const check = callback(hook);
+
+    return check && typeof check.then === 'function' ?
+      check.then(next) : next(check);
+  };
+}
+
 export function remove(... fields) {
   const removeFields = data => {
     for(let field of fields) {

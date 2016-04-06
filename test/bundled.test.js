@@ -368,6 +368,70 @@ describe('Bundled feathers hooks', () => {
     });
   });
 
+  describe('pluckQuery', () => {
+    it('Plucks fields from query', done => {
+      service.before({
+        find: hooks.pluckQuery('name', 'id')
+      });
+
+      service.find({query: {admin: false, name: 'David'}}).then(data => {
+        assert.equal(data.length, 1);
+        assert.deepEqual(data[0], {
+          id: 2,
+          name: 'David',
+          title: 'Genius',
+          admin: true
+        });
+        // Remove the hook we just added
+        service.__beforeHooks.find.pop();
+        done();
+      }).catch(done);
+    });
+
+    it('Throws error if placed in after', done => {
+      service.after({
+        find: hooks.pluckQuery('admin', 'title')
+      });
+
+      service.find({query: {admin: true, name: 'David'}}).then(done).catch(e => {
+        assert.equal(e.name, 'GeneralError');
+
+        // Remove the hook we just added
+        service.__afterHooks.find.pop();
+        done();
+      });
+    });
+  });
+  
+  describe('removeQuery', () => {
+    it('Removes fields from query', done => {
+      service.before({
+        find: hooks.removeQuery('name')
+      });
+     
+      service.find({query: {admin: true, name: 'David'}}).then(data => {
+        assert.equal(data.length, 3);
+        // Remove the hook we just added
+        service.__beforeHooks.find.pop();
+        done();
+      }).catch(done);
+    });
+
+    it('Throws error if placed in after', done => {
+      service.after({
+        find: hooks.removeQuery('admin', 'title')
+      });
+
+      service.find({query: {admin: true, name: 'David'}}).then(done).catch(e => {
+        assert.equal(e.name, 'GeneralError');
+
+        // Remove the hook we just added
+        service.__afterHooks.find.pop();        
+        done();
+      });
+    });
+  });
+
   describe('disable', () => {
     it('disables completely', done => {
       service.before({

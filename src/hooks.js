@@ -94,6 +94,8 @@ function configure() {
   };
 }
 
+configure.removeQuery = hooks.removeQuery;
+configure.pluckQuery = hooks.pluckQuery;
 configure.lowerCase = hooks.lowerCase;
 configure.remove = hooks.remove;
 configure.pluck = hooks.pluck;
