@@ -3,8 +3,13 @@ const errors = require('feathers-errors').errors;
 export function lowerCase(... fields) {
   const lowerCaseFields = data => {
     for(let field of fields) {
-      data[field] = typeof data[field] === 'string' ?
-        data[field].toLowerCase() : data[field]
+      if(data[field]) {
+        if(typeof data[field] !== 'string') {
+          throw new errors.BadRequest('Expected string');
+        } else {
+          data[field] = data[field].toLowerCase();
+        }
+      }
     }
   };
 
