@@ -2,6 +2,7 @@ import assert from 'assert';
 import feathers from 'feathers';
 import rest from 'feathers-rest';
 import memory from 'feathers-memory';
+import {errors} from 'feathers-errors';
 import hooks from '../src/hooks';
 
 const addProvider = function(){
@@ -74,6 +75,38 @@ describe('Bundled feathers hooks', () => {
         service.__beforeHooks.create.pop();
         done();
       }).catch(done);
+    });
+
+    it('transforms to lower case only string fields', done => {
+      service.after({
+        get: hooks.lowerCase('admin')
+      });
+
+      service.get(1).catch(data => {
+        assert.ok(data instanceof errors.BadRequest);
+        service.__afterHooks.get.pop();
+        done();
+      });
+    });
+
+    it('ignores undefined fields', done => {
+      service.before({
+        patch: hooks.lowerCase('name')
+      });
+
+      assert.doesNotThrow(
+        () => {
+          service.patch(1, {
+            title: 'Wizard'
+          }).then(data => {
+            assert.equal(data.title, 'Wizard');
+            // Remove the hook we just added
+            service.__beforeHooks.patch.pop();
+            done();
+          }).catch(done);
+        },
+        TypeError
+      );
     });
   });
 
@@ -253,14 +286,14 @@ describe('Bundled feathers hooks', () => {
         service.after({
           find: hooks.pluck('id', 'title')
         });
-        
+
         service.find().then(data => {
           assert.equal(data[0].name, undefined);
           assert.equal(data[1].name, undefined);
           assert.equal(data[2].name, undefined);
           assert.equal(data[0].admin, undefined);
           assert.equal(data[1].admin, undefined);
-          assert.equal(data[2].admin, undefined);          
+          assert.equal(data[2].admin, undefined);
           // Remove the hook we just added
           service.__afterHooks.find.pop();
           done();
@@ -271,7 +304,7 @@ describe('Bundled feathers hooks', () => {
         service.after({
           get: hooks.pluck('id', 'admin')
         });
-        
+
         service.get(1).then(data => {
           assert.equal(data.name, undefined);
           assert.equal(data.title, undefined);
@@ -280,12 +313,12 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
-      
+
       it('plucks fields from data if it is a before hook', done => {
         service.before({
           create: hooks.pluck('_id', 'id')
         });
-        
+
         service.create({
           _id: 15,
           id: 20,
@@ -298,22 +331,22 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
-      
+
       it('plucks field with a callback', done => {
         const original = {
           id: 10,
           age: 12,
           test: 'David'
         };
-        
+
         service.before({
           create: hooks.pluck('id', 'age', hook => hook.params.pluck)
         });
-        
+
         service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 11;
-          
+
           return service.create(original, { pluck: true });
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 11 });
@@ -322,24 +355,24 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
-      
+
       it('plucks field with callback that returns a Promise', done => {
         const original = {
           id: 23,
           age: 12,
           test: 'David'
         };
-        
+
         service.before({
           create: hooks.pluck('id', 'age', hook => new Promise(resolve => {
             setTimeout(() => resolve(hook.params.pluck), 20);
           }))
         });
-        
+
         service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 24;
-          
+
           return service.create(original, { pluck: true });
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 24 });
@@ -355,7 +388,7 @@ describe('Bundled feathers hooks', () => {
         service.after({
           find: hooks.pluck('id', 'age')
         });
-        
+
         service.find().then(data => {
           assert.equal(data[0].title, 'Old Man');
           assert.equal(data[1].title, 'Genius');

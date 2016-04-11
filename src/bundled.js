@@ -3,7 +3,13 @@ const errors = require('feathers-errors').errors;
 export function lowerCase(... fields) {
   const lowerCaseFields = data => {
     for(let field of fields) {
-      data[field] = data[field].toLowerCase();
+      if(data[field]) {
+        if(typeof data[field] !== 'string') {
+          throw new errors.BadRequest('Expected string');
+        } else {
+          data[field] = data[field].toLowerCase();
+        }
+      }
     }
   };
 
@@ -102,7 +108,7 @@ export function remove(... fields) {
       delete data[field];
     }
   };
-  
+
   const callback = typeof fields[fields.length - 1] === 'function' ?
     fields.pop() : (hook) => !!hook.params.provider;
 
@@ -143,7 +149,7 @@ export function pluck(... fields) {
       }
     }
   };
-  
+
   const callback = typeof fields[fields.length - 1] === 'function' ?
     fields.pop() : (hook) => !!hook.params.provider;
 
