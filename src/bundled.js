@@ -69,10 +69,8 @@ export function removeQuery(... fields) {
 
 export function pluckQuery(... fields) {
   const pluckQueries = data => {
-    // admin, name
     for(let key of Object.keys(data)) {
       if(fields.indexOf(key) === -1) {
-        console.log(key);
         data[key] = undefined;
         delete data[key];
       }
