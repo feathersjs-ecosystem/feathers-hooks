@@ -435,13 +435,13 @@ describe('Bundled feathers hooks', () => {
       });
     });
   });
-  
+
   describe('removeQuery', () => {
     it('Removes fields from query', done => {
       service.before({
         find: hooks.removeQuery('name')
       });
-     
+
       service.find({query: {admin: true, name: 'David'}}).then(data => {
         assert.equal(data.length, 3);
         // Remove the hook we just added
@@ -459,7 +459,7 @@ describe('Bundled feathers hooks', () => {
         assert.equal(e.name, 'GeneralError');
 
         // Remove the hook we just added
-        service.__afterHooks.find.pop();        
+        service.__afterHooks.find.pop();
         done();
       });
     });
@@ -575,6 +575,14 @@ describe('Bundled feathers hooks', () => {
               id, name: `user ${id}`
             });
           }
+        })
+        // using groups service to test array population
+        .use('/groups', {
+          get(id) {
+            return Promise.resolve({
+              id, name: `group ${id}`
+            });
+          }
         });
     });
 
@@ -617,6 +625,28 @@ describe('Bundled feathers hooks', () => {
         });
         service.__afterHooks.create.pop();
         done();
+      }).catch(done);
+    });
+
+    it('populates an array', done => {
+      app.service('todos').after({
+        create: hooks.populate('groups', {
+          service: 'groups'
+        })
+      });
+
+      app.service('todos').create({
+        'text': 'A todo',
+        groups: [12, 13]
+      })
+      .then(todo => {
+          assert.deepEqual(todo, {
+            text: 'A todo',
+            groups: [ { id: 12, name: 'group 12'}, { id: 13, name: 'group 13' }],
+            id: 2
+          });
+          service.__afterHooks.create.pop();
+          done();
       }).catch(done);
     });
   });

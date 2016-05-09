@@ -44,7 +44,7 @@ export function removeQuery(... fields) {
       delete data[field];
     }
   };
-  
+
   const callback = typeof fields[fields.length - 1] === 'function' ?
     fields.pop() : () => true;
 
@@ -52,7 +52,7 @@ export function removeQuery(... fields) {
     if (hook.type === 'after') {
       throw new errors.GeneralError(`Provider '${hook.params.provider}' can not remove query params on after hook.`);
     }
-    const result = hook.params.query; 
+    const result = hook.params.query;
     const next = condition => {
       if(result && condition) {
         removeQueries(result);
@@ -76,7 +76,7 @@ export function pluckQuery(... fields) {
       }
     }
   };
-  
+
   const callback = typeof fields[fields.length - 1] === 'function' ?
     fields.pop() : () => true;
 
@@ -231,14 +231,12 @@ export function populate(target, options) {
       else if (typeof item.toJSON === 'function') {
         item = item.toJSON(options);
       }
-
-      return hook.app.service(options.service)
-        .get(id, hook.params)
-        .then(relatedItem => {
+      // If the relationship is an array of ids, fetch and resolve an object for each, otherwise just fetch the object.
+      const promise = Array.isArray(id) ? Promise.all(id.map(objectID => hook.app.service(options.service).get(objectID, hook.params))) : hook.app.service(options.service).get(id, hook.params);
+      return promise.then(relatedItem => {
           if(relatedItem) {
             item[target] = relatedItem;
           }
-
           return item;
         }).catch(() => item);
     }
