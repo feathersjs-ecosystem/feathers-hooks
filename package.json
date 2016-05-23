@@ -54,7 +54,7 @@
     "feathers-memory": "^0.7.0",
     "feathers-rest": "^1.2.2",
     "jshint": "^2.8.0",
-    "mocha": "^2.3.3",
+    "mocha": "^2.5.0",
     "rimraf": "^2.5.2"
   }
 }
