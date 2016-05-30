@@ -1,0 +1,261 @@
+# Change Log
+
+## [v1.5.4](https://github.com/feathersjs/feathers-hooks/tree/v1.5.4) (2016-05-30)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.3...v1.5.4)
+
+**Closed issues:**
+
+- Throw or log an error for catch block in populate method. [\#80](https://github.com/feathersjs/feathers-hooks/issues/80)
+
+**Merged pull requests:**
+
+- Remove query in populate [\#81](https://github.com/feathersjs/feathers-hooks/pull/81) ([t2t2](https://github.com/t2t2))
+- mocha@2.5.0 breaks build 🚨 [\#78](https://github.com/feathersjs/feathers-hooks/pull/78) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v1.5.3](https://github.com/feathersjs/feathers-hooks/tree/v1.5.3) (2016-05-09)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.2...v1.5.3)
+
+**Closed issues:**
+
+- Populate hook doesn't work with populating arrays [\#74](https://github.com/feathersjs/feathers-hooks/issues/74)
+- hashPassword validation error [\#70](https://github.com/feathersjs/feathers-hooks/issues/70)
+- Remove field hook not working. [\#69](https://github.com/feathersjs/feathers-hooks/issues/69)
+- Remove field and haspassword hooks are not working properly. [\#67](https://github.com/feathersjs/feathers-hooks/issues/67)
+
+**Merged pull requests:**
+
+- Handle array population [\#75](https://github.com/feathersjs/feathers-hooks/pull/75) ([startupthekid](https://github.com/startupthekid))
+- Update babel-plugin-add-module-exports to version 0.2.0 🚀 [\#73](https://github.com/feathersjs/feathers-hooks/pull/73) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Removed garbage [\#71](https://github.com/feathersjs/feathers-hooks/pull/71) ([harangue](https://github.com/harangue))
+
+## [v1.5.2](https://github.com/feathersjs/feathers-hooks/tree/v1.5.2) (2016-04-11)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.1...v1.5.2)
+
+**Fixed bugs:**
+
+- Do not throw an error when a field that is supposed to be lowercased is undefined [\#66](https://github.com/feathersjs/feathers-hooks/pull/66) ([gurisko](https://github.com/gurisko))
+
+**Merged pull requests:**
+
+- Update feathers-memory to version 0.7.0 🚀 [\#65](https://github.com/feathersjs/feathers-hooks/pull/65) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Query bundled hooks [\#59](https://github.com/feathersjs/feathers-hooks/pull/59) ([harangue](https://github.com/harangue))
+
+## [v1.5.1](https://github.com/feathersjs/feathers-hooks/tree/v1.5.1) (2016-03-30)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.0...v1.5.1)
+
+**Closed issues:**
+
+- Header or request information in hooks [\#61](https://github.com/feathersjs/feathers-hooks/issues/61)
+- Create a `populate` hook [\#56](https://github.com/feathersjs/feathers-hooks/issues/56)
+
+**Merged pull requests:**
+
+- adding ability to remove from result.data object [\#64](https://github.com/feathersjs/feathers-hooks/pull/64) ([ekryski](https://github.com/ekryski))
+
+## [v1.5.0](https://github.com/feathersjs/feathers-hooks/tree/v1.5.0) (2016-03-15)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.4.0...v1.5.0)
+
+**Closed issues:**
+
+- Create a "select" or "pluck" hook for serialization [\#50](https://github.com/feathersjs/feathers-hooks/issues/50)
+
+**Merged pull requests:**
+
+- Adding functionality and tests for the populate hook [\#60](https://github.com/feathersjs/feathers-hooks/pull/60) ([daffl](https://github.com/daffl))
+- Add "pluck" bundled hook [\#58](https://github.com/feathersjs/feathers-hooks/pull/58) ([harangue](https://github.com/harangue))
+
+## [v1.4.0](https://github.com/feathersjs/feathers-hooks/tree/v1.4.0) (2016-03-06)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.3.0...v1.4.0)
+
+**Closed issues:**
+
+- The idea for a new hook [\#42](https://github.com/feathersjs/feathers-hooks/issues/42)
+- Make sure hook promises propagate their errors [\#30](https://github.com/feathersjs/feathers-hooks/issues/30)
+- Defining a service hook without an app/before app initialization? [\#25](https://github.com/feathersjs/feathers-hooks/issues/25)
+
+**Merged pull requests:**
+
+- Refactoring hooks to run before event dispatching [\#57](https://github.com/feathersjs/feathers-hooks/pull/57) ([daffl](https://github.com/daffl))
+
+## [v1.3.0](https://github.com/feathersjs/feathers-hooks/tree/v1.3.0) (2016-02-26)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.2.0...v1.3.0)
+
+**Closed issues:**
+
+- Add toLowerCase hook [\#49](https://github.com/feathersjs/feathers-hooks/issues/49)
+
+**Merged pull requests:**
+
+- Params provider [\#55](https://github.com/feathersjs/feathers-hooks/pull/55) ([ekryski](https://github.com/ekryski))
+- add hooks.lowerCase\(\[field\]\) [\#54](https://github.com/feathersjs/feathers-hooks/pull/54) ([kulakowka](https://github.com/kulakowka))
+
+## [v1.2.0](https://github.com/feathersjs/feathers-hooks/tree/v1.2.0) (2016-02-26)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.1.2...v1.2.0)
+
+**Fixed bugs:**
+
+- should be able to bypass remove hook [\#48](https://github.com/feathersjs/feathers-hooks/issues/48)
+
+**Merged pull requests:**
+
+- Alllow to conditionally remove fields [\#51](https://github.com/feathersjs/feathers-hooks/pull/51) ([daffl](https://github.com/daffl))
+
+## [v1.1.2](https://github.com/feathersjs/feathers-hooks/tree/v1.1.2) (2016-02-24)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.1.1...v1.1.2)
+
+**Merged pull requests:**
+
+- Update feathers-errors to version 2.0.1 🚀 [\#47](https://github.com/feathersjs/feathers-hooks/pull/47) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v1.1.1](https://github.com/feathersjs/feathers-hooks/tree/v1.1.1) (2016-02-23)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.1.0...v1.1.1)
+
+**Closed issues:**
+
+- Ability to call the same service from a hook? [\#43](https://github.com/feathersjs/feathers-hooks/issues/43)
+- more request param in hook? [\#40](https://github.com/feathersjs/feathers-hooks/issues/40)
+- hook on non-service apps? [\#39](https://github.com/feathersjs/feathers-hooks/issues/39)
+
+**Merged pull requests:**
+
+- Update feathers-memory to version 0.6.1 🚀 [\#45](https://github.com/feathersjs/feathers-hooks/pull/45) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Update feathers to version 2.0.0 🚀 [\#44](https://github.com/feathersjs/feathers-hooks/pull/44) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- feathers-errors@1.2.2 breaks build 🚨 [\#41](https://github.com/feathersjs/feathers-hooks/pull/41) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v1.1.0](https://github.com/feathersjs/feathers-hooks/tree/v1.1.0) (2016-02-14)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.0.0...v1.1.0)
+
+**Merged pull requests:**
+
+- Allow before hooks to set the result which will skip service method [\#38](https://github.com/feathersjs/feathers-hooks/pull/38) ([daffl](https://github.com/daffl))
+
+## [v1.0.0](https://github.com/feathersjs/feathers-hooks/tree/v1.0.0) (2016-02-13)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.0.0-pre.4...v1.0.0)
+
+**Closed issues:**
+
+- Provide a collection of common hooks [\#31](https://github.com/feathersjs/feathers-hooks/issues/31)
+
+**Merged pull requests:**
+
+- Update feathers-commons to version 0.7.0 🚀 [\#37](https://github.com/feathersjs/feathers-hooks/pull/37) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- updating docs to point to official feathers docs [\#36](https://github.com/feathersjs/feathers-hooks/pull/36) ([ekryski](https://github.com/ekryski))
+- Add docs for `hook.app` [\#35](https://github.com/feathersjs/feathers-hooks/pull/35) ([marshallswain](https://github.com/marshallswain))
+- Added remove and disable common hook [\#33](https://github.com/feathersjs/feathers-hooks/pull/33) ([marshallswain](https://github.com/marshallswain))
+
+## [v1.0.0-pre.4](https://github.com/feathersjs/feathers-hooks/tree/v1.0.0-pre.4) (2016-01-23)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.0.0-pre.3...v1.0.0-pre.4)
+
+## [v1.0.0-pre.3](https://github.com/feathersjs/feathers-hooks/tree/v1.0.0-pre.3) (2016-01-23)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.0.0-pre.2...v1.0.0-pre.3)
+
+**Merged pull requests:**
+
+- Adds the app object at hook.app. [\#34](https://github.com/feathersjs/feathers-hooks/pull/34) ([marshallswain](https://github.com/marshallswain))
+- Update feathers-commons to version 0.6.0 🚀 [\#32](https://github.com/feathersjs/feathers-hooks/pull/32) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v1.0.0-pre.2](https://github.com/feathersjs/feathers-hooks/tree/v1.0.0-pre.2) (2016-01-12)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.0.0-pre.1...v1.0.0-pre.2)
+
+## [v1.0.0-pre.1](https://github.com/feathersjs/feathers-hooks/tree/v1.0.0-pre.1) (2016-01-12)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v0.6.0...v1.0.0-pre.1)
+
+**Closed issues:**
+
+- Should support promises returned from service methods [\#28](https://github.com/feathersjs/feathers-hooks/issues/28)
+
+**Merged pull requests:**
+
+- Refactoring for hooks to use promises and promise chains [\#29](https://github.com/feathersjs/feathers-hooks/pull/29) ([daffl](https://github.com/daffl))
+
+## [v0.6.0](https://github.com/feathersjs/feathers-hooks/tree/v0.6.0) (2016-01-10)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v0.5.1...v0.6.0)
+
+**Fixed bugs:**
+
+- After hooks fail if params was missing on the original service method [\#19](https://github.com/feathersjs/feathers-hooks/issues/19)
+
+**Closed issues:**
+
+- examples not working [\#24](https://github.com/feathersjs/feathers-hooks/issues/24)
+- Unable to modify result object in after hook [\#23](https://github.com/feathersjs/feathers-hooks/issues/23)
+
+**Merged pull requests:**
+
+- Prevent next from being called multiple times [\#27](https://github.com/feathersjs/feathers-hooks/pull/27) ([daffl](https://github.com/daffl))
+- Migrate to ES6 and new plugin infrastructure [\#26](https://github.com/feathersjs/feathers-hooks/pull/26) ([daffl](https://github.com/daffl))
+
+## [v0.5.1](https://github.com/feathersjs/feathers-hooks/tree/v0.5.1) (2015-10-06)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.5.0...v0.5.1)
+
+**Implemented enhancements:**
+
+- Be able to apply hooks to custom service methods [\#9](https://github.com/feathersjs/feathers-hooks/issues/9)
+
+**Merged pull requests:**
+
+- Use feathers-commons hook functionality [\#22](https://github.com/feathersjs/feathers-hooks/pull/22) ([daffl](https://github.com/daffl))
+
+## [0.5.0](https://github.com/feathersjs/feathers-hooks/tree/0.5.0) (2015-02-05)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.4.0...0.5.0)
+
+**Closed issues:**
+
+- feathers-hooks is changing the scope of makeWrapper\(\) [\#17](https://github.com/feathersjs/feathers-hooks/issues/17)
+- Arrays of Hooks are running in reverse order. [\#13](https://github.com/feathersjs/feathers-hooks/issues/13)
+- Remove peer dependency [\#12](https://github.com/feathersjs/feathers-hooks/issues/12)
+- Before all and after all hooks [\#11](https://github.com/feathersjs/feathers-hooks/issues/11)
+- Hooks are always called even if you don't want them to be [\#8](https://github.com/feathersjs/feathers-hooks/issues/8)
+
+**Merged pull requests:**
+
+- Make sure hooks and service methods keep their context [\#18](https://github.com/feathersjs/feathers-hooks/pull/18) ([daffl](https://github.com/daffl))
+- Refactoring to fix hook execution order and all-hooks [\#16](https://github.com/feathersjs/feathers-hooks/pull/16) ([daffl](https://github.com/daffl))
+- Better check for .makeArguments id [\#15](https://github.com/feathersjs/feathers-hooks/pull/15) ([daffl](https://github.com/daffl))
+
+## [0.4.0](https://github.com/feathersjs/feathers-hooks/tree/0.4.0) (2014-07-20)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.3.2...0.4.0)
+
+**Closed issues:**
+
+- multiple hooks / array of hooks [\#2](https://github.com/feathersjs/feathers-hooks/issues/2)
+
+**Merged pull requests:**
+
+- Adding the ability to define multiple hooks in an array. [\#7](https://github.com/feathersjs/feathers-hooks/pull/7) ([ekryski](https://github.com/ekryski))
+
+## [0.3.2](https://github.com/feathersjs/feathers-hooks/tree/0.3.2) (2014-06-18)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.3.1...0.3.2)
+
+**Closed issues:**
+
+- Update repository link on npm [\#5](https://github.com/feathersjs/feathers-hooks/issues/5)
+
+## [0.3.1](https://github.com/feathersjs/feathers-hooks/tree/0.3.1) (2014-06-05)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.3.0...0.3.1)
+
+## [0.3.0](https://github.com/feathersjs/feathers-hooks/tree/0.3.0) (2014-06-05)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.2.0...0.3.0)
+
+**Closed issues:**
+
+- Allow hooks to return a promise [\#3](https://github.com/feathersjs/feathers-hooks/issues/3)
+
+**Merged pull requests:**
+
+- Allow hooks to return a promise [\#4](https://github.com/feathersjs/feathers-hooks/pull/4) ([daffl](https://github.com/daffl))
+
+## [0.2.0](https://github.com/feathersjs/feathers-hooks/tree/0.2.0) (2014-06-02)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.1.1...0.2.0)
+
+**Closed issues:**
+
+- normalize parameters [\#1](https://github.com/feathersjs/feathers-hooks/issues/1)
+
+## [0.1.1](https://github.com/feathersjs/feathers-hooks/tree/0.1.1) (2014-05-29)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.1.0...0.1.1)
+
+## [0.1.0](https://github.com/feathersjs/feathers-hooks/tree/0.1.0) (2014-05-28)
+
+
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
