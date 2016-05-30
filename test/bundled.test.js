@@ -570,7 +570,12 @@ describe('Bundled feathers hooks', () => {
         .configure(hooks())
         .use('/todos', memory())
         .use('/users', {
-          get(id) {
+          get(id, params) {
+            // Check that there's nothing in the query field if it's set as it can mess with some drivers
+            if(params.query && Object.keys(params.query).length) {
+              return Promise.reject(new Error('Query includes fields: ' + Object.keys(params.query).join(', ')));
+            }
+
             return Promise.resolve({
               id, name: `user ${id}`
             });
@@ -647,6 +652,34 @@ describe('Bundled feathers hooks', () => {
           });
           service.__afterHooks.create.pop();
           done();
+      }).catch(done);
+    });
+
+    it('populates queried results', done => {
+      app.service('todos').after({
+        find: hooks.populate('user', {
+          service: 'users',
+          field: 'userId'
+        })
+      });
+
+      app.service('todos').create({
+        text: 'Queried todo',
+        userId: 15
+      }).then(() => {
+        return app.service('todos').find({
+          query: {
+            text: 'Queried todo'
+          }
+        });
+      }).then(todos => {
+        assert.deepEqual(todos, [{
+          text: 'Queried todo',
+          userId: 15,
+          user: { id: 15, name: 'user 15' },
+          id: 3
+        }]);
+        done();
       }).catch(done);
     });
   });
