@@ -99,11 +99,40 @@ export function pluckQuery(... fields) {
   };
 }
 
+function containsField(obj, find) {
+    var args = find.split('.');
+
+  for (var i = 0; i < args.length; i++) {
+    if (!obj || !obj.hasOwnProperty(args[i])) {
+      return false;
+    }
+    obj = obj[args[i]];
+  }
+  return true;
+}
+
+function removeField(obj, find) {
+    var args = find.split('.');
+
+  for (var i = 0; i < args.length; i++) {
+    if (!obj || !obj.hasOwnProperty(args[i])) {
+      return false;
+    }
+    if(i === (args.length - 1)) {
+        obj[args[i]] = undefined;
+        delete obj[args[i]];
+        return true;
+    }
+    obj = obj[args[i]];
+  }
+}
+
 export function remove(... fields) {
   const removeFields = data => {
     for(let field of fields) {
-      data[field] = undefined;
-      delete data[field];
+      if(containsField(data, field)) {
+          removeField(data, field);
+      }
     }
   };
 

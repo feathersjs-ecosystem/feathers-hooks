@@ -21,9 +21,9 @@ const service = app.service('/todos');
 describe('Bundled feathers hooks', () => {
   beforeEach(done => {
     service.create([
-      {id: 1, name: 'Marshall', title: 'Old Man', admin: true},
-      {id: 2, name: 'David', title: 'Genius', admin: true},
-      {id: 3, name: 'Eric', title: 'Badass', admin: true}
+      {id: 1, name: 'Marshall', title: 'Old Man', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
+      {id: 2, name: 'David', title: 'Genius', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
+      {id: 3, name: 'Eric', title: 'Badass', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
     ]).then(() => done());
   });
 
@@ -243,6 +243,23 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
+
+      it('Removes nested fields from result.data object', done => {
+        service.after({
+          get: [
+            hooks.remove('updatedBy.roles')
+          ]
+        });
+
+        service.get(1).then(result => {
+          assert.equal(result.data.updatedBy.roles, undefined);
+          assert.equal(result.data.updatedBy.email, 'admin@feathersjs.com');
+          // Remove the hooks we just added
+          service.__afterHooks.find.pop();
+          service.__afterHooks.find.pop();
+          done();
+        }).catch(done);
+      });
     });
 
     describe('without params.provider set', () => {
@@ -413,7 +430,8 @@ describe('Bundled feathers hooks', () => {
           id: 2,
           name: 'David',
           title: 'Genius',
-          admin: true
+          admin: true,
+          updatedBy : { email : 'admin@feathersjs.com', roles : ['admin']}
         });
         // Remove the hook we just added
         service.__beforeHooks.find.pop();
