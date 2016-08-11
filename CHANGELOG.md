@@ -1,5 +1,17 @@
 # Change Log
 
+## [v1.5.5](https://github.com/feathersjs/feathers-hooks/tree/v1.5.5) (2016-08-11)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.4...v1.5.5)
+
+**Closed issues:**
+
+- Multi populate with client control of which fields to populate [\#85](https://github.com/feathersjs/feathers-hooks/issues/85)
+
+**Merged pull requests:**
+
+- Update mocha to version 3.0.0 🚀 [\#86](https://github.com/feathersjs/feathers-hooks/pull/86) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Add ability to delete deeply nested attributes in bundled hooks [\#84](https://github.com/feathersjs/feathers-hooks/pull/84) ([ryuken](https://github.com/ryuken))
+
 ## [v1.5.4](https://github.com/feathersjs/feathers-hooks/tree/v1.5.4) (2016-05-30)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.3...v1.5.4)
 
