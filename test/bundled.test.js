@@ -127,7 +127,7 @@ describe('Bundled feathers hooks', () => {
         service.__beforeHooks.create.pop();
       });
 
-      it('Removes fields from objects in arrays', done => {
+      it('removes fields from objects in arrays', done => {
         service.after({
           find: hooks.remove('title')
         });
@@ -142,7 +142,7 @@ describe('Bundled feathers hooks', () => {
         }).catch(done);
       });
 
-      it('Removes multiple fields from single objects', done => {
+      it('removes multiple fields from single objects', done => {
         service.after({
           get: hooks.remove('admin', 'title')
         });
@@ -156,7 +156,7 @@ describe('Bundled feathers hooks', () => {
         }).catch(done);
       });
 
-      it('Removes fields from result.data object', done => {
+      it('removes fields from result.data object', done => {
         service.after({
           get: [
             function(hook) {
@@ -171,8 +171,8 @@ describe('Bundled feathers hooks', () => {
         service.get(1).then(result => {
           assert.equal(result.data.title, undefined);
           // Remove the hooks we just added
-          service.__afterHooks.find.pop();
-          service.__afterHooks.find.pop();
+          service.__afterHooks.get.pop();
+          service.__afterHooks.get.pop();
           done();
         }).catch(done);
       });
@@ -244,19 +244,18 @@ describe('Bundled feathers hooks', () => {
         }).catch(done);
       });
 
-      it('Removes nested fields from result.data object', done => {
+      it('removes nested fields from result.data object', done => {
         service.after({
           get: [
             hooks.remove('updatedBy.roles')
           ]
         });
 
-        service.get(1).then(result => {
-          assert.equal(result.data.updatedBy.roles, undefined);
-          assert.equal(result.data.updatedBy.email, 'admin@feathersjs.com');
+        service.get(1).then(data => {
+          assert.equal(data.updatedBy.roles, undefined);
+          assert.equal(data.updatedBy.email, 'admin@feathersjs.com');
           // Remove the hooks we just added
-          service.__afterHooks.find.pop();
-          service.__afterHooks.find.pop();
+          service.__afterHooks.get.pop();
           done();
         }).catch(done);
       });
@@ -697,6 +696,7 @@ describe('Bundled feathers hooks', () => {
           user: { id: 15, name: 'user 15' },
           id: 3
         }]);
+        service.__afterHooks.find.pop();
         done();
       }).catch(done);
     });
