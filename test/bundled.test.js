@@ -259,6 +259,28 @@ describe('Bundled feathers hooks', () => {
           done();
         }).catch(done);
       });
+
+      it('removes inherited fields from inherited object', done => {
+        // Temporarily change memory data to be an inherited object
+        const backup = service.store[1];
+        const child = Object.create(service.store[1]);
+        service.store[1] = child;
+
+        service.after({
+          get: hooks.remove('name')
+        });
+
+        service.get(1).then(data => {
+          assert.equal(data.id, 1);
+          assert.equal(data.title, 'Old Man');
+          assert.equal(data.name, undefined);
+          // Remove the hook we just added
+          service.__afterHooks.get.pop();
+          // Restore memory data
+          service.store[1] = backup;
+          done();
+        }).catch(done);
+      });
     });
 
     describe('without params.provider set', () => {
