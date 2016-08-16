@@ -1,5 +1,18 @@
 # Change Log
 
+## [v1.5.6](https://github.com/feathersjs/feathers-hooks/tree/v1.5.6) (2016-08-16)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.5...v1.5.6)
+
+**Closed issues:**
+
+- Hooks cannot remove inherited properties [\#89](https://github.com/feathersjs/feathers-hooks/issues/89)
+- Pop wrong hooks in bundled.test [\#87](https://github.com/feathersjs/feathers-hooks/issues/87)
+
+**Merged pull requests:**
+
+- Fix \#89 Hooks cannot remove inherited properties [\#90](https://github.com/feathersjs/feathers-hooks/pull/90) ([supasate](https://github.com/supasate))
+- Fix \#87 pop wrong hooks in bundled test [\#88](https://github.com/feathersjs/feathers-hooks/pull/88) ([supasate](https://github.com/supasate))
+
 ## [v1.5.5](https://github.com/feathersjs/feathers-hooks/tree/v1.5.5) (2016-08-11)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.4...v1.5.5)
 
