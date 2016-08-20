@@ -1,5 +1,18 @@
 # Change Log
 
+## [v1.5.7](https://github.com/feathersjs/feathers-hooks/tree/v1.5.7) (2016-08-20)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.6...v1.5.7)
+
+**Closed issues:**
+
+- Customize existing hook - 'this' undefined - TypeError [\#94](https://github.com/feathersjs/feathers-hooks/issues/94)
+- c [\#93](https://github.com/feathersjs/feathers-hooks/issues/93)
+- Remove-hook breaks feathers-mongoose [\#91](https://github.com/feathersjs/feathers-hooks/issues/91)
+
+**Merged pull requests:**
+
+- Fix removing fields from feathers-mongoose [\#92](https://github.com/feathersjs/feathers-hooks/pull/92) ([supasate](https://github.com/supasate))
+
 ## [v1.5.6](https://github.com/feathersjs/feathers-hooks/tree/v1.5.6) (2016-08-16)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.5...v1.5.6)
 
