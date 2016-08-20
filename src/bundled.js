@@ -99,32 +99,16 @@ export function pluckQuery(... fields) {
   };
 }
 
-function findFieldOwner(obj, field) {
-  const nestedFields = field.split('.');
-
-  for (let i = 0; obj && i < nestedFields.length; i++) {
-    // Search prototype chain for direct property owner
-    // obj will be null if it cannot find owner
-    while (obj && !obj.hasOwnProperty(nestedFields[i])) {
-      obj = Object.getPrototypeOf(obj);
-    }
-
-    if (obj && i !== nestedFields.length - 1) {
-      //  Move to the next nested field
-      obj = obj[nestedFields[i]];
-    }
-  }
-  return obj;
-}
-
 function removeField(obj, field) {
-  const owner = findFieldOwner(obj, field);
+  const nestedFields = field.split('.');
+  const lastField = nestedFields[nestedFields.length - 1];
 
-  if (owner) {
-    const lastField = field.split('.').pop();
-
-    owner[lastField] = undefined;
-    delete owner[lastField];
+  for (let i = 0; obj && i < nestedFields.length - 1; i++) {
+    obj = obj[nestedFields[i]];
+  }
+  if (obj) {
+    obj[lastField] = undefined;
+    delete obj[lastField];
   }
 }
 
@@ -139,7 +123,25 @@ export function remove(... fields) {
     fields.pop() : (hook) => !!hook.params.provider;
 
   return function(hook) {
-    const result = hook.type === 'before' ? hook.data : hook.result;
+    let result = hook.type === 'before' ? hook.data : hook.result;
+
+    // Convert Mongoose or Sequelize object into plain JavaScript object
+    if (Array.isArray(result)) {
+      result.forEach((element, index, result) => {
+        if (typeof element.toObject === 'function') {
+          result[index] = element.toObject();
+        } else if (typeof element.toJSON === 'function') {
+          result[index] = element.toJSON();
+        }
+      });
+    } else {
+      if (typeof result.toObject === 'function') {
+        result = result.toObject();
+      } else if (typeof result.toJSON === 'function') {
+        result = result.toJSON();
+      }
+    }
+
     const next = condition => {
       if (result && condition) {
         if (Array.isArray(result)) {
@@ -156,6 +158,13 @@ export function remove(... fields) {
           }
         }
       }
+
+      if (hook.type === 'before') {
+        hook.data = result;
+      } else {
+        hook.result = result;
+      }
+
       return hook;
     };
 
