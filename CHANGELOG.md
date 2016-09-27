@@ -1,5 +1,17 @@
 # Change Log
 
+## [v1.5.8](https://github.com/feathersjs/feathers-hooks/tree/v1.5.8) (2016-09-27)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.7...v1.5.8)
+
+**Closed issues:**
+
+- Sanitation hooks for each db type [\#62](https://github.com/feathersjs/feathers-hooks/issues/62)
+
+**Merged pull requests:**
+
+- Fix/nullable result [\#101](https://github.com/feathersjs/feathers-hooks/pull/101) ([kaiquewdev](https://github.com/kaiquewdev))
+- Update feathers-memory to version 0.8.0 🚀 [\#97](https://github.com/feathersjs/feathers-hooks/pull/97) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
 ## [v1.5.7](https://github.com/feathersjs/feathers-hooks/tree/v1.5.7) (2016-08-20)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.6...v1.5.7)
 
