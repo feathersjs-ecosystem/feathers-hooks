@@ -134,7 +134,7 @@ export function remove(... fields) {
           result[index] = element.toJSON();
         }
       });
-    } else {
+    } else if (result) {
       if (typeof result.toObject === 'function') {
         result = result.toObject();
       } else if (typeof result.toJSON === 'function') {

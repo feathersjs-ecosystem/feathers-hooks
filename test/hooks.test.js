@@ -43,7 +43,7 @@ describe('feathers-hooks', () => {
       done();
     });
   });
-  
+
   it('dispatches events with data modified by hook', done => {
     const app = feathers().configure(hooks()).use('/dummy', {
       create(data) {
@@ -62,7 +62,7 @@ describe('feathers-hooks', () => {
         hook.result.after = true;
       }
     });
-    
+
     service.once('created', function(data) {
       try {
         assert.deepEqual(data, {
@@ -75,7 +75,32 @@ describe('feathers-hooks', () => {
         done(e);
       }
     });
-    
+
     service.create({ test: true });
+  });
+
+  it('does not error when result is null', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get(id, params, callback) {
+        callback(null, { id });
+      }
+    });
+
+    const service = app.service('dummy');
+
+    service.after({
+      get: [
+        function(hook) {
+          hook.result = null;
+          return hook;
+        },
+        hooks.remove('title')
+      ]
+    });
+
+    service.get(1).then(result => {
+      assert.equal(result, null);
+      done();
+    }).catch(done);
   });
 });
