@@ -5,7 +5,7 @@ import hooks from '../src/hooks';
 
 describe('.before hooks', () => {
   describe('function([hook])', () => {
-    it('returning a non-hook object throws error', done => {
+    it('returning a non-hook object throws error', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id) {
           return Promise.resolve({ id });
@@ -19,13 +19,12 @@ describe('.before hooks', () => {
       });
       const service = app.service('dummy');
 
-      service.get(10).catch(e => {
+      return service.get(10).catch(e => {
         assert.equal(e.message, 'before hook for \'get\' method returned invalid hook object');
-        done();
       });
     });
 
-    it('hooks in chain can be replaced', done => {
+    it('hooks in chain can be replaced', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id) {
           return Promise.resolve({
@@ -47,10 +46,10 @@ describe('.before hooks', () => {
         ]
       });
 
-      service.get('laundry').then(() => done());
+      return service.get('laundry');
     });
 
-    it('.before hooks can return a promise', done => {
+    it('.before hooks can return a promise', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id, params) {
           assert.ok(params.ran, 'Ran through promise hook');
@@ -81,15 +80,13 @@ describe('.before hooks', () => {
         }
       });
 
-      service.get('dishes', {}, () => {
-        service.remove(10).catch(error => {
+      return service.get('dishes').then(() => service.remove(10))
+        .catch(error => {
           assert.equal(error.message, 'This did not work');
-          done();
         });
-      });
     });
 
-    it('.before hooks do not need to return anything', done => {
+    it('.before hooks do not need to return anything', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id, params) {
           assert.ok(params.ran, 'Ran through promise hook');
@@ -115,15 +112,13 @@ describe('.before hooks', () => {
         }
       });
 
-      service.get('dishes').then(() => {
-        service.remove(10).catch(error => {
+      return service.get('dishes').then(() => service.remove(10))
+        .catch(error => {
           assert.equal(error.message, 'This did not work');
-          done();
         });
-      });
     });
-    
-    it('.before hooks can set hook.result which will skip service method', done => {
+
+    it('.before hooks can set hook.result which will skip service method', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id) {
           assert.ok(false, 'This should never run');
@@ -142,13 +137,12 @@ describe('.before hooks', () => {
         }
       });
 
-      service.get(10, {}).then(data => {
+      return service.get(10, {}).then(data => {
         assert.deepEqual(data, {
           id: 10,
           message: 'Set from hook'
         });
-        done();
-      }).catch(done);
+      });
     });
   });
 
@@ -458,7 +452,7 @@ describe('.before hooks', () => {
       });
     });
 
-    it('calling next() multiple times does not do anything', done => {
+    it('calling next() multiple times does not do anything', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id, params, callback) {
           callback(null, { id });
@@ -480,9 +474,8 @@ describe('.before hooks', () => {
         ]
       });
 
-      service.get(10).then(data => {
+      return service.get(10).then(data => {
         assert.deepEqual(data, { id: 10 });
-        done();
       });
     });
   });

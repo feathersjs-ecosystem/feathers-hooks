@@ -48,13 +48,15 @@ export function processHooks(hooks, initialHookObject) {
 }
 
 export function addHookMethod(service, type, methods) {
-  const prop = `__${type}Hooks`;
+  if(!service.__hooks) {
+    service.__hooks = {};
+  }
 
   // Initialize properties where hook functions are stored
-  service[prop] = {};
+  service.__hooks[type] = {};
   methods.forEach(method => {
     if(typeof service[method] === 'function') {
-      service[prop][method] = [];
+      service.__hooks[type][method] = [];
     }
   });
 
@@ -68,7 +70,7 @@ export function addHookMethod(service, type, methods) {
           return;
         }
 
-        const myHooks = this[prop][method];
+        const myHooks = this.__hooks[type][method];
 
         if(hooks.all) {
           myHooks.push.apply(myHooks, hooks.all);

@@ -2,7 +2,7 @@ import assert from 'assert';
 import feathers from 'feathers';
 import rest from 'feathers-rest';
 import memory from 'feathers-memory';
-import {errors} from 'feathers-errors';
+import { errors } from 'feathers-errors';
 import mongoose from 'mongoose';
 import mongooseService from 'feathers-mongoose';
 import hooks from '../src/hooks';
@@ -21,12 +21,12 @@ const app = feathers()
 const service = app.service('/todos');
 
 describe('Bundled feathers hooks', () => {
-  beforeEach(done => {
-    service.create([
+  beforeEach(() => {
+    return service.create([
       {id: 1, name: 'Marshall', title: 'Old Man', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
       {id: 2, name: 'David', title: 'Genius', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
       {id: 3, name: 'Eric', title: 'Badass', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
-    ]).then(() => done());
+    ]);
   });
 
   afterEach(done => {
@@ -34,60 +34,56 @@ describe('Bundled feathers hooks', () => {
   });
 
   describe('lowerCase', () => {
-    it('transforms to lower case fields from objects in arrays', done => {
+    it('transforms to lower case fields from objects in arrays', () => {
       service.after({
         find: hooks.lowerCase('name')
       });
 
-      service.find().then(data => {
+      return service.find().then(data => {
         assert.equal(data[0].name, 'marshall');
         assert.equal(data[1].name, 'david');
         assert.equal(data[2].name, 'eric');
         // Remove the hook we just added
-        service.__afterHooks.find.pop();
-        done();
-      }).catch(done);
+        service.__hooks.after.find.pop();
+      });
     });
 
-    it('transforms to lower case fields from single objects', done => {
+    it('transforms to lower case fields from single objects', () => {
       service.after({
         get: hooks.lowerCase('name')
       });
 
-      service.get(1).then(data => {
+      return service.get(1).then(data => {
         assert.equal(data.name, 'marshall');
         // Remove the hook we just added
-        service.__afterHooks.get.pop();
-        done();
-      }).catch(done);
+        service.__hooks.after.get.pop();
+      });
     });
 
-    it('transforms to lower case fields from data if it is a before hook', done => {
+    it('transforms to lower case fields from data if it is a before hook', () => {
       service.before({
         create: hooks.lowerCase('name')
       });
 
-      service.create({
+      return service.create({
         id: 4,
         name: 'David'
       }).then(data => {
         assert.equal(data.name, 'david');
         assert.equal(data.id, 4);
         // Remove the hook we just added
-        service.__beforeHooks.create.pop();
-        done();
-      }).catch(done);
+        service.__hooks.before.create.pop();
+      });
     });
 
-    it('transforms to lower case only string fields', done => {
+    it('transforms to lower case only string fields', () => {
       service.after({
         get: hooks.lowerCase('admin')
       });
 
-      service.get(1).catch(data => {
+      return service.get(1).catch(data => {
         assert.ok(data instanceof errors.BadRequest);
-        service.__afterHooks.get.pop();
-        done();
+        service.__hooks.after.get.pop();
       });
     });
 
@@ -103,7 +99,7 @@ describe('Bundled feathers hooks', () => {
           }).then(data => {
             assert.equal(data.title, 'Wizard');
             // Remove the hook we just added
-            service.__beforeHooks.patch.pop();
+            service.__hooks.before.patch.pop();
             done();
           }).catch(done);
         },
@@ -124,41 +120,39 @@ describe('Bundled feathers hooks', () => {
 
       after(() => {
         // remove our before hooks
-        service.__beforeHooks.find.pop();
-        service.__beforeHooks.get.pop();
-        service.__beforeHooks.create.pop();
+        service.__hooks.before.find.pop();
+        service.__hooks.before.get.pop();
+        service.__hooks.before.create.pop();
       });
 
-      it('removes fields from objects in arrays', done => {
+      it('removes fields from objects in arrays', () => {
         service.after({
           find: hooks.remove('title')
         });
 
-        service.find().then(data => {
+        return service.find().then(data => {
           assert.equal(data[0].title, undefined);
           assert.equal(data[1].title, undefined);
           assert.equal(data[2].title, undefined);
           // Remove the hook we just added
-          service.__afterHooks.find.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.find.pop();
+        });
       });
 
-      it('removes multiple fields from single objects', done => {
+      it('removes multiple fields from single objects', () => {
         service.after({
           get: hooks.remove('admin', 'title')
         });
 
-        service.get(1).then(data => {
+        return service.get(1).then(data => {
           assert.equal(data.admin, undefined);
           assert.equal(data.title, undefined);
           // Remove the hook we just added
-          service.__afterHooks.get.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.get.pop();
+        });
       });
 
-      it('removes fields from result.data object', done => {
+      it('removes fields from result.data object', () => {
         service.after({
           get: [
             function(hook) {
@@ -173,30 +167,28 @@ describe('Bundled feathers hooks', () => {
         service.get(1).then(result => {
           assert.equal(result.data.title, undefined);
           // Remove the hooks we just added
-          service.__afterHooks.get.pop();
-          service.__afterHooks.get.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.get.pop();
+          service.__hooks.after.get.pop();
+        });
       });
 
-      it('removes fields from data if it is a before hook', done => {
+      it('removes fields from data if it is a before hook', () => {
         service.before({
           create: hooks.remove('_id')
         });
 
-        service.create({
+        return service.create({
           _id: 10,
           name: 'David'
         }).then(data => {
           assert.equal(data.name, 'David');
           assert.equal(data._id, undefined);
           // Remove the hook we just added
-          service.__beforeHooks.create.pop();
-          done();
-        }).catch(done);
+          service.__hooks.before.create.pop();
+        });
       });
 
-      it('removes field with a callback', done => {
+      it('removes field with a callback', () => {
         const original = {
           id: 10,
           age: 12,
@@ -207,7 +199,7 @@ describe('Bundled feathers hooks', () => {
           create: hooks.remove('test', hook => hook.params.remove)
         });
 
-        service.create(original).then(data => {
+        return service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 11;
 
@@ -215,12 +207,11 @@ describe('Bundled feathers hooks', () => {
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 11 });
           // Remove the hook we just added
-          service.__beforeHooks.create.pop();
-          done();
-        }).catch(done);
+          service.__hooks.before.create.pop();
+        });
       });
 
-      it('removes field with callback that returns a Promise', done => {
+      it('removes field with callback that returns a Promise', () => {
         const original = {
           id: 23,
           age: 12,
@@ -233,7 +224,7 @@ describe('Bundled feathers hooks', () => {
           }))
         });
 
-        service.create(original).then(data => {
+        return service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 24;
 
@@ -241,33 +232,31 @@ describe('Bundled feathers hooks', () => {
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 24 });
           // Remove the hook we just added
-          service.__beforeHooks.create.pop();
-          done();
-        }).catch(done);
+          service.__hooks.before.create.pop();
+        });
       });
 
-      it('removes nested fields from result.data object', done => {
+      it('removes nested fields from result.data object', () => {
         service.after({
           get: [
             hooks.remove('updatedBy.roles')
           ]
         });
 
-        service.get(1).then(data => {
+        return service.get(1).then(data => {
           assert.equal(data.updatedBy.roles, undefined);
           assert.equal(data.updatedBy.email, 'admin@feathersjs.com');
           // Remove the hooks we just added
-          service.__afterHooks.get.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.get.pop();
+        });
       });
 
       describe('with mongoose', () => {
         let DemoUserModel;
         let usersService;
 
-        before(done => {
-          mongoose.connect('mongodb://mongodb:27017/feathes-hooks-dev');
+        before(() => {
+          mongoose.connect('mongodb://localhost:27017/feathes-hooks-dev');
           mongoose.Promise = Promise;
 
           const Schema = mongoose.Schema;
@@ -286,50 +275,47 @@ describe('Bundled feathers hooks', () => {
             get: addProvider(),
             create: addProvider()
           });
-          done();
         });
 
-        beforeEach(done => {
-          DemoUserModel.insertMany([
-            {id: 1, name: 'Marshall', email: 'admin@feathersjs.com', password: '1337'},
-            {id: 2, name: 'David', email : 'admin@feathersjs.com', password: '1337' },
-            {id: 3, name: 'Eric', email : 'admin@feathersjs.com', password: '1337' }
-          ]).then(() => done());
-        });
+        beforeEach(() => DemoUserModel.insertMany([
+          {id: 1, name: 'Marshall', email: 'admin@feathersjs.com', password: '1337'},
+          {id: 2, name: 'David', email : 'admin@feathersjs.com', password: '1337' },
+          {id: 3, name: 'Eric', email : 'admin@feathersjs.com', password: '1337' }
+        ]));
 
         afterEach(done => {
           DemoUserModel.remove({}).then(() => done());
         });
 
         after(done => {
-          usersService.__beforeHooks.find.pop();
-          usersService.__beforeHooks.get.pop();
-          usersService.__beforeHooks.create.pop();
+          usersService.__hooks.before.find.pop();
+          usersService.__hooks.before.get.pop();
+          usersService.__hooks.before.create.pop();
           mongoose.connection.close();
           done();
         });
 
-        it('removes fields from single mongoose object', done => {
+        it('removes fields from single mongoose object', () => {
           usersService.after({
             get: [hooks.remove('email', 'password')]
           });
 
-          usersService.get(1).then(data => {
+          return usersService.get(1).then(data => {
             assert.equal(data.id, 1);
             assert.equal(data.name, 'Marshall');
             assert.equal(data.email, undefined);
             assert.equal(data.password, undefined);
 
-            usersService.__afterHooks.get.pop();
-            done();
-          }).catch(done);
+            usersService.__hooks.after.get.pop();
+          });
         });
 
-        it('removes fields from mongoose objects in array', done => {
+        it('removes fields from mongoose objects in array', () => {
           usersService.after({
             find: [hooks.remove('email', 'password')]
           });
-          usersService.find().then(data => {
+
+          return usersService.find().then(data => {
             assert.equal(data[0].id, 1);
             assert.equal(data[0].name, 'Marshall');
             assert.equal(data[0].email, undefined);
@@ -345,28 +331,25 @@ describe('Bundled feathers hooks', () => {
             assert.equal(data[2].email, undefined);
             assert.equal(data[2].password, undefined);
 
-            usersService.__afterHooks.find.pop();
-            done();
-          })
-          .catch(done);
+            usersService.__hooks.after.find.pop();
+          });
         });
       });
     });
 
     describe('without params.provider set', () => {
-      it('does not remove fields', done => {
+      it('does not remove fields', () => {
         service.after({
           find: hooks.remove('title')
         });
 
-        service.find().then(data => {
+        return service.find().then(data => {
           assert.equal(data[0].title, 'Old Man');
           assert.equal(data[1].title, 'Genius');
           assert.equal(data[2].title, 'Badass');
           // Remove the hook we just added
-          service.__afterHooks.find.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.find.pop();
+        });
       });
     });
   });
@@ -383,19 +366,19 @@ describe('Bundled feathers hooks', () => {
 
       after(() => {
         // remove our before hooks
-        service.__beforeHooks.find.pop();
-        service.__beforeHooks.get.pop();
-        service.__beforeHooks.create.pop();
+        service.__hooks.before.find.pop();
+        service.__hooks.before.get.pop();
+        service.__hooks.before.create.pop();
       });
       // {id: 1, name: 'Marshall', title: 'Old Man', admin: true},
       // {id: 2, name: 'David', title: 'Genius', admin: true},
       // {id: 3, name: 'Eric', title: 'Badass', admin: true}
-      it('plucks fields from objects in arrays', done => {
+      it('plucks fields from objects in arrays', () => {
         service.after({
           find: hooks.pluck('id', 'title')
         });
 
-        service.find().then(data => {
+        return service.find().then(data => {
           assert.equal(data[0].name, undefined);
           assert.equal(data[1].name, undefined);
           assert.equal(data[2].name, undefined);
@@ -403,31 +386,29 @@ describe('Bundled feathers hooks', () => {
           assert.equal(data[1].admin, undefined);
           assert.equal(data[2].admin, undefined);
           // Remove the hook we just added
-          service.__afterHooks.find.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.find.pop();
+        });
       });
 
-      it('plucks multiple fields from single objects', done => {
+      it('plucks multiple fields from single objects', () => {
         service.after({
           get: hooks.pluck('id', 'admin')
         });
 
-        service.get(1).then(data => {
+        return service.get(1).then(data => {
           assert.equal(data.name, undefined);
           assert.equal(data.title, undefined);
           // Remove the hook we just added
-          service.__afterHooks.get.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.get.pop();
+        });
       });
 
-      it('plucks fields from data if it is a before hook', done => {
+      it('plucks fields from data if it is a before hook', () => {
         service.before({
           create: hooks.pluck('_id', 'id')
         });
 
-        service.create({
+        return service.create({
           _id: 15,
           id: 20,
           name: 'David'
@@ -435,12 +416,11 @@ describe('Bundled feathers hooks', () => {
           assert.equal(data._id, 15);
           assert.equal(data.name, undefined);
           // Remove the hook we just added
-          service.__beforeHooks.create.pop();
-          done();
-        }).catch(done);
+          service.__hooks.before.create.pop();
+        });
       });
 
-      it('plucks field with a callback', done => {
+      it('plucks field with a callback', () => {
         const original = {
           id: 10,
           age: 12,
@@ -451,7 +431,7 @@ describe('Bundled feathers hooks', () => {
           create: hooks.pluck('id', 'age', hook => hook.params.pluck)
         });
 
-        service.create(original).then(data => {
+        return service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 11;
 
@@ -459,12 +439,11 @@ describe('Bundled feathers hooks', () => {
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 11 });
           // Remove the hook we just added
-          service.__beforeHooks.create.pop();
-          done();
-        }).catch(done);
+          service.__hooks.before.create.pop();
+        });
       });
 
-      it('plucks field with callback that returns a Promise', done => {
+      it('plucks field with callback that returns a Promise', () => {
         const original = {
           id: 23,
           age: 12,
@@ -477,7 +456,7 @@ describe('Bundled feathers hooks', () => {
           }))
         });
 
-        service.create(original).then(data => {
+        return service.create(original).then(data => {
           assert.deepEqual(data, original);
           original.id = 24;
 
@@ -485,153 +464,148 @@ describe('Bundled feathers hooks', () => {
         }).then(data => {
           assert.deepEqual(data, { age: 12, id: 24 });
           // Remove the hook we just added
-          service.__beforeHooks.create.pop();
-          done();
-        }).catch(done);
+          service.__hooks.before.create.pop();
+        });
       });
     });
 
     describe('without params.provider set', () => {
-      it('does not pluck fields', done => {
+      it('does not pluck fields', () => {
         service.after({
           find: hooks.pluck('id', 'age')
         });
 
-        service.find().then(data => {
+        return service.find().then(data => {
           assert.equal(data[0].title, 'Old Man');
           assert.equal(data[1].title, 'Genius');
           assert.equal(data[2].title, 'Badass');
           // Remove the hook we just added
-          service.__afterHooks.find.pop();
-          done();
-        }).catch(done);
+          service.__hooks.after.find.pop();
+        });
       });
     });
   });
 
   describe('pluckQuery', () => {
-    it('Plucks fields from query', done => {
+    it('Plucks fields from query', () => {
       service.before({
         find: hooks.pluckQuery('name', 'id')
       });
 
-      service.find({query: {admin: false, name: 'David'}}).then(data => {
-        assert.equal(data.length, 1);
-        assert.deepEqual(data[0], {
-          id: 2,
-          name: 'David',
-          title: 'Genius',
-          admin: true,
-          updatedBy : { email : 'admin@feathersjs.com', roles : ['admin']}
+      return service.find({ query: {admin: false, name: 'David' } })
+        .then(data => {
+          assert.equal(data.length, 1);
+          assert.deepEqual(data[0], {
+            id: 2,
+            name: 'David',
+            title: 'Genius',
+            admin: true,
+            updatedBy : { email : 'admin@feathersjs.com', roles : ['admin']}
+          });
+          // Remove the hook we just added
+          service.__hooks.before.find.pop();
         });
-        // Remove the hook we just added
-        service.__beforeHooks.find.pop();
-        done();
-      }).catch(done);
     });
 
-    it('Throws error if placed in after', done => {
+    it('Throws error if placed in after', () => {
       service.after({
         find: hooks.pluckQuery('admin', 'title')
       });
 
-      service.find({query: {admin: true, name: 'David'}}).then(done).catch(e => {
+      return service.find({
+        query: { admin: true, name: 'David' }
+      }).catch(e => {
         assert.equal(e.name, 'GeneralError');
 
         // Remove the hook we just added
-        service.__afterHooks.find.pop();
-        done();
+        service.__hooks.after.find.pop();
       });
     });
   });
 
   describe('removeQuery', () => {
-    it('Removes fields from query', done => {
+    it('Removes fields from query', () => {
       service.before({
         find: hooks.removeQuery('name')
       });
 
-      service.find({query: {admin: true, name: 'David'}}).then(data => {
-        assert.equal(data.length, 3);
-        // Remove the hook we just added
-        service.__beforeHooks.find.pop();
-        done();
-      }).catch(done);
+      return service.find({query: {admin: true, name: 'David'}})
+        .then(data => {
+          assert.equal(data.length, 3);
+          // Remove the hook we just added
+          service.__hooks.before.find.pop();
+        });
     });
 
-    it('Throws error if placed in after', done => {
+    it('Throws error if placed in after', () => {
       service.after({
         find: hooks.removeQuery('admin', 'title')
       });
 
-      service.find({query: {admin: true, name: 'David'}}).then(done).catch(e => {
-        assert.equal(e.name, 'GeneralError');
+      return service.find({query: {admin: true, name: 'David'}})
+        .catch(e => {
+          assert.equal(e.name, 'GeneralError');
 
-        // Remove the hook we just added
-        service.__afterHooks.find.pop();
-        done();
-      });
+          // Remove the hook we just added
+          service.__hooks.after.find.pop();
+        });
     });
   });
 
   describe('disable', () => {
-    it('disables completely', done => {
+    it('disables completely', () => {
       service.before({
         remove: hooks.disable()
       });
 
-      service.remove().catch(e => {
+      return service.remove().catch(e => {
         assert.equal(e.message, `Calling 'remove' not allowed.`);
         // Remove the hook we just tested
-        service.__beforeHooks.remove.pop();
-        done();
-      }).catch(done);
+        service.__hooks.before.remove.pop();
+      });
     });
 
-    it('disables provider for external', done => {
+    it('disables provider for external', () => {
       service.before({
         remove: hooks.disable('external')
       });
 
-      service.remove(0, { provider: 'test' }).catch(e => {
+      return service.remove(0, { provider: 'test' }).catch(e => {
         assert.equal(e.message, `Provider 'test' can not call 'remove'`);
         // Remove the hook we just tested
-        service.__beforeHooks.remove.pop();
-        done();
-      }).catch(done);
+        service.__hooks.before.remove.pop();
+      });
     });
 
-    it('disables for a specific provider', done => {
+    it('disables for a specific provider', () => {
       service.before({
         remove: hooks.disable('testing')
       });
 
-      service.remove(0, { provider: 'testing' }).catch(e => {
+      return service.remove(0, { provider: 'testing' }).catch(e => {
         assert.equal(e.message, `Provider 'testing' can not call 'remove'`);
         // Remove the hook we just tested
-        service.__beforeHooks.remove.pop();
-        done();
-      }).catch(done);
+        service.__hooks.before.remove.pop();
+      });
     });
 
-    it('disables multiple providers', done => {
+    it('disables multiple providers', () => {
       service.before({
         remove: hooks.disable('testing', 'again')
       });
 
-      service.remove(0, { provider: 'testing' }).catch(e => {
+      return service.remove(0, { provider: 'testing' }).catch(e => {
         assert.equal(e.message, `Provider 'testing' can not call 'remove'`);
 
         return service.remove(0, { provider: 'again' }).catch(e => {
           assert.equal(e.message, `Provider 'again' can not call 'remove'`);
           // Remove the hook we just tested
-          service.__beforeHooks.remove.pop();
-          done();
+          service.__hooks.before.remove.pop();
         });
-      }).catch(done);
+      });
     });
 
-    it('disables with a function', done => {
+    it('disables with a function', () => {
       service.before({
         remove: hooks.disable(function(hook) {
           if(hook.params.disable) {
@@ -640,15 +614,14 @@ describe('Bundled feathers hooks', () => {
         })
       });
 
-      service.remove(0, { disable: true }).catch(e => {
+      return service.remove(0, { disable: true }).catch(e => {
         assert.equal(e.message, 'Not allowed!');
         // Remove the hook we just tested
-        service.__beforeHooks.remove.pop();
-        done();
-      }).catch(done);
+        service.__hooks.before.remove.pop();
+      });
     });
 
-    it('disables with a function that returns a promise', done => {
+    it('disables with a function that returns a promise', () => {
       service.before({
         remove: hooks.disable(function(hook) {
           return new Promise((resolve, reject) => {
@@ -661,12 +634,11 @@ describe('Bundled feathers hooks', () => {
         })
       });
 
-      service.remove(0, { disable: true }).catch(e => {
+      return service.remove(0, { disable: true }).catch(e => {
         assert.equal(e.message, 'Not allowed!');
         // Remove the hook we just tested
-        service.__beforeHooks.remove.pop();
-        done();
-      }).catch(done);
+        service.__hooks.before.remove.pop();
+      });
     });
   });
 
@@ -700,12 +672,12 @@ describe('Bundled feathers hooks', () => {
         });
     });
 
-    it('populates the same field', done => {
+    it('populates the same field', () => {
       app.service('todos').after({
         create: hooks.populate('user', { service: 'users' })
       });
 
-      app.service('todos').create({
+      return app.service('todos').create({
         text: 'A todo',
         user: 10
       }).then(todo => {
@@ -714,12 +686,11 @@ describe('Bundled feathers hooks', () => {
           user: { id: 10, name: 'user 10' },
           id: 0
         });
-        service.__afterHooks.create.pop();
-        done();
-      }).catch(done);
+        service.__hooks.after.create.pop();
+      });
     });
 
-    it('populates a different field', done => {
+    it('populates a different field', () => {
       app.service('todos').after({
         create: hooks.populate('user', {
           service: 'users',
@@ -727,7 +698,7 @@ describe('Bundled feathers hooks', () => {
         })
       });
 
-      app.service('todos').create({
+      return app.service('todos').create({
         text: 'A todo',
         userId: 10
       }).then(todo => {
@@ -737,19 +708,18 @@ describe('Bundled feathers hooks', () => {
           user: { id: 10, name: 'user 10' },
           id: 1
         });
-        service.__afterHooks.create.pop();
-        done();
-      }).catch(done);
+        service.__hooks.after.create.pop();
+      });
     });
 
-    it('populates an array', done => {
+    it('populates an array', () => {
       app.service('todos').after({
         create: hooks.populate('groups', {
           service: 'groups'
         })
       });
 
-      app.service('todos').create({
+      return app.service('todos').create({
         'text': 'A todo',
         groups: [12, 13]
       })
@@ -759,12 +729,11 @@ describe('Bundled feathers hooks', () => {
             groups: [ { id: 12, name: 'group 12'}, { id: 13, name: 'group 13' }],
             id: 2
           });
-          service.__afterHooks.create.pop();
-          done();
-      }).catch(done);
+          service.__hooks.after.create.pop();
+      });
     });
 
-    it('populates queried results', done => {
+    it('populates queried results', () => {
       app.service('todos').after({
         find: hooks.populate('user', {
           service: 'users',
@@ -772,7 +741,7 @@ describe('Bundled feathers hooks', () => {
         })
       });
 
-      app.service('todos').create({
+      return app.service('todos').create({
         text: 'Queried todo',
         userId: 15
       }).then(() => {
@@ -788,9 +757,8 @@ describe('Bundled feathers hooks', () => {
           user: { id: 15, name: 'user 15' },
           id: 3
         }]);
-        service.__afterHooks.find.pop();
-        done();
-      }).catch(done);
+        service.__hooks.after.find.pop();
+      });
     });
   });
 });

@@ -36,7 +36,7 @@ function hookMixin(service){
       hookObject.app = app;
 
       // Process all before hooks
-      return processHooks.call(this, this.__beforeHooks[method], hookObject)
+      return processHooks.call(this, this.__hooks.before[method], hookObject)
         // Use the hook object to call the original method
         .then(hookObject => {
           if(typeof hookObject.result !== 'undefined') {
@@ -69,7 +69,7 @@ function hookMixin(service){
         // Make a copy of hookObject from `before` hooks and update type
         .then(hookObject => Object.assign({}, hookObject, { type: 'after' }))
         // Run through all `after` hooks
-        .then(processHooks.bind(this, this.__afterHooks[method]))
+        .then(processHooks.bind(this, this.__hooks.after[method]))
         // Finally, return the result
         .then(hookObject => hookObject.result);
     };

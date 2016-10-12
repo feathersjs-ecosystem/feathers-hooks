@@ -4,7 +4,7 @@ import feathers from 'feathers';
 import hooks from '../src/hooks';
 
 describe('feathers-hooks', () => {
-  it('always turns service call into a promise (#28)', done => {
+  it('always turns service call into a promise (#28)', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
       get(id, params, callback) {
         callback(null, { id });
@@ -13,13 +13,12 @@ describe('feathers-hooks', () => {
 
     const service = app.service('dummy');
 
-    service.get(10).then(data => {
+    return service.get(10).then(data => {
       assert.deepEqual(data, { id: 10 });
-      done();
     });
   });
 
-  it('works with services that return a promise (#28)', done => {
+  it('works with services that return a promise (#28)', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
       get(id, params) {
         return Promise.resolve({ id, user: params.user });
@@ -38,9 +37,8 @@ describe('feathers-hooks', () => {
       }
     });
 
-    service.get(10).then(data => {
+    return service.get(10).then(data => {
       assert.deepEqual(data, { id: 10, user: 'David', after: true });
-      done();
     });
   });
 
@@ -79,7 +77,7 @@ describe('feathers-hooks', () => {
     service.create({ test: true });
   });
 
-  it('does not error when result is null', done => {
+  it('does not error when result is null', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
       get(id, params, callback) {
         callback(null, { id });
@@ -98,9 +96,7 @@ describe('feathers-hooks', () => {
       ]
     });
 
-    service.get(1).then(result => {
-      assert.equal(result, null);
-      done();
-    }).catch(done);
+    return service.get(1)
+      .then(result => assert.equal(result, null));
   });
 });

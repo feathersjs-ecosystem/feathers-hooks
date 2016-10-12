@@ -5,7 +5,7 @@ import hooks from '../lib/hooks';
 
 describe('.after hooks', () => {
   describe('function(hook)', () => {
-    it('returning a non-hook object throws error', done => {
+    it('returning a non-hook object throws error', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id) {
           return Promise.resolve({ id });
@@ -19,9 +19,8 @@ describe('.after hooks', () => {
       });
       const service = app.service('dummy');
 
-      service.get(10).catch(e => {
+      return service.get(10).catch(e => {
         assert.equal(e.message, 'after hook for \'get\' method returned invalid hook object');
-        done();
       });
     });
 
@@ -64,7 +63,7 @@ describe('.after hooks', () => {
       });
     });
 
-    it('.after hooks do not need to return anything', done => {
+    it('.after hooks do not need to return anything', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
         get(id) {
           return Promise.resolve({
@@ -88,16 +87,15 @@ describe('.after hooks', () => {
         }
       });
 
-      service.get('laundry').then(data => {
+      return service.get('laundry').then(data => {
         assert.deepEqual(data, {
           id: 'laundry',
           description: 'You have to do laundry',
           ran: true
         });
 
-        service.find().catch(error => {
+        return service.find().catch(error => {
           assert.equal(error.message, 'You can not see this');
-          done();
         });
       });
     });
