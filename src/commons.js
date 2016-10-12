@@ -48,10 +48,6 @@ export function processHooks(hooks, initialHookObject) {
 }
 
 export function addHookMethod(service, type, methods) {
-  if(!service.__hooks) {
-    service.__hooks = {};
-  }
-
   // Initialize properties where hook functions are stored
   service.__hooks[type] = {};
   methods.forEach(method => {

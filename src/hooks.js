@@ -19,8 +19,13 @@ function hookMixin(service){
   const oldAfter = service.after;
   const mixin = {};
 
+  Object.defineProperty(service, '__hooks', {
+    value: {}
+  });
+
   addHookMethod(service, 'before', methods);
   addHookMethod(service, 'after', methods);
+  addHookMethod(service, 'onError', methods);
 
   methods.forEach(method => {
     if(typeof service[method] !== 'function') {
