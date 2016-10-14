@@ -1,7 +1,7 @@
 import assert from 'assert';
 import feathers from 'feathers';
 
-import hooks from '../lib/hooks';
+import hooks from '../src/hooks';
 
 describe('.after hooks', () => {
   describe('function(hook)', () => {

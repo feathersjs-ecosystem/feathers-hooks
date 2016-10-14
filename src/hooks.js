@@ -8,15 +8,18 @@ function isPromise(result) {
     typeof result.then === 'function';
 }
 
-function hookMixin(service){
+function hookMixin(service) {
   if(typeof service.mixin !== 'function') {
     return;
   }
 
   const app = this;
   const methods = app.methods;
-  const oldBefore = service.before;
-  const oldAfter = service.after;
+  const old = {
+    before: service.before,
+    after: service.after,
+    onError: service.onError
+  };
   const mixin = {};
 
   Object.defineProperty(service, '__hooks', {
@@ -76,20 +79,36 @@ function hookMixin(service){
         // Run through all `after` hooks
         .then(processHooks.bind(this, this.__hooks.after[method]))
         // Finally, return the result
-        .then(hookObject => hookObject.result);
+        .then(hookObject => hookObject.result)
+        .catch(error => {
+          const errorHook = Object.assign({}, error.hook || hookObject, {
+            type: 'onError',
+            original: error.hook,
+            error
+          });
+
+          return processHooks
+            .call(this, this.__hooks.onError[method], errorHook)
+            .then(hook => Promise.reject(hook.error));
+        });
     };
   });
 
   service.mixin(mixin);
 
   // Before hooks that were registered in the service
-  if(oldBefore) {
-    service.before(oldBefore);
+  if(old.before) {
+    service.before(old.before);
   }
 
   // After hooks that were registered in the service
-  if(oldAfter) {
-    service.after(oldAfter);
+  if(old.after) {
+    service.after(old.after);
+  }
+
+  // onError
+  if(old.onError) {
+    service.onError(old.onError);
   }
 }
 

@@ -3,7 +3,7 @@ import { hooks as utils } from 'feathers-commons';
 export function isHookObject(hookObject) {
   return typeof hookObject === 'object' &&
     typeof hookObject.method === 'string' &&
-    (hookObject.type === 'before' || hookObject.type === 'after');
+    typeof hookObject.type === 'string';
 }
 
 export function processHooks(hooks, initialHookObject) {
