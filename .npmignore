@@ -1,10 +1,9 @@
-.git*
-docs/
-test/
-.DS_Store
-*.markdown
-*.md
-!lib/
-src/
 .babelrc
+.istanbul.yml
+.travis.yml
+.jshintrc
 .editorconfig
+.idea/
+src/
+test/
+!lib/
