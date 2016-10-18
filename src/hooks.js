@@ -1,7 +1,7 @@
-import { hooks as utils } from 'feathers-commons';
+import { each, hooks as utils } from 'feathers-commons';
 
 import * as hooks from './bundled';
-import { addHookMethod, processHooks } from './commons';
+import { addHookTypes, processHooks } from './commons';
 
 function isPromise(result) {
   return typeof result !== 'undefined' &&
@@ -17,18 +17,50 @@ function hookMixin(service) {
   const methods = app.methods;
   const old = {
     before: service.before,
-    after: service.after,
-    onError: service.onError
+    after: service.after
   };
-  const mixin = {};
+  const mixin = {
+    hooks(allHooks) {
+      each(allHooks, (obj, type) => {
+        const hooks = utils.convertHookData(obj);
+
+        methods.forEach(method => {
+          if(typeof this[method] !== 'function') {
+            return;
+          }
+
+          const myHooks = this.__hooks[type][method];
+
+          if(hooks.all) {
+            myHooks.push.apply(myHooks, hooks.all);
+          }
+
+          if(hooks[method]) {
+            myHooks.push.apply(myHooks, hooks[method]);
+          }
+        });
+      });
+
+      return this;
+    },
+
+    // TODO add deprecation warnings
+    before(before) {
+      return this.hooks({ before });
+    },
+
+    after(after) {
+      return this.hooks({ after });
+    }
+  };
 
   Object.defineProperty(service, '__hooks', {
     value: {}
   });
 
-  addHookMethod(service, 'before', methods);
-  addHookMethod(service, 'after', methods);
-  addHookMethod(service, 'onError', methods);
+  addHookTypes(service, methods,
+    'before', 'after', 'error', 'first', 'last'
+  );
 
   methods.forEach(method => {
     if(typeof service[method] !== 'function') {
@@ -88,7 +120,7 @@ function hookMixin(service) {
           });
 
           return processHooks
-            .call(this, this.__hooks.onError[method], errorHook)
+            .call(this, this.__hooks.error[method], errorHook)
             .then(hook => Promise.reject(hook.error));
         });
     };
@@ -104,11 +136,6 @@ function hookMixin(service) {
   // After hooks that were registered in the service
   if(old.after) {
     service.after(old.after);
-  }
-
-  // onError
-  if(old.onError) {
-    service.onError(old.onError);
   }
 }
 

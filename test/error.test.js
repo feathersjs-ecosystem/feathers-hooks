@@ -13,16 +13,18 @@ describe('.onError hooks', () => {
     });
     const service = app.service('dummy');
 
-    afterEach(() => service.__hooks.onError.get.pop());
+    afterEach(() => service.__hooks.error.get.pop());
 
     it('basic onError hook', done => {
-      service.onError({
-        get(hook) {
-          assert.equal(hook.type, 'onError');
-          assert.equal(hook.id, 'test');
-          assert.equal(hook.method, 'get');
-          assert.equal(hook.app, app);
-          assert.equal(hook.error.message, 'Something went wrong');
+      service.hooks({
+        error: {
+          get(hook) {
+            assert.equal(hook.type, 'onError');
+            assert.equal(hook.id, 'test');
+            assert.equal(hook.method, 'get');
+            assert.equal(hook.app, app);
+            assert.equal(hook.error.message, 'Something went wrong');
+          }
         }
       });
 
@@ -32,9 +34,11 @@ describe('.onError hooks', () => {
     });
 
     it('can change the error', () => {
-      service.onError({
-        get(hook) {
-          hook.error = new Error(errorMessage);
+      service.hooks({
+        error: {
+          get(hook) {
+            hook.error = new Error(errorMessage);
+          }
         }
       });
 
@@ -44,9 +48,11 @@ describe('.onError hooks', () => {
     });
 
     it('throwing an error', () => {
-      service.onError({
-        get() {
-          throw new Error(errorMessage);
+      service.hooks({
+        error: {
+          get() {
+            throw new Error(errorMessage);
+          }
         }
       });
 
@@ -56,9 +62,11 @@ describe('.onError hooks', () => {
     });
 
     it('rejecting a promise', () => {
-      service.onError({
-        get() {
-          return Promise.reject(new Error(errorMessage));
+      service.hooks({
+        error: {
+          get() {
+            return Promise.reject(new Error(errorMessage));
+          }
         }
       });
 
@@ -68,9 +76,11 @@ describe('.onError hooks', () => {
     });
 
     it('calling `next` with error', () => {
-      service.onError({
-        get(hook, next) {
-          next(new Error(errorMessage));
+      service.hooks({
+        error: {
+          get(hook, next) {
+            next(new Error(errorMessage));
+          }
         }
       });
 
@@ -80,25 +90,27 @@ describe('.onError hooks', () => {
     });
 
     it('can chain multiple hooks', () => {
-      service.onError({
-        get: [
-          function(hook) {
-            hook.error = new Error(errorMessage);
-            hook.error.first = true;
-          },
+      service.hooks({
+        error: {
+          get: [
+            function(hook) {
+              hook.error = new Error(errorMessage);
+              hook.error.first = true;
+            },
 
-          function(hook) {
-            hook.error.second = true;
+            function(hook) {
+              hook.error.second = true;
 
-            return Promise.resolve(hook);
-          },
+              return Promise.resolve(hook);
+            },
 
-          function(hook, next) {
-            hook.error.third = true;
+            function(hook, next) {
+              hook.error.third = true;
 
-            next();
-          }
-        ]
+              next();
+            }
+          ]
+        }
       });
 
       return service.get('test').catch(error => {
@@ -130,47 +142,58 @@ describe('.onError hooks', () => {
     it('error in before hook', done => {
       service.before(function() {
         throw new Error(errorMessage);
-      }).onError(function(hook) {
-        assert.equal(hook.error.hook.type, 'before',
-          'Original hook still set'
-        );
-        assert.equal(hook.id, 'dishes');
-        assert.equal(hook.error.message, errorMessage);
-        done();
+      }).hooks({
+        error(hook) {
+          assert.equal(hook.error.hook.type, 'before',
+            'Original hook still set'
+          );
+          assert.equal(hook.id, 'dishes');
+          assert.equal(hook.error.message, errorMessage);
+          done();
+        }
       });
 
       service.get('dishes').then(done);
     });
 
     it('error in after hook', done => {
-      service.after(function() {
-        throw new Error(errorMessage);
-      }).onError(function(hook) {
-        assert.equal(hook.error.hook.type, 'after',
-          'Original hook still set'
-        );
-        assert.equal(hook.id, 'dishes');
-        assert.deepEqual(hook.result, {
-          id: 'dishes',
-          text: 'You have to do dishes'
-        });
-        assert.equal(hook.error.message, errorMessage);
-        done();
+      service.hooks({
+        after() {
+          throw new Error(errorMessage);
+        },
+
+        error(hook) {
+          assert.equal(hook.error.hook.type, 'after',
+            'Original hook still set'
+          );
+          assert.equal(hook.id, 'dishes');
+          assert.deepEqual(hook.result, {
+            id: 'dishes',
+            text: 'You have to do dishes'
+          });
+          assert.equal(hook.error.message, errorMessage);
+          done();
+        }
       });
 
       service.get('dishes').then(done);
     });
 
     it('uses the current hook object if thrown in a hook and sets hook.original', done => {
-      service.after(function(hook) {
-        hook.modified = true;
 
-        throw new Error(errorMessage);
-      }).onError(function(hook) {
-        assert.ok(hook.modified);
-        assert.equal(hook.original.type, 'after');
+      service.hooks({
+        after(hook) {
+          hook.modified = true;
 
-        done();
+          throw new Error(errorMessage);
+        },
+
+        error(hook) {
+          assert.ok(hook.modified);
+          assert.equal(hook.original.type, 'after');
+
+          done();
+        }
       });
 
       service.get('laundry').then(done);

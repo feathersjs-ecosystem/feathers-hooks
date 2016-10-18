@@ -1,5 +1,3 @@
-import { hooks as utils } from 'feathers-commons';
-
 export function isHookObject(hookObject) {
   return typeof hookObject === 'object' &&
     typeof hookObject.method === 'string' &&
@@ -47,37 +45,15 @@ export function processHooks(hooks, initialHookObject) {
   });
 }
 
-export function addHookMethod(service, type, methods) {
-  // Initialize properties where hook functions are stored
-  service.__hooks[type] = {};
-  methods.forEach(method => {
-    if(typeof service[method] === 'function') {
-      service.__hooks[type][method] = [];
-    }
-  });
+export function addHookTypes(service, methods, ... types) {
+  types.forEach(type => {
+    // Initialize properties where hook functions are stored
+    service.__hooks[type] = {};
 
-  // mixin the method (.before or .after)
-  service.mixin({
-    [type](obj) {
-      const hooks = utils.convertHookData(obj);
-
-      methods.forEach(method => {
-        if(typeof this[method] !== 'function') {
-          return;
-        }
-
-        const myHooks = this.__hooks[type][method];
-
-        if(hooks.all) {
-          myHooks.push.apply(myHooks, hooks.all);
-        }
-
-        if(hooks[method]) {
-          myHooks.push.apply(myHooks, hooks[method]);
-        }
-      });
-
-      return this;
-    }
+    methods.forEach(method => {
+      if(typeof service[method] === 'function') {
+        service.__hooks[type][method] = [];
+      }
+    });
   });
 }
