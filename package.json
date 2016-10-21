@@ -57,7 +57,7 @@
     "feathers-mongoose": "^3.5.1",
     "feathers-rest": "^1.2.2",
     "istanbul": "^1.1.0-alpha.1",
-    "jshint": "^2.8.0",
+    "jshint": "^2.9.4",
     "mocha": "^3.0.0",
     "mongoose": "^4.5.9",
     "rimraf": "^2.5.2"
