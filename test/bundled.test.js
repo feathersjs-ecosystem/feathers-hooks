@@ -7,8 +7,8 @@ import mongoose from 'mongoose';
 import mongooseService from 'feathers-mongoose';
 import hooks from '../src/hooks';
 
-const addProvider = function(){
-  return function(hook){
+const addProvider = function () {
+  return function (hook) {
     hook.params.provider = 'rest';
   };
 };
@@ -23,9 +23,9 @@ const service = app.service('/todos');
 describe('Bundled feathers hooks', () => {
   beforeEach(() => {
     return service.create([
-      {id: 1, name: 'Marshall', title: 'Old Man', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
-      {id: 2, name: 'David', title: 'Genius', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
-      {id: 3, name: 'Eric', title: 'Badass', admin: true, updatedBy : { email : 'admin@feathersjs.com', roles : ['admin'] } },
+      { id: 1, name: 'Marshall', title: 'Old Man', admin: true, updatedBy: { email: 'admin@feathersjs.com', roles: ['admin'] } },
+      { id: 2, name: 'David', title: 'Genius', admin: true, updatedBy: { email: 'admin@feathersjs.com', roles: ['admin'] } },
+      { id: 3, name: 'Eric', title: 'Badass', admin: true, updatedBy: { email: 'admin@feathersjs.com', roles: ['admin'] } }
     ]);
   });
 
@@ -155,7 +155,7 @@ describe('Bundled feathers hooks', () => {
       it('removes fields from result.data object', () => {
         service.after({
           get: [
-            function(hook) {
+            function (hook) {
               var data = Object.assign({}, hook.result);
               hook.result = { data };
               return hook;
@@ -264,7 +264,7 @@ describe('Bundled feathers hooks', () => {
             id: { type: Number, required: true },
             name: { type: String, required: true },
             email: { type: String, required: true },
-            password: { type: String, required: true },
+            password: { type: String, required: true }
           });
           DemoUserModel = mongoose.model('DemoUser', DemoUserSchema);
           app.use('/users', mongooseService({ Model: DemoUserModel, id: 'id' }));
@@ -278,9 +278,9 @@ describe('Bundled feathers hooks', () => {
         });
 
         beforeEach(() => DemoUserModel.insertMany([
-          {id: 1, name: 'Marshall', email: 'admin@feathersjs.com', password: '1337'},
-          {id: 2, name: 'David', email : 'admin@feathersjs.com', password: '1337' },
-          {id: 3, name: 'Eric', email : 'admin@feathersjs.com', password: '1337' }
+          { id: 1, name: 'Marshall', email: 'admin@feathersjs.com', password: '1337' },
+          { id: 2, name: 'David', email: 'admin@feathersjs.com', password: '1337' },
+          { id: 3, name: 'Eric', email: 'admin@feathersjs.com', password: '1337' }
         ]));
 
         afterEach(done => {
@@ -492,7 +492,7 @@ describe('Bundled feathers hooks', () => {
         find: hooks.pluckQuery('name', 'id')
       });
 
-      return service.find({ query: {admin: false, name: 'David' } })
+      return service.find({ query: { admin: false, name: 'David' } })
         .then(data => {
           assert.equal(data.length, 1);
           assert.deepEqual(data[0], {
@@ -500,7 +500,7 @@ describe('Bundled feathers hooks', () => {
             name: 'David',
             title: 'Genius',
             admin: true,
-            updatedBy : { email : 'admin@feathersjs.com', roles : ['admin']}
+            updatedBy: { email: 'admin@feathersjs.com', roles: ['admin'] }
           });
           // Remove the hook we just added
           service.__hooks.before.find.pop();
@@ -607,8 +607,8 @@ describe('Bundled feathers hooks', () => {
 
     it('disables with a function', () => {
       service.before({
-        remove: hooks.disable(function(hook) {
-          if(hook.params.disable) {
+        remove: hooks.disable(function (hook) {
+          if (hook.params.disable) {
             throw new Error('Not allowed!');
           }
         })
@@ -623,10 +623,10 @@ describe('Bundled feathers hooks', () => {
 
     it('disables with a function that returns a promise', () => {
       service.before({
-        remove: hooks.disable(function(hook) {
+        remove: hooks.disable(function (hook) {
           return new Promise((resolve, reject) => {
             setTimeout(() => {
-              if(hook.params.disable) {
+              if (hook.params.disable) {
                 reject(new Error('Not allowed!'));
               }
             }, 20);
@@ -651,9 +651,9 @@ describe('Bundled feathers hooks', () => {
         .configure(hooks())
         .use('/todos', memory())
         .use('/users', {
-          get(id, params) {
+          get (id, params) {
             // Check that there's nothing in the query field if it's set as it can mess with some drivers
-            if(params.query && Object.keys(params.query).length) {
+            if (params.query && Object.keys(params.query).length) {
               return Promise.reject(new Error('Query includes fields: ' + Object.keys(params.query).join(', ')));
             }
 
@@ -664,7 +664,7 @@ describe('Bundled feathers hooks', () => {
         })
         // using groups service to test array population
         .use('/groups', {
-          get(id) {
+          get (id) {
             return Promise.resolve({
               id, name: `group ${id}`
             });
@@ -724,12 +724,12 @@ describe('Bundled feathers hooks', () => {
         groups: [12, 13]
       })
       .then(todo => {
-          assert.deepEqual(todo, {
-            text: 'A todo',
-            groups: [ { id: 12, name: 'group 12'}, { id: 13, name: 'group 13' }],
-            id: 2
-          });
-          service.__hooks.after.create.pop();
+        assert.deepEqual(todo, {
+          text: 'A todo',
+          groups: [ { id: 12, name: 'group 12' }, { id: 13, name: 'group 13' } ],
+          id: 2
+        });
+        service.__hooks.after.create.pop();
       });
     });
 

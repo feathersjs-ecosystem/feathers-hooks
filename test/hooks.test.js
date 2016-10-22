@@ -6,7 +6,7 @@ import hooks from '../src/hooks';
 describe('feathers-hooks', () => {
   it('always turns service call into a promise (#28)', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
-      get(id, params, callback) {
+      get (id, params, callback) {
         callback(null, { id });
       }
     });
@@ -20,7 +20,7 @@ describe('feathers-hooks', () => {
 
   it('works with services that return a promise (#28)', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
-      get(id, params) {
+      get (id, params) {
         return Promise.resolve({ id, user: params.user });
       }
     });
@@ -28,11 +28,11 @@ describe('feathers-hooks', () => {
     const service = app.service('dummy');
 
     service.before({
-      get(hook) {
+      get (hook) {
         hook.params.user = 'David';
       }
     }).after({
-      get(hook) {
+      get (hook) {
         hook.result.after = true;
       }
     });
@@ -44,7 +44,7 @@ describe('feathers-hooks', () => {
 
   it('dispatches events with data modified by hook', done => {
     const app = feathers().configure(hooks()).use('/dummy', {
-      create(data) {
+      create (data) {
         return Promise.resolve(data);
       }
     });
@@ -52,16 +52,16 @@ describe('feathers-hooks', () => {
     const service = app.service('dummy');
 
     service.before({
-      create(hook) {
+      create (hook) {
         hook.data.user = 'David';
       }
     }).after({
-      create(hook) {
+      create (hook) {
         hook.result.after = true;
       }
     });
 
-    service.once('created', function(data) {
+    service.once('created', function (data) {
       try {
         assert.deepEqual(data, {
           test: true,
@@ -69,7 +69,7 @@ describe('feathers-hooks', () => {
           after: true
         });
         done();
-      } catch(e) {
+      } catch (e) {
         done(e);
       }
     });
@@ -79,7 +79,7 @@ describe('feathers-hooks', () => {
 
   it('does not error when result is null', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
-      get(id, params, callback) {
+      get (id, params, callback) {
         callback(null, { id });
       }
     });
@@ -88,7 +88,7 @@ describe('feathers-hooks', () => {
 
     service.after({
       get: [
-        function(hook) {
+        function (hook) {
           hook.result = null;
           return hook;
         },

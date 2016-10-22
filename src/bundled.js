@@ -1,10 +1,10 @@
 const errors = require('feathers-errors').errors;
 
-export function lowerCase(... fields) {
+export function lowerCase (...fields) {
   const lowerCaseFields = data => {
-    for(let field of fields) {
-      if(data[field]) {
-        if(typeof data[field] !== 'string') {
+    for (let field of fields) {
+      if (data[field]) {
+        if (typeof data[field] !== 'string') {
           throw new errors.BadRequest('Expected string');
         } else {
           data[field] = data[field].toLowerCase();
@@ -13,14 +13,14 @@ export function lowerCase(... fields) {
     }
   };
 
-  const callback = typeof fields[fields.length - 1] === 'function' ?
-    fields.pop() : () => true;
+  const callback = typeof fields[fields.length - 1] === 'function'
+    ? fields.pop() : () => true;
 
-  return function(hook) {
+  return function (hook) {
     const result = hook.type === 'before' ? hook.data : hook.result;
     const next = condition => {
-      if(result && condition) {
-        if(hook.method === 'find' || Array.isArray(result)) {
+      if (result && condition) {
+        if (hook.method === 'find' || Array.isArray(result)) {
           // data.data if the find method is paginated
           (result.data || result).forEach(lowerCaseFields);
         } else {
@@ -32,29 +32,29 @@ export function lowerCase(... fields) {
 
     const check = callback(hook);
 
-    return check && typeof check.then === 'function' ?
-      check.then(next) : next(check);
+    return check && typeof check.then === 'function'
+      ? check.then(next) : next(check);
   };
 }
 
-export function removeQuery(... fields) {
+export function removeQuery (...fields) {
   const removeQueries = data => {
-    for(let field of fields) {
+    for (let field of fields) {
       data[field] = undefined;
       delete data[field];
     }
   };
 
-  const callback = typeof fields[fields.length - 1] === 'function' ?
-    fields.pop() : () => true;
+  const callback = typeof fields[fields.length - 1] === 'function'
+    ? fields.pop() : () => true;
 
-  return function(hook) {
+  return function (hook) {
     if (hook.type === 'after') {
       throw new errors.GeneralError(`Provider '${hook.params.provider}' can not remove query params on after hook.`);
     }
     const result = hook.params.query;
     const next = condition => {
-      if(result && condition) {
+      if (result && condition) {
         removeQueries(result);
       }
       return hook;
@@ -62,31 +62,31 @@ export function removeQuery(... fields) {
 
     const check = callback(hook);
 
-    return check && typeof check.then === 'function' ?
-      check.then(next) : next(check);
+    return check && typeof check.then === 'function'
+      ? check.then(next) : next(check);
   };
 }
 
-export function pluckQuery(... fields) {
+export function pluckQuery (...fields) {
   const pluckQueries = data => {
-    for(let key of Object.keys(data)) {
-      if(fields.indexOf(key) === -1) {
+    for (let key of Object.keys(data)) {
+      if (fields.indexOf(key) === -1) {
         data[key] = undefined;
         delete data[key];
       }
     }
   };
 
-  const callback = typeof fields[fields.length - 1] === 'function' ?
-    fields.pop() : () => true;
+  const callback = typeof fields[fields.length - 1] === 'function'
+    ? fields.pop() : () => true;
 
-  return function(hook) {
+  return function (hook) {
     if (hook.type === 'after') {
       throw new errors.GeneralError(`Provider '${hook.params.provider}' can not pluck query params on after hook.`);
     }
     const result = hook.params.query;
     const next = condition => {
-      if(result && condition) {
+      if (result && condition) {
         pluckQueries(result);
       }
       return hook;
@@ -94,12 +94,12 @@ export function pluckQuery(... fields) {
 
     const check = callback(hook);
 
-    return check && typeof check.then === 'function' ?
-      check.then(next) : next(check);
+    return check && typeof check.then === 'function'
+      ? check.then(next) : next(check);
   };
 }
 
-function removeField(obj, field) {
+function removeField (obj, field) {
   const nestedFields = field.split('.');
   const lastField = nestedFields[nestedFields.length - 1];
 
@@ -112,17 +112,17 @@ function removeField(obj, field) {
   }
 }
 
-export function remove(... fields) {
+export function remove (...fields) {
   const removeFields = data => {
-    for(let field of fields) {
+    for (let field of fields) {
       removeField(data, field);
     }
   };
 
-  const callback = typeof fields[fields.length - 1] === 'function' ?
-    fields.pop() : (hook) => !!hook.params.provider;
+  const callback = typeof fields[fields.length - 1] === 'function'
+    ? fields.pop() : (hook) => !!hook.params.provider;
 
-  return function(hook) {
+  return function (hook) {
     let result = hook.type === 'before' ? hook.data : hook.result;
 
     // Convert Mongoose or Sequelize object into plain JavaScript object
@@ -170,29 +170,29 @@ export function remove(... fields) {
 
     const check = callback(hook);
 
-    return check && typeof check.then === 'function' ?
-      check.then(next) : next(check);
+    return check && typeof check.then === 'function'
+      ? check.then(next) : next(check);
   };
 }
 
-export function pluck(... fields) {
+export function pluck (...fields) {
   const pluckFields = data => {
-    for(let key of Object.keys(data)) {
-      if(fields.indexOf(key) === -1) {
+    for (let key of Object.keys(data)) {
+      if (fields.indexOf(key) === -1) {
         data[key] = undefined;
         delete data[key];
       }
     }
   };
 
-  const callback = typeof fields[fields.length - 1] === 'function' ?
-    fields.pop() : (hook) => !!hook.params.provider;
+  const callback = typeof fields[fields.length - 1] === 'function'
+    ? fields.pop() : (hook) => !!hook.params.provider;
 
-  return function(hook) {
+  return function (hook) {
     const result = hook.type === 'before' ? hook.data : hook.result;
     const next = condition => {
-      if(result && condition) {
-        if(hook.method === 'find' || Array.isArray(result)) {
+      if (result && condition) {
+        if (hook.method === 'find' || Array.isArray(result)) {
           // data.data if the find method is paginated
           (result.data || result).forEach(pluckFields);
         } else {
@@ -204,45 +204,45 @@ export function pluck(... fields) {
 
     const check = callback(hook);
 
-    return check && typeof check.then === 'function' ?
-      check.then(next) : next(check);
+    return check && typeof check.then === 'function'
+      ? check.then(next) : next(check);
   };
 }
 
-export function disable(realm, ... args) {
-  if(!realm) {
-    return function(hook) {
+export function disable (realm, ...args) {
+  if (!realm) {
+    return function (hook) {
       throw new errors.MethodNotAllowed(`Calling '${hook.method}' not allowed.`);
     };
-  } else if(typeof realm === 'function') {
-    return function(hook) {
+  } else if (typeof realm === 'function') {
+    return function (hook) {
       const result = realm(hook);
       const next = check => {
-        if(!check) {
+        if (!check) {
           throw new errors.MethodNotAllowed(`Calling '${hook.method}' not allowed.`);
         }
       };
 
-      if(result && typeof result.then === 'function') {
+      if (result && typeof result.then === 'function') {
         return result.then(next);
       }
 
       next(result);
     };
   } else {
-    const providers = [ realm ].concat(args);
+    const providers = [realm].concat(args);
 
-    return function(hook) {
+    return function (hook) {
       const provider = hook.params.provider;
 
-      if((realm === 'external' && provider) || providers.indexOf(provider) !== -1) {
+      if ((realm === 'external' && provider) || providers.indexOf(provider) !== -1) {
         throw new errors.MethodNotAllowed(`Provider '${hook.params.provider}' can not call '${hook.method}'`);
       }
     };
   }
 }
 
-export function populate(target, options) {
+export function populate (target, options) {
   options = Object.assign({}, options);
 
   if (!options.service) {
@@ -251,9 +251,9 @@ export function populate(target, options) {
 
   const field = options.field || target;
 
-  return function(hook) {
-    function populate(item) {
-      if(!item[field]) {
+  return function (hook) {
+    function populate (item) {
+      if (!item[field]) {
         return Promise.resolve(item);
       }
 
@@ -263,30 +263,28 @@ export function populate(target, options) {
       // If it's a mongoose model then
       if (typeof item.toObject === 'function') {
         item = item.toObject(options);
-      }
-      // If it's a Sequelize model
-      else if (typeof item.toJSON === 'function') {
+      } else if (typeof item.toJSON === 'function') { // If it's a Sequelize model
         item = item.toJSON(options);
       }
       // Remove any query from params as it's not related
-      const params = Object.assign({}, hook.params, { query: undefined });
+      const params = Object.assign({}, hook.params, {query: undefined});
       // If the relationship is an array of ids, fetch and resolve an object for each, otherwise just fetch the object.
       const promise = Array.isArray(id) ? Promise.all(id.map(objectID => hook.app.service(options.service).get(objectID, params))) : hook.app.service(options.service).get(id, params);
       return promise.then(relatedItem => {
-          if(relatedItem) {
-            item[target] = relatedItem;
-          }
-          return item;
-        });
+        if (relatedItem) {
+          item[target] = relatedItem;
+        }
+        return item;
+      });
     }
 
-    if(hook.type === 'after') {
+    if (hook.type === 'after') {
       const isPaginated = (hook.method === 'find' && hook.result.data);
       const data = isPaginated ? hook.result.data : hook.result;
 
       if (Array.isArray(data)) {
         return Promise.all(data.map(populate)).then(results => {
-          if(isPaginated) {
+          if (isPaginated) {
             hook.result.data = results;
           } else {
             hook.result = results;

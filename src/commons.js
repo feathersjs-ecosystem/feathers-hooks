@@ -1,14 +1,14 @@
-export function isHookObject(hookObject) {
+export function isHookObject (hookObject) {
   return typeof hookObject === 'object' &&
     typeof hookObject.method === 'string' &&
     typeof hookObject.type === 'string';
 }
 
-export function processHooks(hooks, initialHookObject) {
+export function processHooks (hooks, initialHookObject) {
   let hookObject = initialHookObject;
   let updateCurrentHook = current => {
-    if(current) {
-      if(!isHookObject(current)) {
+    if (current) {
+      if (!isHookObject(current)) {
         throw new Error(`${hookObject.type} hook for '${hookObject.method}' method returned invalid hook object`);
       }
 
@@ -23,7 +23,7 @@ export function processHooks(hooks, initialHookObject) {
   hooks.forEach(fn => {
     const hook = fn.bind(this);
 
-    if(hook.length === 2) { // function(hook, next)
+    if (hook.length === 2) { // function(hook, next)
       promise = promise.then(hookObject => {
         return new Promise((resolve, reject) => {
           hook(hookObject, (error, result) =>
@@ -45,13 +45,13 @@ export function processHooks(hooks, initialHookObject) {
   });
 }
 
-export function addHookTypes(service, methods, ... types) {
+export function addHookTypes (service, methods, ...types) {
   types.forEach(type => {
     // Initialize properties where hook functions are stored
     service.__hooks[type] = {};
 
     methods.forEach(method => {
-      if(typeof service[method] === 'function') {
+      if (typeof service[method] === 'function') {
         service.__hooks[type][method] = [];
       }
     });

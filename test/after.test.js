@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 import assert from 'assert';
 import feathers from 'feathers';
 
@@ -7,12 +8,12 @@ describe('.after hooks', () => {
   describe('function(hook)', () => {
     it('returning a non-hook object throws error', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
-        get(id) {
+        get (id) {
           return Promise.resolve({ id });
         },
 
         after: {
-          get() {
+          get () {
             return {};
           }
         }
@@ -26,26 +27,26 @@ describe('.after hooks', () => {
 
     it('.after hooks can return a promise', done => {
       const app = feathers().configure(hooks()).use('/dummy', {
-        get(id) {
+        get (id) {
           return Promise.resolve({
             id: id,
             description: `You have to do ${id}`
           });
         },
 
-        find() {
+        find () {
           return Promise.resolve([]);
         }
       });
       const service = app.service('dummy');
 
       service.after({
-        get(hook) {
+        get (hook) {
           hook.result.ran = true;
           return Promise.resolve(hook);
         },
 
-        find() {
+        find () {
           return Promise.reject(new Error('You can not see this'));
         }
       });
@@ -65,24 +66,24 @@ describe('.after hooks', () => {
 
     it('.after hooks do not need to return anything', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
-        get(id) {
+        get (id) {
           return Promise.resolve({
             id, description: `You have to do ${id}`
           });
         },
 
-        find() {
+        find () {
           return Promise.resolve([]);
         }
       });
       const service = app.service('dummy');
 
       service.after({
-        get(hook) {
+        get (hook) {
           hook.result.ran = true;
         },
 
-        find() {
+        find () {
           throw new Error('You can not see this');
         }
       });
@@ -105,7 +106,7 @@ describe('.after hooks', () => {
     it('gets mixed into a service and modifies data', done => {
       const dummyService = {
         after: {
-          create(hook, next) {
+          create (hook, next) {
             assert.equal(hook.type, 'after');
 
             hook.result.some = 'thing';
@@ -114,7 +115,7 @@ describe('.after hooks', () => {
           }
         },
 
-        create(data, params, callback) {
+        create (data, params, callback) {
           callback(null, data);
         }
       };
@@ -131,7 +132,7 @@ describe('.after hooks', () => {
     it('also makes the app available at hook.app', done => {
       const dummyService = {
         after: {
-          create(hook, next) {
+          create (hook, next) {
             hook.result.appPresent = typeof hook.app === 'function';
             assert.equal(hook.result.appPresent, true);
 
@@ -139,7 +140,7 @@ describe('.after hooks', () => {
           }
         },
 
-        create(data, params, callback) {
+        create (data, params, callback) {
           callback(null, data);
         }
       };
@@ -156,12 +157,12 @@ describe('.after hooks', () => {
     it('returns errors', done => {
       const dummyService = {
         after: {
-          update(hook, next) {
+          update (hook, next) {
             next(new Error('This did not work'));
           }
         },
 
-        update(id, data, params, callback) {
+        update (id, data, params, callback) {
           callback(null, data);
         }
       };
@@ -179,12 +180,12 @@ describe('.after hooks', () => {
     it('does not run after hook when there is an error', done => {
       const dummyService = {
         after: {
-          remove() {
+          remove () {
             assert.ok(false, 'This should never get called');
           }
         },
 
-        remove(id, params, callback) {
+        remove (id, params, callback) {
           callback(new Error('Error removing item'));
         }
       };
@@ -201,7 +202,7 @@ describe('.after hooks', () => {
 
     it('adds .after() and chains multiple hooks for the same method', done => {
       const dummyService = {
-        create(data, params, callback) {
+        create (data, params, callback) {
           callback(null, data);
         }
       };
@@ -210,14 +211,14 @@ describe('.after hooks', () => {
       const service = app.service('dummy');
 
       service.after({
-        create(hook, next) {
+        create (hook, next) {
           hook.result.some = 'thing';
           next();
         }
       });
 
       service.after({
-        create(hook, next) {
+        create (hook, next) {
           hook.result.other = 'stuff';
 
           next();
@@ -236,7 +237,7 @@ describe('.after hooks', () => {
 
     it('chains multiple after hooks using array syntax', done => {
       const dummyService = {
-        create(data, params, callback) {
+        create (data, params, callback) {
           callback(null, data);
         }
       };
@@ -246,11 +247,11 @@ describe('.after hooks', () => {
 
       service.after({
         create: [
-          function(hook, next) {
+          function (hook, next) {
             hook.result.some = 'thing';
             next();
           },
-          function(hook, next) {
+          function (hook, next) {
             hook.result.other = 'stuff';
 
             next();
@@ -270,7 +271,7 @@ describe('.after hooks', () => {
 
     it('.after hooks run in the correct order (#13)', done => {
       const app = feathers().configure(hooks()).use('/dummy', {
-        get(id, params, callback) {
+        get (id, params, callback) {
           callback(null, { id });
         }
       });
@@ -278,7 +279,7 @@ describe('.after hooks', () => {
       const service = app.service('dummy');
 
       service.after({
-        get(hook, next) {
+        get (hook, next) {
           hook.result.items = ['first'];
           next();
         }
@@ -286,11 +287,11 @@ describe('.after hooks', () => {
 
       service.after({
         get: [
-          function(hook, next) {
+          function (hook, next) {
             hook.result.items.push('second');
             next();
           },
-          function(hook, next) {
+          function (hook, next) {
             hook.result.items.push('third');
             next();
           }
@@ -306,20 +307,20 @@ describe('.after hooks', () => {
     it('after all hooks (#11)', done => {
       const app = feathers().configure(hooks()).use('/dummy', {
         after: {
-          all(hook, next) {
+          all (hook, next) {
             hook.result.afterAllObject = true;
             next();
           }
         },
 
-        get(id, params, callback) {
+        get (id, params, callback) {
           callback(null, {
             id: id,
             items: []
           });
         },
 
-        find(params, callback) {
+        find (params, callback) {
           callback(null, []);
         }
       });
@@ -327,7 +328,7 @@ describe('.after hooks', () => {
       const service = app.service('dummy');
 
       service.after([
-        function(hook, next) {
+        function (hook, next) {
           hook.result.afterAllMethodArray = true;
           next();
         }
@@ -348,7 +349,7 @@ describe('.after hooks', () => {
     it('after hooks have service as context and keep it in service method (#17)', done => {
       const app = feathers().configure(hooks()).use('/dummy', {
         number: 42,
-        get(id, params, callback) {
+        get (id, params, callback) {
           callback(null, {
             id: id,
             number: this.number
@@ -359,7 +360,7 @@ describe('.after hooks', () => {
       const service = app.service('dummy');
 
       service.after({
-        get(hook, next) {
+        get (hook, next) {
           hook.result.test = this.number + 1;
           next();
         }
@@ -377,7 +378,7 @@ describe('.after hooks', () => {
 
     it('can not call next() multiple times', () => {
       const app = feathers().configure(hooks()).use('/dummy', {
-        get(id, params, callback) {
+        get (id, params, callback) {
           callback(null, { id });
         }
       });
@@ -386,11 +387,11 @@ describe('.after hooks', () => {
 
       service.after({
         get: [
-          function(hook, next) {
+          function (hook, next) {
             next();
           },
 
-          function(hook, next) {
+          function (hook, next) {
             next();
             next();
           }
@@ -399,7 +400,7 @@ describe('.after hooks', () => {
 
       try {
         service.get(10);
-      } catch(e) {
+      } catch (e) {
         assert.deepEqual(e.message, `next() called multiple times for hook on 'get' method`);
       }
     });
