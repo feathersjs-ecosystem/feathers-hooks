@@ -99,4 +99,59 @@ describe('feathers-hooks', () => {
     return service.get(1)
       .then(result => assert.equal(result, null));
   });
+
+  it('invalid type in .hooks throws error', () => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get (id, params, callback) {
+        callback(null, { id, params });
+      }
+    });
+
+    try {
+      app.service('dummy').hooks({
+        invalid: {}
+      });
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(e.message, `'invalid' is not a valid hook type`);
+    }
+  });
+
+  it('.hooks and backwards compatibility methods chain their hooks', () => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get (id, params, callback) {
+        callback(null, { id, params });
+      }
+    });
+    const makeHooks = name => {
+      return {
+        all (hook) {
+          hook.params.items.push(`${name}_all`);
+        },
+
+        get (hook) {
+          hook.params.items.push(`${name}_get`);
+        }
+      };
+    };
+
+    const service = app.service('dummy');
+
+    service.hooks({ before: makeHooks('hooks_before') });
+    service.hooks({ before: makeHooks('hooks_before_1') });
+    service.before(makeHooks('before'));
+    service.before(makeHooks('before_1'));
+
+    return service.get('testing', { items: [] })
+      .then(data => assert.deepEqual(data.params.items, [
+        'hooks_before_all',
+        'hooks_before_get',
+        'hooks_before_1_all',
+        'hooks_before_1_get',
+        'before_all',
+        'before_get',
+        'before_1_all',
+        'before_1_get'
+      ]));
+  });
 });

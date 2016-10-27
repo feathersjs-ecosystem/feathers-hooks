@@ -22,6 +22,10 @@ function hookMixin (service) {
   const mixin = {
     hooks (allHooks) {
       each(allHooks, (obj, type) => {
+        if (!this.__hooks[type]) {
+          throw new Error(`'${type}' is not a valid hook type`);
+        }
+
         const hooks = utils.convertHookData(obj);
 
         methods.forEach(method => {
@@ -58,9 +62,7 @@ function hookMixin (service) {
     value: {}
   });
 
-  addHookTypes(service, methods,
-    'before', 'after', 'error', 'first', 'last'
-  );
+  addHookTypes(service, methods, 'before', 'after', 'error');
 
   methods.forEach(method => {
     if (typeof service[method] !== 'function') {
