@@ -28,6 +28,12 @@ function hookMixin (service) {
 
         const hooks = utils.convertHookData(obj);
 
+        each(hooks, (value, method) => {
+          if (method !== 'all' && methods.indexOf(method) === -1) {
+            throw new Error(`'${method}' is not a valid hook method`);
+          }
+        });
+
         methods.forEach(method => {
           if (typeof this[method] !== 'function') {
             return;
@@ -73,9 +79,7 @@ function hookMixin (service) {
       // A reference to the original method
       const _super = this._super.bind(this);
       // Create the hook object that gets passed through
-      const hookObject = utils.hookObject(method, 'before', arguments);
-
-      hookObject.app = app;
+      const hookObject = utils.hookObject(method, 'before', arguments, app);
 
       // Process all before hooks
       return processHooks.call(this, this.__hooks.before[method], hookObject)
@@ -114,9 +118,10 @@ function hookMixin (service) {
         .then(processHooks.bind(this, this.__hooks.after[method]))
         // Finally, return the result
         .then(hookObject => hookObject.result)
+        // Handle errors
         .catch(error => {
           const errorHook = Object.assign({}, error.hook || hookObject, {
-            type: 'onError',
+            type: 'error',
             original: error.hook,
             error
           });

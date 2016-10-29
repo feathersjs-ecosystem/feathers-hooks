@@ -3,7 +3,7 @@ import feathers from 'feathers';
 
 import hooks from '../src/hooks';
 
-describe('.onError hooks', () => {
+describe('error hooks', () => {
   describe('on direct service method errors', () => {
     const errorMessage = 'Something else went wrong';
     const app = feathers().configure(hooks()).use('/dummy', {
@@ -15,11 +15,11 @@ describe('.onError hooks', () => {
 
     afterEach(() => service.__hooks.error.get.pop());
 
-    it('basic onError hook', done => {
+    it('basic error hook', done => {
       service.hooks({
         error: {
           get (hook) {
-            assert.equal(hook.type, 'onError');
+            assert.equal(hook.type, 'error');
             assert.equal(hook.id, 'test');
             assert.equal(hook.method, 'get');
             assert.equal(hook.app, app);

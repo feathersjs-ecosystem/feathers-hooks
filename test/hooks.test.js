@@ -117,6 +117,25 @@ describe('feathers-hooks', () => {
     }
   });
 
+  it('invalid hook method throws error', () => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get (id, params, callback) {
+        callback(null, { id, params });
+      }
+    });
+
+    try {
+      app.service('dummy').hooks({
+        before: {
+          invalid () {}
+        }
+      });
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(e.message, `'invalid' is not a valid hook method`);
+    }
+  });
+
   it('.hooks and backwards compatibility methods chain their hooks', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
       get (id, params, callback) {
