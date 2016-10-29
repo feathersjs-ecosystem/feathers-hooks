@@ -1,6 +1,9 @@
 import { each, hooks as utils } from 'feathers-commons';
+import {
+  lowerCase, removeQuery, pluckQuery,
+  removeField, remove, pluck, disable, populate
+} from 'feathers-hooks-common';
 
-import * as hooks from './bundled';
 import { addHookTypes, processHooks } from './commons';
 
 function isPromise (result) {
@@ -152,12 +155,13 @@ function configure () {
   };
 }
 
-configure.removeQuery = hooks.removeQuery;
-configure.pluckQuery = hooks.pluckQuery;
-configure.lowerCase = hooks.lowerCase;
-configure.remove = hooks.remove;
-configure.pluck = hooks.pluck;
-configure.disable = hooks.disable;
-configure.populate = hooks.populate;
+configure.removeQuery = removeQuery;
+configure.pluckQuery = pluckQuery;
+configure.lowerCase = lowerCase;
+configure.remove = remove;
+configure.pluck = pluck;
+configure.disable = disable;
+configure.populate = populate;
+configure.removeField = removeField;
 
 export default configure;

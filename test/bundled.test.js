@@ -559,7 +559,7 @@ describe('Bundled feathers hooks', () => {
       });
 
       return service.remove().catch(e => {
-        assert.equal(e.message, `Calling 'remove' not allowed.`);
+        assert.equal(e.message, `Calling 'remove' not allowed. (disable)`);
         // Remove the hook we just tested
         service.__hooks.before.remove.pop();
       });
@@ -571,7 +571,7 @@ describe('Bundled feathers hooks', () => {
       });
 
       return service.remove(0, { provider: 'test' }).catch(e => {
-        assert.equal(e.message, `Provider 'test' can not call 'remove'`);
+        assert.equal(e.message, `Provider 'test' can not call 'remove'. (disable)'`);
         // Remove the hook we just tested
         service.__hooks.before.remove.pop();
       });
@@ -583,7 +583,7 @@ describe('Bundled feathers hooks', () => {
       });
 
       return service.remove(0, { provider: 'testing' }).catch(e => {
-        assert.equal(e.message, `Provider 'testing' can not call 'remove'`);
+        assert.equal(e.message, `Provider 'testing' can not call 'remove'. (disable)'`);
         // Remove the hook we just tested
         service.__hooks.before.remove.pop();
       });
@@ -595,10 +595,10 @@ describe('Bundled feathers hooks', () => {
       });
 
       return service.remove(0, { provider: 'testing' }).catch(e => {
-        assert.equal(e.message, `Provider 'testing' can not call 'remove'`);
+        assert.equal(e.message, `Provider 'testing' can not call 'remove'. (disable)'`);
 
         return service.remove(0, { provider: 'again' }).catch(e => {
-          assert.equal(e.message, `Provider 'again' can not call 'remove'`);
+          assert.equal(e.message, `Provider 'again' can not call 'remove'. (disable)'`);
           // Remove the hook we just tested
           service.__hooks.before.remove.pop();
         });
