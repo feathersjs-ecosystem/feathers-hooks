@@ -1,5 +1,31 @@
 # Change Log
 
+## [v1.6.0](https://github.com/feathersjs/feathers-hooks/tree/v1.6.0) (2016-10-31)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.8...v1.6.0)
+
+**Closed issues:**
+
+- service.hooks\(\) did not run as expected [\#119](https://github.com/feathersjs/feathers-hooks/issues/119)
+- Throw an error for unknown hook methods [\#118](https://github.com/feathersjs/feathers-hooks/issues/118)
+- no hook result when internal service call [\#106](https://github.com/feathersjs/feathers-hooks/issues/106)
+- remove hook should check if hook.result is not null [\#99](https://github.com/feathersjs/feathers-hooks/issues/99)
+- afterError hooks [\#83](https://github.com/feathersjs/feathers-hooks/issues/83)
+- Should remove hook.params.provider to act as an internal call [\#76](https://github.com/feathersjs/feathers-hooks/issues/76)
+
+**Merged pull requests:**
+
+- app.hooks global hooks [\#122](https://github.com/feathersjs/feathers-hooks/pull/122) ([daffl](https://github.com/daffl))
+- Error on invalid hook methods [\#121](https://github.com/feathersjs/feathers-hooks/pull/121) ([daffl](https://github.com/daffl))
+- Use feathers-hooks-common for bundled hooks [\#120](https://github.com/feathersjs/feathers-hooks/pull/120) ([daffl](https://github.com/daffl))
+- Test to verify hooks get chained [\#117](https://github.com/feathersjs/feathers-hooks/pull/117) ([daffl](https://github.com/daffl))
+- jshint —\> semistandard [\#116](https://github.com/feathersjs/feathers-hooks/pull/116) ([corymsmith](https://github.com/corymsmith))
+- feathers-commons@0.7.8 breaks build 🚨 [\#115](https://github.com/feathersjs/feathers-hooks/pull/115) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- jshint@2.9.4 breaks build 🚨 [\#113](https://github.com/feathersjs/feathers-hooks/pull/113) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- adding code coverage [\#112](https://github.com/feathersjs/feathers-hooks/pull/112) ([ekryski](https://github.com/ekryski))
+- Implement .hooks service method [\#110](https://github.com/feathersjs/feathers-hooks/pull/110) ([daffl](https://github.com/daffl))
+- onError hooks functionality [\#109](https://github.com/feathersjs/feathers-hooks/pull/109) ([daffl](https://github.com/daffl))
+- Rename hooks properties on service [\#108](https://github.com/feathersjs/feathers-hooks/pull/108) ([daffl](https://github.com/daffl))
+
 ## [v1.5.8](https://github.com/feathersjs/feathers-hooks/tree/v1.5.8) (2016-09-27)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.7...v1.5.8)
 
@@ -19,7 +45,6 @@
 
 - Customize existing hook - 'this' undefined - TypeError [\#94](https://github.com/feathersjs/feathers-hooks/issues/94)
 - c [\#93](https://github.com/feathersjs/feathers-hooks/issues/93)
-- Remove-hook breaks feathers-mongoose [\#91](https://github.com/feathersjs/feathers-hooks/issues/91)
 
 **Merged pull requests:**
 
@@ -290,6 +315,7 @@
 **Closed issues:**
 
 - Allow hooks to return a promise [\#3](https://github.com/feathersjs/feathers-hooks/issues/3)
+- normalize parameters [\#1](https://github.com/feathersjs/feathers-hooks/issues/1)
 
 **Merged pull requests:**
 
@@ -297,10 +323,6 @@
 
 ## [0.2.0](https://github.com/feathersjs/feathers-hooks/tree/0.2.0) (2014-06-02)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.1.1...0.2.0)
-
-**Closed issues:**
-
-- normalize parameters [\#1](https://github.com/feathersjs/feathers-hooks/issues/1)
 
 ## [0.1.1](https://github.com/feathersjs/feathers-hooks/tree/0.1.1) (2014-05-29)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.1.0...0.1.1)
