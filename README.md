@@ -21,7 +21,7 @@ Please refer to the [Feathers hooks documentation](http://docs.feathersjs.com/ho
 
 ## Quick start
 
-`feathers-hooks` allows you to register composable middleware functions **before** or **after** a Feathers service method executes. This makes it easy to decouple things like authorization and pre- or post processing from your service logic.
+`feathers-hooks` allows to register composable middleware functions when a Feathers service method executes. This makes it easy to decouple things like authorization and pre- or post processing and error handling from your service logic.
 
 To install from [npm](https://www.npmjs.com/package/feathers-hooks), run:
 
@@ -48,9 +48,7 @@ module.exports = function(){
   const app = this;
 
   let myHook = function(options) {
-    return function(hook) {
-      console.log('My custom hook ran!');
-    }
+    return 
   }
 
   // Initialize our service
@@ -60,21 +58,16 @@ module.exports = function(){
   const userService = app.service('/users');
 
   // Set up our before hook
-  userService.before({
-    find: [ myHook() ]
+  userService.hooks({
+    before(hook){
+      console.log('My custom before hook ran!');
+    }
   });
 }
 ```
 
-## Examples
-
-The repository contains the following examples:
-
-- [authorization.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/authorization.js) - A simple demo showing how to use hooks for authorization (and post-processing the results) where the user is set via a `?user=username` query parameter.
-- [timestamp.js](https://github.com/feathersjs/feathers-hooks/blob/master/examples/timestamp.js) - A demo that adds a `createdAt` and `updatedAt` timestamp when creating or updating a Todo using hooks.
-
 ## License
 
-Copyright (c) 2014 [Feathers contributors](https://github.com/feathersjs/feathers-hooks/graphs/contributors)
+Copyright (c) 2016 [Feathers contributors](https://github.com/feathersjs/feathers-hooks/graphs/contributors)
 
 Licensed under the [MIT license](LICENSE).
