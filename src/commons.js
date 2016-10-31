@@ -1,3 +1,5 @@
+import { each, hooks as utils } from 'feathers-commons';
+
 export function isHookObject (hookObject) {
   return typeof hookObject === 'object' &&
     typeof hookObject.method === 'string' &&
@@ -45,15 +47,65 @@ export function processHooks (hooks, initialHookObject) {
   });
 }
 
-export function addHookTypes (service, methods, ...types) {
+export function addHookTypes (target, types = ['before', 'after', 'error']) {
+  Object.defineProperty(target, '__hooks', {
+    value: {}
+  });
+
   types.forEach(type => {
     // Initialize properties where hook functions are stored
-    service.__hooks[type] = {};
-
-    methods.forEach(method => {
-      if (typeof service[method] === 'function') {
-        service.__hooks[type][method] = [];
-      }
-    });
+    target.__hooks[type] = {};
   });
+}
+
+export function getHooks (app, service, type, method, appLast = false) {
+  const appHooks = app.__hooks[type][method] || [];
+  const serviceHooks = service.__hooks[type][method] || [];
+
+  if (appLast) {
+    return serviceHooks.concat(appHooks);
+  }
+
+  return appHooks.concat(serviceHooks);
+}
+
+export function baseMixin (methods, ...objs) {
+  const mixin = {
+    hooks (allHooks) {
+      each(allHooks, (obj, type) => {
+        if (!this.__hooks[type]) {
+          throw new Error(`'${type}' is not a valid hook type`);
+        }
+
+        const hooks = utils.convertHookData(obj);
+
+        each(hooks, (value, method) => {
+          if (method !== 'all' && methods.indexOf(method) === -1) {
+            throw new Error(`'${method}' is not a valid hook method`);
+          }
+        });
+
+        methods.forEach(method => {
+          if (!(hooks[method] || hooks.all)) {
+            return;
+          }
+
+          const myHooks = this.__hooks[type][method] ||
+            (this.__hooks[type][method] = []);
+
+          if (hooks.all) {
+            myHooks.push.apply(myHooks, hooks.all);
+          }
+
+          if (hooks[method]) {
+            myHooks.push.apply(myHooks, hooks[method]);
+          }
+        });
+      });
+
+      return this;
+    }
+  };
+
+  return Object.assign(mixin, ...objs);
 }

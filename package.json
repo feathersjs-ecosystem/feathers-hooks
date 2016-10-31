@@ -54,7 +54,8 @@
   "dependencies": {
     "feathers-commons": "^0.7.8",
     "feathers-errors": "^2.0.1",
-    "feathers-hooks-common": "^2.0.0"
+    "feathers-hooks-common": "^2.0.0",
+    "uberproto": "^1.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",

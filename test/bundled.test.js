@@ -645,7 +645,7 @@ describe('Bundled feathers hooks', () => {
   describe('populate', () => {
     let app;
 
-    before(() => {
+    beforeEach(() => {
       app = feathers()
         .configure(rest())
         .configure(hooks())
@@ -686,7 +686,6 @@ describe('Bundled feathers hooks', () => {
           user: { id: 10, name: 'user 10' },
           id: 0
         });
-        service.__hooks.after.create.pop();
       });
     });
 
@@ -706,9 +705,8 @@ describe('Bundled feathers hooks', () => {
           text: 'A todo',
           userId: 10,
           user: { id: 10, name: 'user 10' },
-          id: 1
+          id: 0
         });
-        service.__hooks.after.create.pop();
       });
     });
 
@@ -727,9 +725,8 @@ describe('Bundled feathers hooks', () => {
         assert.deepEqual(todo, {
           text: 'A todo',
           groups: [ { id: 12, name: 'group 12' }, { id: 13, name: 'group 13' } ],
-          id: 2
+          id: 0
         });
-        service.__hooks.after.create.pop();
       });
     });
 
@@ -755,9 +752,8 @@ describe('Bundled feathers hooks', () => {
           text: 'Queried todo',
           userId: 15,
           user: { id: 15, name: 'user 15' },
-          id: 3
+          id: 0
         }]);
-        service.__hooks.after.find.pop();
       });
     });
   });

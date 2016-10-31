@@ -1,10 +1,11 @@
-import { each, hooks as utils } from 'feathers-commons';
+import Proto from 'uberproto';
+import { hooks as utils } from 'feathers-commons';
 import {
   lowerCase, removeQuery, pluckQuery,
   removeField, remove, pluck, disable, populate
 } from 'feathers-hooks-common';
 
-import { addHookTypes, processHooks } from './commons';
+import { addHookTypes, processHooks, baseMixin, getHooks } from './commons';
 
 function isPromise (result) {
   return typeof result !== 'undefined' &&
@@ -12,52 +13,13 @@ function isPromise (result) {
 }
 
 function hookMixin (service) {
-  if (typeof service.mixin !== 'function') {
-    return;
-  }
-
   const app = this;
   const methods = app.methods;
   const old = {
     before: service.before,
     after: service.after
   };
-  const mixin = {
-    hooks (allHooks) {
-      each(allHooks, (obj, type) => {
-        if (!this.__hooks[type]) {
-          throw new Error(`'${type}' is not a valid hook type`);
-        }
-
-        const hooks = utils.convertHookData(obj);
-
-        each(hooks, (value, method) => {
-          if (method !== 'all' && methods.indexOf(method) === -1) {
-            throw new Error(`'${method}' is not a valid hook method`);
-          }
-        });
-
-        methods.forEach(method => {
-          if (typeof this[method] !== 'function') {
-            return;
-          }
-
-          const myHooks = this.__hooks[type][method];
-
-          if (hooks.all) {
-            myHooks.push.apply(myHooks, hooks.all);
-          }
-
-          if (hooks[method]) {
-            myHooks.push.apply(myHooks, hooks[method]);
-          }
-        });
-      });
-
-      return this;
-    },
-
-    // TODO add deprecation warnings
+  const mixin = baseMixin(methods, {
     before (before) {
       return this.hooks({ before });
     },
@@ -65,13 +27,9 @@ function hookMixin (service) {
     after (after) {
       return this.hooks({ after });
     }
-  };
-
-  Object.defineProperty(service, '__hooks', {
-    value: {}
   });
 
-  addHookTypes(service, methods, 'before', 'after', 'error');
+  addHookTypes(service);
 
   methods.forEach(method => {
     if (typeof service[method] !== 'function') {
@@ -83,9 +41,17 @@ function hookMixin (service) {
       const _super = this._super.bind(this);
       // Create the hook object that gets passed through
       const hookObject = utils.hookObject(method, 'before', arguments, app);
+      // Get all hooks
+      const hooks = {
+        // For before hooks the app hooks will run first
+        before: getHooks(app, this, 'before', method),
+        // For after and error hooks the app hooks will run last
+        after: getHooks(app, this, 'after', method, true),
+        error: getHooks(app, this, 'error', method, true)
+      };
 
       // Process all before hooks
-      return processHooks.call(this, this.__hooks.before[method], hookObject)
+      return processHooks.call(this, hooks.before, hookObject)
         // Use the hook object to call the original method
         .then(hookObject => {
           if (typeof hookObject.result !== 'undefined') {
@@ -118,7 +84,7 @@ function hookMixin (service) {
         // Make a copy of hookObject from `before` hooks and update type
         .then(hookObject => Object.assign({}, hookObject, { type: 'after' }))
         // Run through all `after` hooks
-        .then(processHooks.bind(this, this.__hooks.after[method]))
+        .then(processHooks.bind(this, hooks.after))
         // Finally, return the result
         .then(hookObject => hookObject.result)
         // Handle errors
@@ -130,7 +96,7 @@ function hookMixin (service) {
           });
 
           return processHooks
-            .call(this, this.__hooks.error[method], errorHook)
+            .call(this, hooks.error, errorHook)
             .then(hook => Promise.reject(hook.error));
         });
     };
@@ -151,6 +117,12 @@ function hookMixin (service) {
 
 function configure () {
   return function () {
+    const app = this;
+
+    addHookTypes(app);
+
+    Proto.mixin(baseMixin(app.methods), app);
+
     this.mixins.unshift(hookMixin);
   };
 }
