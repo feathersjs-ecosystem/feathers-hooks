@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.6.1](https://github.com/feathersjs/feathers-hooks/tree/v1.6.1) (2016-11-02)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.6.0...v1.6.1)
+
+**Closed issues:**
+
+- app.hooks\(\) does not pass hook.app [\#123](https://github.com/feathersjs/feathers-hooks/issues/123)
+- \[Feature Request\] Hook to disable multi-update/patch/remove [\#98](https://github.com/feathersjs/feathers-hooks/issues/98)
+
 ## [v1.6.0](https://github.com/feathersjs/feathers-hooks/tree/v1.6.0) (2016-10-31)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.5.8...v1.6.0)
 
