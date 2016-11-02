@@ -3,7 +3,7 @@ import { hooks as utils } from 'feathers-commons';
 import {
   lowerCase, removeQuery, pluckQuery,
   removeField, remove, pluck, disable, populate
-} from 'feathers-hooks-common';
+} from 'feathers-hooks-common/lib/bundled';
 
 import { addHookTypes, processHooks, baseMixin, getHooks } from './commons';
 
