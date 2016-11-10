@@ -52,7 +52,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "feathers-commons": "^0.7.8",
+    "feathers-commons": "^0.8.0",
     "feathers-hooks-common": "^2.0.0",
     "uberproto": "^1.2.0"
   },
