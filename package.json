@@ -22,7 +22,7 @@
     "url": "https://github.com/feathersjs/feathers-hooks/issues"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">= 4.0"
   },
   "main": "lib/hooks.js",
   "scripts": {
