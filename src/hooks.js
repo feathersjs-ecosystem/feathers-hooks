@@ -37,10 +37,20 @@ function hookMixin (service) {
     }
 
     mixin[method] = function () {
+      const service = this;
       // A reference to the original method
       const _super = this._super.bind(this);
+      // Additional data to add to the hook object
+      const hookData = {
+        app,
+        service,
+        get path () {
+          return Object.keys(app.services)
+            .find(path => app.services[path] === service);
+        }
+      };
       // Create the hook object that gets passed through
-      const hookObject = utils.hookObject(method, 'before', arguments, app);
+      const hookObject = utils.hookObject(method, 'before', arguments, hookData);
       // Get all hooks
       const hooks = {
         // For before hooks the app hooks will run first

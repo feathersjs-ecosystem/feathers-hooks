@@ -77,6 +77,32 @@ describe('feathers-hooks', () => {
     service.create({ test: true });
   });
 
+  it('has hook.app, hook.service and hook.path', done => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get (id) {
+        return Promise.resolve({ id });
+      }
+    });
+
+    const service = app.service('dummy');
+
+    service.hooks({
+      before (hook) {
+        try {
+          assert.equal(this, service);
+          assert.equal(hook.service, service);
+          assert.equal(hook.app, app);
+          assert.equal(hook.path, 'dummy');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      }
+    });
+
+    service.get('test');
+  });
+
   it('does not error when result is null', () => {
     const app = feathers().configure(hooks()).use('/dummy', {
       get (id, params, callback) {
