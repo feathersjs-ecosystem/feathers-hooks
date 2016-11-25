@@ -1,5 +1,25 @@
 # Change Log
 
+## [v1.7.0](https://github.com/feathersjs/feathers-hooks/tree/v1.7.0) (2016-11-25)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.6.1...v1.7.0)
+
+**Implemented enhancements:**
+
+- Bundled hooks should support a scope [\#63](https://github.com/feathersjs/feathers-hooks/issues/63)
+
+**Closed issues:**
+
+- Be able to access deeply nested attributes in bundled hooks [\#79](https://github.com/feathersjs/feathers-hooks/issues/79)
+
+**Merged pull requests:**
+
+- Adding hook.path and hook.service [\#129](https://github.com/feathersjs/feathers-hooks/pull/129) ([daffl](https://github.com/daffl))
+- Update feathers-memory to version 1.0.0 🚀 [\#128](https://github.com/feathersjs/feathers-hooks/pull/128) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Node \>= 4 [\#127](https://github.com/feathersjs/feathers-hooks/pull/127) ([daffl](https://github.com/daffl))
+- Update feathers-commons to version 0.8.0 🚀 [\#126](https://github.com/feathersjs/feathers-hooks/pull/126) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- feathers-errors@2.5.0 breaks build 🚨 [\#125](https://github.com/feathersjs/feathers-hooks/pull/125) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- babel-core@6.18.1 breaks build 🚨 [\#124](https://github.com/feathersjs/feathers-hooks/pull/124) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
 ## [v1.6.1](https://github.com/feathersjs/feathers-hooks/tree/v1.6.1) (2016-11-02)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.6.0...v1.6.1)
 
