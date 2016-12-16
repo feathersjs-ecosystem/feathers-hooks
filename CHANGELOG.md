@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.7.1](https://github.com/feathersjs/feathers-hooks/tree/v1.7.1) (2016-12-16)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.7.0...v1.7.1)
+
+**Closed issues:**
+
+- How to mix hooks together \(pluck + populate\) [\#68](https://github.com/feathersjs/feathers-hooks/issues/68)
+
+**Merged pull requests:**
+
+- Use legacyPopulate from latest hooks-common [\#131](https://github.com/feathersjs/feathers-hooks/pull/131) ([daffl](https://github.com/daffl))
+
 ## [v1.7.0](https://github.com/feathersjs/feathers-hooks/tree/v1.7.0) (2016-11-25)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.6.1...v1.7.0)
 
