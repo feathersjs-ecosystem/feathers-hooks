@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "feathers-commons": "^0.8.6",
-    "feathers-hooks-common": "^2.0.0",
+    "feathers-hooks-common": "^2.0.3",
     "uberproto": "^1.2.0"
   },
   "devDependencies": {
