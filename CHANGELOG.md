@@ -1,5 +1,20 @@
 # Change Log
 
+## [v1.8.0](https://github.com/feathersjs/feathers-hooks/tree/v1.8.0) (2017-03-01)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.7.1...v1.8.0)
+
+**Closed issues:**
+
+- Composing Hooks [\#133](https://github.com/feathersjs/feathers-hooks/issues/133)
+- Can I use populate without authentication? [\#132](https://github.com/feathersjs/feathers-hooks/issues/132)
+- Remove-hook breaks feathers-mongoose [\#91](https://github.com/feathersjs/feathers-hooks/issues/91)
+
+**Merged pull requests:**
+
+- Update feathers-mongoose to version 5.0.0 🚀 [\#138](https://github.com/feathersjs/feathers-hooks/pull/138) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Typescript Definitions [\#135](https://github.com/feathersjs/feathers-hooks/pull/135) ([AbraaoAlves](https://github.com/AbraaoAlves))
+- Update feathers-mongoose to version 4.0.0 🚀 [\#134](https://github.com/feathersjs/feathers-hooks/pull/134) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
 ## [v1.7.1](https://github.com/feathersjs/feathers-hooks/tree/v1.7.1) (2016-12-16)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.7.0...v1.7.1)
 
