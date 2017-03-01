@@ -25,6 +25,7 @@
     "node": ">= 4.0"
   },
   "main": "lib/hooks.js",
+  "types":["./index.d.ts"],
   "scripts": {
     "prepublish": "npm run compile",
     "publish": "git push origin --tags && npm run changelog && git push origin",
