@@ -4,6 +4,7 @@ declare module 'feathers' {
   interface Service<T> {
     before(hooks: hooks.HookMap);
     after(hooks: hooks.HookMap);
+    hooks(hooks: hooks.HooksObject);
   }
 }
 
@@ -31,6 +32,12 @@ declare namespace hooks {
     update?: Hook | Hook[];
     patch?: Hook | Hook[];
     remove?: Hook | Hook[];
+  }
+
+  interface HooksObject {
+    before?: HookMap;
+    after?: HookMap;
+    error?: HookMap;
   }
 }
 
