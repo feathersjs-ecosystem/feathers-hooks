@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.8.1](https://github.com/feathersjs/feathers-hooks/tree/v1.8.1) (2017-03-02)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.8.0...v1.8.1)
+
+**Merged pull requests:**
+
+- Additional hook typedefs [\#139](https://github.com/feathersjs/feathers-hooks/pull/139) ([myknbani](https://github.com/myknbani))
+
 ## [v1.8.0](https://github.com/feathersjs/feathers-hooks/tree/v1.8.0) (2017-03-01)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.7.1...v1.8.0)
 
