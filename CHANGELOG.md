@@ -1,5 +1,28 @@
 # Change Log
 
+## [v2.0.0](https://github.com/feathersjs/feathers-hooks/tree/v2.0.0) (2017-04-17)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.8.1...v2.0.0)
+
+**Implemented enhancements:**
+
+- Population fails on empty values [\#137](https://github.com/feathersjs/feathers-hooks/issues/137)
+
+**Closed issues:**
+
+- feathers-hooks-common/lib/populate, feathers-hooks-common/lib/bundled not found. [\#149](https://github.com/feathersjs/feathers-hooks/issues/149)
+- Test Hooks [\#146](https://github.com/feathersjs/feathers-hooks/issues/146)
+- Gravatar example doesn't work?! [\#145](https://github.com/feathersjs/feathers-hooks/issues/145)
+- how to get service name\(path\) in hook functions? [\#143](https://github.com/feathersjs/feathers-hooks/issues/143)
+- V1.7.1: Module not found: Error: Can't resolve 'feathers-hooks-common/lib/populate' in '/app/node\_modules/feathers-hooks/lib' @ ./~/feathers-hooks/lib/hooks.js 13:16-61 [\#142](https://github.com/feathersjs/feathers-hooks/issues/142)
+- Calling populate\(target, options\) is now DEPRECATED [\#141](https://github.com/feathersjs/feathers-hooks/issues/141)
+- Hooks with mutiple entries per request [\#95](https://github.com/feathersjs/feathers-hooks/issues/95)
+- Remove ref doc will broke the parent router [\#82](https://github.com/feathersjs/feathers-hooks/issues/82)
+
+**Merged pull requests:**
+
+- Remove bundled hooks [\#150](https://github.com/feathersjs/feathers-hooks/pull/150) ([daffl](https://github.com/daffl))
+- Update dependencies to enable Greenkeeper 🌴 [\#148](https://github.com/feathersjs/feathers-hooks/pull/148) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+
 ## [v1.8.1](https://github.com/feathersjs/feathers-hooks/tree/v1.8.1) (2017-03-02)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.8.0...v1.8.1)
 
