@@ -117,8 +117,7 @@ describe('feathers-hooks', () => {
         function (hook) {
           hook.result = null;
           return hook;
-        },
-        hooks.remove('title')
+        }
       ]
     });
 
