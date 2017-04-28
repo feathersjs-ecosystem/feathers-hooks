@@ -1,5 +1,19 @@
 # Change Log
 
+## [v2.0.1](https://github.com/feathersjs/feathers-hooks/tree/v2.0.1) (2017-04-28)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.0...v2.0.1)
+
+**Closed issues:**
+
+- `\_\_hooks` of existing service should not be overwritten [\#154](https://github.com/feathersjs/feathers-hooks/issues/154)
+- An in-range update of mongoose is breaking the build 🚨 [\#153](https://github.com/feathersjs/feathers-hooks/issues/153)
+
+**Merged pull requests:**
+
+- Test for \#154 and \#155 [\#156](https://github.com/feathersjs/feathers-hooks/pull/156) ([daffl](https://github.com/daffl))
+- Fixed issue with \_\_hooks being overwritten when reusing service [\#155](https://github.com/feathersjs/feathers-hooks/pull/155) ([Mattchewone](https://github.com/Mattchewone))
+- Update semistandard to the latest version 🚀 [\#152](https://github.com/feathersjs/feathers-hooks/pull/152) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+
 ## [v2.0.0](https://github.com/feathersjs/feathers-hooks/tree/v2.0.0) (2017-04-17)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.8.1...v2.0.0)
 
