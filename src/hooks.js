@@ -8,6 +8,10 @@ function isPromise (result) {
 }
 
 function hookMixin (service) {
+  if (typeof service.hooks === 'function') {
+    return;
+  }
+
   const app = this;
   const methods = app.methods;
   const old = {
