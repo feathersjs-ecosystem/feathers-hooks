@@ -198,4 +198,14 @@ describe('feathers-hooks', () => {
         'before_1_get'
       ]));
   });
+
+  it('registering an already hooked service works (#154)', () => {
+    const app = feathers().configure(hooks()).use('/dummy', {
+      get (id, params, callback) {
+        callback(null, { id, params });
+      }
+    });
+
+    app.use('/dummy2', app.service('dummy'));
+  });
 });
