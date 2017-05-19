@@ -17,7 +17,7 @@ declare namespace hooks {
 
   interface HookProps<T> {
     method?: string;
-    type: 'before' | 'after';
+    type: 'before' | 'after' | 'error';
     params?: any;
     data?: T;
     result?: T;
