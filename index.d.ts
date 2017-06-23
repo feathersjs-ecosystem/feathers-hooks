@@ -1,10 +1,14 @@
 import * as feathers from 'feathers';
 
 declare module 'feathers' {
+  interface Application {
+    hooks(hooks: hooks.HooksObject): Application;
+  }
+
   interface Service<T> {
-    before(hooks: hooks.HookMap):any;
-    after(hooks: hooks.HookMap):any;
-    hooks(hooks: hooks.HooksObject):any;
+    before(hooks: hooks.HookMap): Application;
+    after(hooks: hooks.HookMap): Application;
+    hooks(hooks: hooks.HooksObject): Application;
   }
 }
 
