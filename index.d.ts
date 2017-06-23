@@ -2,9 +2,9 @@ import * as feathers from 'feathers';
 
 declare module 'feathers' {
   interface Service<T> {
-    before(hooks: hooks.HookMap);
-    after(hooks: hooks.HookMap);
-    hooks(hooks: hooks.HooksObject);
+    before(hooks: hooks.HookMap):any;
+    after(hooks: hooks.HookMap):any;
+    hooks(hooks: hooks.HooksObject):any;
   }
 }
 
