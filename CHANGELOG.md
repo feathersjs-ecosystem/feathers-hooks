@@ -1,5 +1,26 @@
 # Change Log
 
+## [v2.0.2](https://github.com/feathersjs/feathers-hooks/tree/v2.0.2) (2017-07-11)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.1...v2.0.2)
+
+**Fixed bugs:**
+
+- TypeScript: HookProps.type: add 'error' [\#161](https://github.com/feathersjs/feathers-hooks/pull/161) ([tycho01](https://github.com/tycho01))
+
+**Closed issues:**
+
+- Params are not populated when called internally [\#160](https://github.com/feathersjs/feathers-hooks/issues/160)
+- \[discussion\] maybe change the name of the context parameter from 'hook' to 'context' or use 'this' in the future? [\#159](https://github.com/feathersjs/feathers-hooks/issues/159)
+- Add hook to the top of others hook [\#158](https://github.com/feathersjs/feathers-hooks/issues/158)
+- \_\_hooks being overwritten [\#157](https://github.com/feathersjs/feathers-hooks/issues/157)
+- Using a hook.disable\(\) on a service should remove that from the Allow header for REST services [\#107](https://github.com/feathersjs/feathers-hooks/issues/107)
+
+**Merged pull requests:**
+
+- Add prepare script [\#164](https://github.com/feathersjs/feathers-hooks/pull/164) ([couac](https://github.com/couac))
+- Update index.d.ts [\#163](https://github.com/feathersjs/feathers-hooks/pull/163) ([j2L4e](https://github.com/j2L4e))
+- Define return type for hooks [\#162](https://github.com/feathersjs/feathers-hooks/pull/162) ([Creiger](https://github.com/Creiger))
+
 ## [v2.0.1](https://github.com/feathersjs/feathers-hooks/tree/v2.0.1) (2017-04-28)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.0...v2.0.1)
 
@@ -12,7 +33,7 @@
 
 - Test for \#154 and \#155 [\#156](https://github.com/feathersjs/feathers-hooks/pull/156) ([daffl](https://github.com/daffl))
 - Fixed issue with \_\_hooks being overwritten when reusing service [\#155](https://github.com/feathersjs/feathers-hooks/pull/155) ([Mattchewone](https://github.com/Mattchewone))
-- Update semistandard to the latest version 🚀 [\#152](https://github.com/feathersjs/feathers-hooks/pull/152) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+- Update semistandard to the latest version 🚀 [\#152](https://github.com/feathersjs/feathers-hooks/pull/152) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v2.0.0](https://github.com/feathersjs/feathers-hooks/tree/v2.0.0) (2017-04-17)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.8.1...v2.0.0)
@@ -35,7 +56,7 @@
 **Merged pull requests:**
 
 - Remove bundled hooks [\#150](https://github.com/feathersjs/feathers-hooks/pull/150) ([daffl](https://github.com/daffl))
-- Update dependencies to enable Greenkeeper 🌴 [\#148](https://github.com/feathersjs/feathers-hooks/pull/148) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+- Update dependencies to enable Greenkeeper 🌴 [\#148](https://github.com/feathersjs/feathers-hooks/pull/148) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v1.8.1](https://github.com/feathersjs/feathers-hooks/tree/v1.8.1) (2017-03-02)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v1.8.0...v1.8.1)
