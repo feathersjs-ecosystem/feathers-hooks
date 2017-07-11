@@ -29,6 +29,7 @@
     "./index.d.ts"
   ],
   "scripts": {
+    "prepare": "npm run compile",
     "prepublish": "npm run compile",
     "publish": "git push origin --tags && npm run changelog && git push origin",
     "release:prerelease": "npm version prerelease && npm publish",
