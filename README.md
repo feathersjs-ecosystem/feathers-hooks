@@ -13,7 +13,7 @@
 
 ## Documentation
 
-Please refer to the [Feathers hooks documentation](http://docs.feathersjs.com/hooks/readme.html) for more details on:
+Please refer to the [Feathers hooks documentation](https://docs.feathersjs.com/api/hooks.html) for more details on:
 
 - The philosophy behind hooks
 - How you can use hooks
