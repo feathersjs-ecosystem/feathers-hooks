@@ -1,5 +1,19 @@
 # Change Log
 
+## [v2.0.3](https://github.com/feathersjs/feathers-hooks/tree/v2.0.3) (2017-09-25)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.2...v2.0.3)
+
+**Closed issues:**
+
+- Hook typings [\#166](https://github.com/feathersjs/feathers-hooks/issues/166)
+- Error: 'chck' is not a valid hook method [\#165](https://github.com/feathersjs/feathers-hooks/issues/165)
+- \[feature request\] provide a way to swallow error in error hooks [\#151](https://github.com/feathersjs/feathers-hooks/issues/151)
+
+**Merged pull requests:**
+
+- \[typings\] add service and id to hook context object [\#169](https://github.com/feathersjs/feathers-hooks/pull/169) ([j2L4e](https://github.com/j2L4e))
+- Update README to point at new documentation location [\#167](https://github.com/feathersjs/feathers-hooks/pull/167) ([tfussell](https://github.com/tfussell))
+
 ## [v2.0.2](https://github.com/feathersjs/feathers-hooks/tree/v2.0.2) (2017-07-11)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.1...v2.0.2)
 
