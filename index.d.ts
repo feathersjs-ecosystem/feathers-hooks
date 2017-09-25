@@ -20,12 +20,16 @@ declare namespace hooks {
   }
 
   interface HookProps<T> {
-    method?: string;
-    type: 'before' | 'after' | 'error';
-    params?: any;
-    data?: T;
-    result?: T;
     app?: feathers.Application;
+    data?: T;
+    error?: any;
+    id?: string | number;
+    method?: string;
+    params?: any;
+    path?: string;
+    result?: T;
+    service: feathers.Service<T>;
+    type: 'before' | 'after' | 'error';
   }
 
   interface HookMap {
