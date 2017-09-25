@@ -1,5 +1,12 @@
 # Change Log
 
+## [v2.0.4](https://github.com/feathersjs/feathers-hooks/tree/v2.0.4) (2017-09-25)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.3...v2.0.4)
+
+**Merged pull requests:**
+
+- \[typings\] Make Service generic types default to any [\#168](https://github.com/feathersjs/feathers-hooks/pull/168) ([j2L4e](https://github.com/j2L4e))
+
 ## [v2.0.3](https://github.com/feathersjs/feathers-hooks/tree/v2.0.3) (2017-09-25)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.2...v2.0.3)
 
@@ -449,10 +456,6 @@
 
 - Allow hooks to return a promise [\#3](https://github.com/feathersjs/feathers-hooks/issues/3)
 - normalize parameters [\#1](https://github.com/feathersjs/feathers-hooks/issues/1)
-
-**Merged pull requests:**
-
-- Allow hooks to return a promise [\#4](https://github.com/feathersjs/feathers-hooks/pull/4) ([daffl](https://github.com/daffl))
 
 ## [0.2.0](https://github.com/feathersjs/feathers-hooks/tree/0.2.0) (2014-06-02)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/0.1.1...0.2.0)
