@@ -100,13 +100,14 @@ function hookMixin (service) {
         .catch(error => {
           const errorHook = Object.assign({}, error.hook || hookObject, {
             type: 'error',
+            result: null,
             original: error.hook,
             error
           });
 
           return processHooks
             .call(this, hooks.error, errorHook)
-            .then(hook => Promise.reject(hook.error));
+            .then(hook => hook.result || Promise.reject(hook.error));
         });
     };
   });

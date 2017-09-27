@@ -120,6 +120,22 @@ describe('error hooks', () => {
         assert.ok(error.third);
       });
     });
+
+    it('setting `hook.result` will return result', () => {
+      const data = {
+        message: 'It worked'
+      };
+
+      service.hooks({
+        error (hook) {
+          hook.result = data;
+          return Promise.resolve(hook);
+        }
+      });
+
+      return service.get(10)
+        .then(result => assert.deepEqual(result, data));
+    });
   });
 
   describe('error in hooks', () => {
@@ -167,7 +183,7 @@ describe('error hooks', () => {
             'Original hook still set'
           );
           assert.equal(hook.id, 'dishes');
-          assert.deepEqual(hook.result, {
+          assert.deepEqual(hook.original.result, {
             id: 'dishes',
             text: 'You have to do dishes'
           });
