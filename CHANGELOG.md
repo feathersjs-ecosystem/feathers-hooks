@@ -1,5 +1,17 @@
 # Change Log
 
+## [v2.1.1](https://github.com/feathersjs/feathers-hooks/tree/v2.1.1) (2017-10-22)
+[Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.1.0...v2.1.1)
+
+**Closed issues:**
+
+- Angular 4 feathers hook build fails - "All declarations of 'Service' must have identical type parameters" [\#172](https://github.com/feathersjs/feathers-hooks/issues/172)
+
+**Merged pull requests:**
+
+- Fix TypeScript declarations. [\#173](https://github.com/feathersjs/feathers-hooks/pull/173) ([TimMensch](https://github.com/TimMensch))
+- Update mocha to the latest version 🚀 [\#171](https://github.com/feathersjs/feathers-hooks/pull/171) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v2.1.0](https://github.com/feathersjs/feathers-hooks/tree/v2.1.0) (2017-09-27)
 [Full Changelog](https://github.com/feathersjs/feathers-hooks/compare/v2.0.4...v2.1.0)
 
