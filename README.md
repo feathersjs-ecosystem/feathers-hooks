@@ -1,5 +1,7 @@
 # Feathers Hooks
 
+> _Important:_ `feathers-hooks` is included in Feathers (`@feathersjs/feathers`) v3 and later and does not have to be loaded and configured separately anymore.
+
 [![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs/feathers-hooks.svg)](https://greenkeeper.io/)
 
 [![Build Status](https://travis-ci.org/feathersjs/feathers-hooks.png?branch=master)](https://travis-ci.org/feathersjs/feathers-hooks)

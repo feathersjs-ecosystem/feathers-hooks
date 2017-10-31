@@ -129,6 +129,10 @@ function configure () {
   return function () {
     const app = this;
 
+    if (app.version && app.version >= '3.0.0') {
+      throw new Error(`You are using Feathers v${app.version} which already includes feathers-hooks. You can remove this module from your application.`);
+    }
+
     addHookTypes(app);
 
     Proto.mixin(baseMixin(app.methods), app);

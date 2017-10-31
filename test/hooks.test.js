@@ -208,4 +208,17 @@ describe('feathers-hooks', () => {
 
     app.use('/dummy2', app.service('dummy'));
   });
+
+  if(process.version > 'v6.0.0') {
+    it('throws an error when using Feathers v3 or later', () => {
+      const feathers3 = require('@feathersjs/feathers');
+
+      try {
+        feathers3().configure(hooks());
+        assert.ok(false, 'Should never get here');
+      } catch (e) {
+        assert.equal(e.message, `You are using Feathers v${feathers3.version} which already includes feathers-hooks. You can remove this module from your application.`);
+      }
+    });
+  }
 });
