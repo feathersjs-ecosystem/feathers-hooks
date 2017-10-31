@@ -2,12 +2,12 @@
 
 > _Important:_ `feathers-hooks` is included in Feathers (`@feathersjs/feathers`) v3 and later and does not have to be loaded and configured separately anymore.
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs/feathers-hooks.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs-ecosystem/feathers-hooks.svg)](https://greenkeeper.io/)
 
-[![Build Status](https://travis-ci.org/feathersjs/feathers-hooks.png?branch=master)](https://travis-ci.org/feathersjs/feathers-hooks)
-[![Code Climate](https://codeclimate.com/github/feathersjs/feathers-hooks/badges/gpa.svg)](https://codeclimate.com/github/feathersjs/feathers-hooks)
-[![Test Coverage](https://codeclimate.com/github/feathersjs/feathers-hooks/badges/coverage.svg)](https://codeclimate.com/github/feathersjs/feathers-hooks/coverage)
-[![Dependency Status](https://img.shields.io/david/feathersjs/feathers-hooks.svg?style=flat-square)](https://david-dm.org/feathersjs/feathers-hooks)
+[![Build Status](https://travis-ci.org/feathersjs-ecosystem/feathers-hooks.png?branch=master)](https://travis-ci.org/feathersjs-ecosystem/feathers-hooks)
+[![Code Climate](https://codeclimate.com/github/feathersjs-ecosystem/feathers-hooks/badges/gpa.svg)](https://codeclimate.com/github/feathersjs-ecosystem/feathers-hooks)
+[![Test Coverage](https://codeclimate.com/github/feathersjs-ecosystem/feathers-hooks/badges/coverage.svg)](https://codeclimate.com/github/feathersjs-ecosystem/feathers-hooks/coverage)
+[![Dependency Status](https://img.shields.io/david/feathersjs-ecosystem/feathers-hooks.svg?style=flat-square)](https://david-dm.org/feathersjs-ecosystem/feathers-hooks)
 [![Download Status](https://img.shields.io/npm/dm/feathers-hooks.svg?style=flat-square)](https://www.npmjs.com/package/feathers-hooks)
 [![Slack Status](http://slack.feathersjs.com/badge.svg)](http://slack.feathersjs.com)
 
@@ -72,6 +72,6 @@ module.exports = function(){
 
 ## License
 
-Copyright (c) 2016 [Feathers contributors](https://github.com/feathersjs/feathers-hooks/graphs/contributors)
+Copyright (c) 2016 [Feathers contributors](https://github.com/feathersjs-ecosystem/feathers-hooks/graphs/contributors)
 
 Licensed under the [MIT license](LICENSE).

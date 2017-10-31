@@ -2,7 +2,7 @@
   "name": "feathers-hooks",
   "version": "2.1.2",
   "description": "Before and after service method call hooks for easy authorization and processing.",
-  "homepage": "https://github.com/feathersjs/feathers-hooks",
+  "homepage": "https://github.com/feathersjs-ecosystem/feathers-hooks",
   "keywords": [
     "feathers-plugin",
     "feathers"
@@ -10,7 +10,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/feathersjs/feathers-hooks.git"
+    "url": "git://github.com/feathersjs-ecosystem/feathers-hooks.git"
   },
   "author": {
     "name": "David Luecke",
@@ -19,7 +19,7 @@
   },
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/feathersjs/feathers-hooks/issues"
+    "url": "https://github.com/feathersjs-ecosystem/feathers-hooks/issues"
   },
   "engines": {
     "node": ">= 4.0"
