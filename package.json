@@ -59,6 +59,29 @@
     "feathers-commons": "^0.8.6",
     "uberproto": "^1.2.0"
   },
+  "greenkeeper": {
+    "ignore": [
+      "feathers-commons",
+      "uberproto",
+      "@feathersjs/feathers",
+      "babel-cli",
+      "babel-core",
+      "babel-plugin-add-module-exports",
+      "babel-preset-es2015",
+      "eslint-if-supported",
+      "eslint-if-supported",
+      "feathers",
+      "feathers-errors",
+      "feathers-memory",
+      "feathers-mongoose",
+      "feathers-rest",
+      "istanbul",
+      "mocha",
+      "mongoose",
+      "rimraf",
+      "semistandard"
+    ]
+  },
   "devDependencies": {
     "@feathersjs/feathers": "^3.0.0-pre.3",
     "babel-cli": "^6.4.0",
